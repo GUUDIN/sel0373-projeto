@@ -1,3 +1,5 @@
+// Carrega variáveis de ambiente do arquivo .env
+require("dotenv").config();
 // Importa o módulo Express e cria uma instância da aplicação
 const express = require("express");
 const app = express();
@@ -7,9 +9,29 @@ const path = require("path");
 
 // Importa o body-parser para processar dados de formulários
 const bodyParser = require("body-parser");
+// Sessões
+const session = require("express-session");
+const MongoStore = require("connect-mongo");
 
 // Configura o body-parser para interpretar dados URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));
+
+// Middleware de sessão
+app.use(session({
+  secret: process.env.SESSION_SECRET || "dev-secret",
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 }, // 1 h
+  store: MongoStore.create({
+    mongoUrl: process.env.MONGO_URL || "mongodb://localhost:27017/sel0373-sessions"
+  })
+}));
+
+// Torna `user` disponível em res.locals para os templates
+app.use((req, res, next) => {
+  res.locals.user = req.session.user;
+  next();
+});
 
 // Configura o middleware para servir arquivos estáticos da pasta "public"
 app.use(express.static(path.join(__dirname, "public")));
