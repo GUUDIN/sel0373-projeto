@@ -18,8 +18,14 @@ jobs:
         mkdir -p ~/.ssh
         echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
+    
+        # Remove entradas antigas do host (caso existam)
+        ssh-keygen -R igbt.eesc.usp.br || true
+        ssh-keygen -R [igbt.eesc.usp.br]:22 || true
+    
+        # Adiciona a chave atual do host
         ssh-keyscan -p 22 -H igbt.eesc.usp.br >> ~/.ssh/known_hosts
-        ssh-keyscan -H igbt.eesc.usp.br >> ~/.ssh/known_hosts  # Limpa a chave antiga
+    
     
 
     - name: Enviar projeto para o servidor
