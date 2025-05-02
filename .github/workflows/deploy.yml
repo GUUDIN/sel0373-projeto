@@ -19,8 +19,11 @@ jobs:
         echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
         chmod 600 ~/.ssh/id_ed25519
         ssh-keyscan -p 22 -H igbt.eesc.usp.br >> ~/.ssh/known_hosts
+        ssh-keyscan -H igbt.eesc.usp.br >> ~/.ssh/known_hosts  # Limpa a chave antiga
+    
 
     - name: Enviar projeto para o servidor
       run: |
-        rsync -avz -e "ssh -p 22 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" --delete ./ farmbot@igbt.eesc.usp.br:~
+        rsync -avz -e "ssh -p 22 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes -v" --delete ./ farmbot@igbt.eesc.usp.br:~
+
 
