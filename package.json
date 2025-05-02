@@ -1,10 +1,10 @@
 {
-  "name": "node-learning",
+  "name": "sel0373-projeto",
   "version": "1.0.0",
-  "description": "",
+  "description": "Este projeto é uma prova de conceito desenvolvida para a disciplina SEL0373 - Projetos em Sistemas de IoT. O objetivo é demonstrar como utilizar o Node.js para criar um sistema simples de autenticação de usuários, envio de arquivos via MQTT e visualização de arquivos, em um ambiente de Internet das Coisas (IoT).",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon server.js"
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "",

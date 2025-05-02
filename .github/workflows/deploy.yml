@@ -3,7 +3,7 @@ name: Deploy via SSH
 on:
   push:
     branches:
-      - main  # ou a branch que quiser monitorar
+      - main  # Altere se sua branch principal for diferente
 
 jobs:
   deploy:
@@ -22,4 +22,5 @@ jobs:
 
     - name: Enviar projeto para o servidor
       run: |
-        rsync -avz -e "ssh -p 22 -i ~/.ssh/id_ed25519" --delete ./ farmbot@igbt.eesc.usp.br:~
+        rsync -avz -e "ssh -p 22 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" --delete ./ farmbot@igbt.eesc.usp.br:~
+

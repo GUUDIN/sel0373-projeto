@@ -36,6 +36,6 @@ const sendFiles = require("./routes/send-files");
 app.use("/send-files", sendFiles);
 
 // Inicia o servidor na porta 3000
-app.listen(3000, () => {
-  console.log("Server on port 3000");
+app.listen(6005, () => {
+  console.log("Server on port 6005");
 });
