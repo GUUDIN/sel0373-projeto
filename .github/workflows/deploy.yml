@@ -3,35 +3,26 @@ name: Deploy via SSH
 on:
   push:
     branches:
-      - main  # Altere se sua branch principal for diferente
+      - main  # ou altere para sua branch principal
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout código
-      uses: actions/checkout@v3
+      - name: Checkout código
+        uses: actions/checkout@v3
 
-    - name: Adicionar chave SSH
-      run: |
-        mkdir -p ~/.ssh
-        echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
-        chmod 600 ~/.ssh/id_ed25519
-    
-        # Remove entradas antigas do host (caso existam)
-        ssh-keygen -R igbt.eesc.usp.br || true
-        ssh-keygen -R [igbt.eesc.usp.br]:22 || true
-    
-        # Adiciona a chave atual do host
-        ssh-keyscan -p 22 -H igbt.eesc.usp.br >> ~/.ssh/known_hosts
-    
-    
+      - name: Adicionar chave SSH
+        run: |
+          mkdir -p ~/.ssh
+          echo "${{ secrets.DEPLOY_KEY }}" > ~/.ssh/id_ed25519
+          chmod 600 ~/.ssh/id_ed25519
+          ssh-keyscan -p 22 -H igbt.eesc.usp.br >> ~/.ssh/known_hosts
 
-    - name: Enviar projeto para o servidor
-      run: |
-        rsync -avz -e "ssh -p 22 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" \
-          --delete \
-          --exclude='.ssh' \
-          ./ farmbot@igbt.eesc.usp.br:~
-  
+      - name: Enviar projeto para o servidor (sem sobrescrever .ssh)
+        run: |
+          rsync -avz -e "ssh -p 22 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" \
+            --delete \
+            --exclude='.ssh' \
+            ./ farmbot@igbt.eesc.usp.br:~
