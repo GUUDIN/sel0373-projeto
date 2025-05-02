@@ -36,6 +36,6 @@ const sendFiles = require("./routes/send-files");
 app.use("/send-files", sendFiles);
 
 // Inicia o servidor na porta 6005
-app.listen(80, "0.0.0.0", () => {
+app.listen(6005, "0.0.0.0", () => {
   console.log("Server on port 6005");
 });
