@@ -16,20 +16,19 @@ const MongoStore = require("connect-mongo");
 // Configura o body-parser para interpretar dados URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Middleware de sessão
-app.use(session({
-  secret: process.env.SESSION_SECRET || "dev-secret",
+
+const sessionOptions = {
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 }, // 1 h
-  store: MongoStore.create({
-    mongoUrl: process.env.MONGO_URL || "mongodb://localhost:27017/sel0373-sessions"
-  })
-}));
+  cookie: { maxAge: 1000 * 60 * 60 } // 1 hour
+};
+
+app.use(session(sessionOptions));
 
 // Torna `user` disponível em res.locals para os templates
 app.use((req, res, next) => {
-  res.locals.user = req.session.user;
+  res.locals.user = req.session.user; 
   next();
 });
 
@@ -42,6 +41,8 @@ app.set("view engine", "pug");
 
 // Rota para a página inicial (index.pug) passando o título "Home"
 app.get("/", (req, res) => {
+  console.log("User session:", req.session.user); // Log para verificação (depuração)
+  console.log("Session ID:", req.session.id); // Log para verificação (depuração)
   res.render("index", { title: "Home" });
 });
 
