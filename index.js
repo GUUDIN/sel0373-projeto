@@ -1,6 +1,7 @@
 // Importa o módulo Express e cria uma instância da aplicação
 const express = require("express");
 const app = express();
+const PORT = 6005
 
 // Importa o módulo path para manipulação de caminhos de diretórios
 const path = require("path");
@@ -36,7 +37,7 @@ const sendFiles = require("./routes/send-files");
 app.use("/send-files", sendFiles);
 
 // Inicia o servidor na porta 6005
-app.listen(6005, () => {
+app.listen(PORT, '0.0.0.0', () => {
   console.log("Server on port 6005");
 });
 
