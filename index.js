@@ -1,7 +1,7 @@
 // Importa o módulo Express e cria uma instância da aplicação
 const express = require("express");
 const app = express();
-const PORT = 6005
+const PORT = 80
 
 // Importa o módulo path para manipulação de caminhos de diretórios
 const path = require("path");
