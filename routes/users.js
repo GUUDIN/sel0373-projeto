@@ -42,6 +42,7 @@ router.post("/login", (req, res) => {
     console.log("Comparison Result:", result); // Log para verificação (depuração)
     if (result) {
       // Se as senhas coincidirem, redireciona para a rota de envio de arquivos
+      req.session.user = { username }; // salva usuário na sessão
       if(user.project ==1){
         req.session.user = {
           username: user.username
@@ -82,6 +83,16 @@ router.post("/register", (req, res) => {
     users.push({ username, password: hash, project });
     console.log("Projeto:", project);
     // Redireciona para a página de login após o registro bem-sucedido
+    res.redirect("/users");
+  });
+});
+
+// Rota GET para logout: destrói a sessão e redireciona para login
+router.get("/logout", (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error("Erro ao encerrar sessão:", err);
+    }
     res.redirect("/users");
   });
 });

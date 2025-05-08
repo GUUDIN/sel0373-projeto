@@ -18,6 +18,11 @@ html
             a.logout-button.text-white.ms-2(href="/users/logout") Logout
           else
             a.login-button.text-white(href="/users") Login
+          if user
+            span.text-white.me-3 Olá, #{user.username}
+            a.logout-button.text-white.ms-2(href="/users/logout") Logout
+          else
+            a.login-button.text-white(href="/users") Login
 
     // Container para o formulário de registro
     .container.d-flex.justify-content-center.align-items-center(style="height: 100vh;")
