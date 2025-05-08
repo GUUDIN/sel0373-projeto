@@ -26,7 +26,11 @@ jobs:
             --delete \
             --exclude='.ssh' \
             ./ farmbot@igbt.eesc.usp.br:~
-      
+            
+      - name: Enviar arquivo .env para o servidor
+        run: |
+          scp -i ~/.ssh/id_ed25519 .env farmbot@igbt.eesc.usp.br:/home/farmbot/.env
+          
       - name: Rodar npm install no servidor
         run: |
           ssh -p 22 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes \
