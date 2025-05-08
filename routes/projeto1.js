@@ -49,7 +49,7 @@ client.on('message', (topic, payload) => {
   }
 });
 
-// Middleware de teste para simular sessão de usuário caso login der errado
+// Middleware de teste para simular sessão de usuário caso login dê errado
 router.use((req, res, next) => {
   if (!req.session.user) {
     req.session.user = { id: 1, username: 'vitorinha123_noUser' }; 

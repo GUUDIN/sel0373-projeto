@@ -1,5 +1,8 @@
 // Carrega variáveis de ambiente do arquivo .env
 require("dotenv").config();
+
+
+
 // Importa o módulo Express e cria uma instância da aplicação
 const express = require("express");
 const app = express();
@@ -20,7 +23,8 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 const sessionOptions = {
-  secret: process.env.SESSION_SECRET,
+  secret: 'chave-ultra-secreta-aqui',
+  // process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 1000 * 60 * 60 } // 1 hour
