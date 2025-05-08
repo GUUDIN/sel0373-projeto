@@ -14,13 +14,6 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 
-const session = require('express-session');
-
-app.use(session({
-  secret: 'segredo-super-seguro',
-  resave: false,
-  saveUninitialized: false,
-}));
 
 // Configura o body-parser para interpretar dados URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));

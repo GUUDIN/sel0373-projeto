@@ -42,12 +42,12 @@ router.post("/login", (req, res) => {
     console.log("Comparison Result:", result); // Log para verificação (depuração)
     if (result) {
       // Se as senhas coincidirem, redireciona para a rota de envio de arquivos
-      req.session.user = { username }; // salva usuário na sessão
+      req.session.user = {
+        username: user.username
+      };
+      console.log("User logado", user.username)
+      //req.session.user = { username }; // salva usuário na sessão
       if(user.project ==1){
-        req.session.user = {
-          username: user.username
-        };
-        console.log("User logado", user.username)
         return res.redirect("/projeto1");
       }
       else{
