@@ -13,7 +13,11 @@ html
           // Logo clicável que redireciona para a página inicial
           a.logo-text.text-white(href="/") Projetos IOT
         nav.nav-right
-          a.login-button.text-white(href="/users") Login
+          if user
+            span.text-white.me-3 Olá, #{user.username}
+            a.logout-button.text-white.ms-2(href="/users/logout") Logout
+          else
+            a.login-button.text-white(href="/users") Login
 
     // Container para o formulário de registro
     .container.d-flex.justify-content-center.align-items-center(style="height: 100vh;")
@@ -30,4 +34,10 @@ html
             .mb-3
               label.form-label(for="password") Senha
               input#password.form-control(type="password" name="password" placeholder="Digite sua senha" required)
+            .mb-3
+              label.form-label(for="project") Projeto
+              select#project.form-select(name="project" required)
+                option(value="" selected disabled) Selecione um projeto
+                option(value="1") Projeto 1
+                option(value="2") Projeto 2
             button.btn.btn-primary.w-100(type="submit") Criar conta

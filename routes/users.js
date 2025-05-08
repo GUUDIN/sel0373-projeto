@@ -23,7 +23,7 @@ router.get("/", (req, res) => {
 
 // Rota POST para processar o login do usuário
 router.post("/login", (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, project } = req.body;
   
   // Procura um usuário com o username fornecido
   const user = users.find(u => u.username === username);
@@ -42,7 +42,17 @@ router.post("/login", (req, res) => {
     console.log("Comparison Result:", result); // Log para verificação (depuração)
     if (result) {
       // Se as senhas coincidirem, redireciona para a rota de envio de arquivos
-      return res.redirect("/send-files");
+      if(user.project ==1){
+        req.session.user = {
+          username: user.username
+        };
+        console.log("User logado", user.username)
+        return res.redirect("/projeto1");
+      }
+      else{
+        return res.redirect("/send-files");
+      }
+      
     } else {
       // Se não coincidirem, renderiza a página de login com mensagem de erro
       return res.render("login", { error: "Usuário ou senha incorretos!" });
@@ -52,7 +62,7 @@ router.post("/login", (req, res) => {
 
 // Rota POST para registrar um novo usuário
 router.post("/register", (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, project } = req.body;
   
   // Verifica se já existe um usuário com o mesmo username
   const userExists = users.some(user => user.username === username);
@@ -69,7 +79,8 @@ router.post("/register", (req, res) => {
     }
     console.log("Hashed password:", hash); // Log do hash (remova em produção)
     // Adiciona o novo usuário ao array, armazenando o username e o hash da senha
-    users.push({ username, password: hash });
+    users.push({ username, password: hash, project });
+    console.log("Projeto:", project);
     // Redireciona para a página de login após o registro bem-sucedido
     res.redirect("/users");
   });

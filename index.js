@@ -9,6 +9,14 @@ const path = require("path");
 // Importa o body-parser para processar dados de formulários
 const bodyParser = require("body-parser");
 
+const session = require('express-session');
+
+app.use(session({
+  secret: 'segredo-super-seguro',
+  resave: false,
+  saveUninitialized: false,
+}));
+
 // Configura o body-parser para interpretar dados URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -35,6 +43,10 @@ app.use("/users", userRouter);
 // Importa e utiliza o roteador de envio de arquivos
 const sendFiles = require("./routes/send-files");
 app.use("/send-files", sendFiles);
+
+// Importa e utiliza o roteador de envio de arquivos
+const projeto1 = require("./routes/projeto1");
+app.use("/projeto1", projeto1);
 
 // Inicia o servidor na porta 6005
 app.listen(PORT, '0.0.0.0', () => {
