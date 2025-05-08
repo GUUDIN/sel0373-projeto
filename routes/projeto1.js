@@ -11,9 +11,6 @@ const registrosProjeto1 = [];
 // Variável para guardar o último peso recebido
 const pesosPorIdentificador = {};
 
-
-
-
 // Conexão MQTT
 const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
   username: 'mqtt',
@@ -50,12 +47,10 @@ client.on('message', (topic, payload) => {
   }
 });
 
-
-
 // Middleware para simular sessão de usuário
 router.use((req, res, next) => {
   if (!req.session.user) {
-    req.session.user = { id: 1, username: 'joao123' }; // Simulado
+    req.session.user = { id: 1, username: 'vitorinha123_noUser' }; 
   }
   next();
 });
@@ -78,15 +73,14 @@ router.post('/register', (req, res) => {
     return res.status(401).send('Usuário não autenticado');
   }
 
-  const peso = pesosPorIdentificador[identifier] || "não recebido";
+  const peso = pesosPorIdentificador[identifier] || "Não recebido";
   const existente = registrosProjeto1.find(reg => reg.identifier === identifier);
-
   const registroPeso = pesosPorIdentificador[identifier];
-
+ 
   const novoRegistro = {
     identifier,
     allowed,
-    peso: registroPeso?.peso || "não recebido",
+    peso: registroPeso?.peso || "Não recebido",
     dataPesoAtualizado: registroPeso?.dataAtualizacao || null,
     registradoPor: req.session.user.username,
     data: new Date().toISOString()
@@ -97,7 +91,7 @@ router.post('/register', (req, res) => {
     existente.peso = peso;
     existente.registradoPor = req.session.user.username;
     existente.data = new Date().toISOString();
-    console.log(`Registro atualizado:`, existente);
+    console.log('Registro atualizado:', existente);
   } else {
     const novo = {
       identifier,
@@ -110,11 +104,12 @@ router.post('/register', (req, res) => {
     console.log('Novo registro:', novo);
   }
 
+
   // Envia mensagem MQTT com 'id,allowed'
   const mensagemMQTT = JSON.stringify({ identifier, allowed });
   client.publish(mqtt_topic, mensagemMQTT, {}, (err) => {
     if (err) console.error('Erro ao enviar mensagem MQTT:', err);
-    else console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
+    else console.log('Mensagem enviada via MQTT: ${mensagemMQTT}');
   });
 
   res.redirect('/projeto1');
