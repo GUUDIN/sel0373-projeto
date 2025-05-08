@@ -17,6 +17,7 @@ const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
   password: 'mqtt_123_abc'
 });
 
+// Definição do topico associado ao projeto 1
 const mqtt_topic = 'vaquinha';
 
 // Qnd conectar ao broker MQTT ...
@@ -30,6 +31,7 @@ client.on('connect', () => {
   });
 });
 
+//Recebimento dos dados via mqtt 
 client.on('message', (topic, payload) => {
   try {
     const mensagem = JSON.parse(payload.toString());
@@ -47,7 +49,7 @@ client.on('message', (topic, payload) => {
   }
 });
 
-// Middleware para simular sessão de usuário
+// Middleware de teste para simular sessão de usuário caso login der errado
 router.use((req, res, next) => {
   if (!req.session.user) {
     req.session.user = { id: 1, username: 'vitorinha123_noUser' }; 

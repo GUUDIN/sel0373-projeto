@@ -35,7 +35,7 @@ router.post("/login", (req, res) => {
   // Compara a senha fornecida com o hash armazenado usando bcrypt
   bcrypt.compare(password, user.password, (err, result) => {
     if (err) {
-      console.log("Comparison Result:", err); // Log para verificação (depuração)
+      console.log("Resultado da Comparação:", err); // Log para verificação (depuração)
       // Em caso de erro na comparação, retorna erro 500
       return res.status(500).send("Erro na autenticação!");
     }
