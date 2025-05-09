@@ -87,7 +87,7 @@ router.post('/register', (req, res) => {
     registradoPor: req.session.user.username,
     data: new Date().toISOString()
   };
-
+  
   if (existente) {
     existente.allowed = allowed;
     existente.peso = peso;
@@ -111,12 +111,27 @@ router.post('/register', (req, res) => {
   const mensagemMQTT = JSON.stringify({ identifier, allowed });
   client.publish(mqtt_topic, mensagemMQTT, {}, (err) => {
     if (err) console.error('Erro ao enviar mensagem MQTT:', err);
-    else console.log('Mensagem enviada via MQTT: ${mensagemMQTT}');
+    else console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
+
   });
 
   res.redirect('/projeto1');
 });
 
+// Rota para excluir um animal pelo identifier
+router.post('/delete/:identifier', (req, res) => {
+  const { identifier } = req.params;
+
+  const index = registrosProjeto1.findIndex(r => r.identifier === identifier);
+  if (index !== -1) {
+    registrosProjeto1.splice(index, 1);
+    console.log(`Animal ${identifier} removido.`);
+  } else {
+    console.log(`Animal ${identifier} não encontrado para remoção.`);
+  }
+
+  res.redirect('/projeto1');
+});
 
 // Rota GET para ver os registros como JSON
 router.get('/registered', (req, res) => {

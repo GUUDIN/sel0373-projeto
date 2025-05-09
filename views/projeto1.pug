@@ -19,10 +19,10 @@ html(lang="pt-BR")
     .container
       .row
         // Coluna do formulário
-        .col-md-6.d-flex.align-items-center.justify-content-center
-          .card.shadow-lg.w-100(style="max-width: 400px;")
+        .col-md-6.d-flex.flex-column.align-items-center.justify-content-start
+          .card.shadow-lg.w-100.mb-3(style="max-width: 400px; margin-top: 0px;")
             .card-body
-              h2.card-title.text-center Cadastro de Animal
+              h4.card-title.text-center Cadastro de Animal
 
               if error
                 .alert.alert-danger.text-center.mb-3= error
@@ -43,28 +43,34 @@ html(lang="pt-BR")
                 p.text-center.mt-3
                   a(href="/") Voltar à página inicial
 
-        // Coluna da lista de animais
-        .col-md-6
-          h4.mb-3 Animais Registrados
+          // Botão fora da card, mas ainda dentro da coluna
+          a.btn.btn-outline-secondary.mt-2(href="/projeto1/registered" target="_blank") Histórico completo dos animais
+
+        // Coluna da lista de animais com rolagem
+        .col-md-6(style="max-height: 80vh; overflow-y: auto;")
+          h4.mb-3.text-center Animais Registrados
           if registros.length
             each registro in registros
-                .border.p-3.mb-2.rounded.bg-light
-                    strong Identificador: 
-                    | #{registro.identifier}
-                    br
-                    strong Permitido: 
-                    | #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
-                    br
-                    strong Peso (kg): 
-                    | #{registro.peso}
-                    if registro.dataPesoAtualizado
-                    br
-                    small.text-muted Peso atualizado em: #{new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR")}
-                    if registro.registradoPor
-                    br
-                    small.text-muted Registrado por #{registro.registradoPor}
-                    if registro.data
-                    br
-                    small.text-muted Data: #{new Date(registro.data).toLocaleString("pt-BR")}
+              .border.p-3.mb-2.rounded.bg-light
+                strong Identificador: 
+                | #{registro.identifier}
+                br
+                strong Permitido: 
+                | #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
+                br
+                strong Peso (kg): 
+                | #{registro.peso}
+                if registro.dataPesoAtualizado
+                  br
+                  small.text-muted Peso atualizado em: #{new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR")}
+                if registro.registradoPor
+                  br
+                  small.text-muted Registrado por #{registro.registradoPor}
+                if registro.data
+                  br
+                  small.text-muted Data: #{new Date(registro.data).toLocaleString("pt-BR")}
+                br
+                form(action=`/projeto1/delete/${registro.identifier}` method="POST" style="display: inline;")
+                  button.btn.btn-sm.btn-danger.mt-2(type="submit") Excluir
           else
             p.text-muted Nenhum animal registrado ainda.
