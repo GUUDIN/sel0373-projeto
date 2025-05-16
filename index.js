@@ -21,7 +21,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 
 const sessionOptions = {
-  secret: 'sua-chave-ultra-secreta-aqui', //process.env.SESSION_SECRET,
+  secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: { maxAge: 1000 * 60 * 60 } // 1 hour
