@@ -10,6 +10,8 @@ const { fileURLToPath } = require('url');
 const path = require("path")
 
 // Conecta ao broker MQTT utilizando as credenciais fornecidas
+
+
 const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
   username: 'mqtt',
   password: 'mqtt_123_abc'

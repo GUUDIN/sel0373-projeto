@@ -33,19 +33,22 @@ client.on('connect', () => {
 
 //Recebimento dos dados via mqtt 
 client.on('message', (topic, payload) => {
-  try {
-    const mensagem = JSON.parse(payload.toString());
-    const { identifier, peso } = mensagem;
+  if (topic === 'vaquinha') {
+    try {
+      const mensagem = JSON.parse(payload.toString());
+      const { identifier, peso } = mensagem;
 
-    if (identifier && peso != null) {
-      pesosPorIdentificador[identifier] = {
-        peso,
-        dataAtualizacao: new Date().toISOString()
-      };
-      console.log(`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
+      if (identifier && peso != null) {
+        pesosPorIdentificador[identifier] = {
+          peso,
+          dataAtualizacao: new Date().toISOString()
+        };
+        console.log(`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
+        client.publish('logs/vaquinha',`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
+      }
+    } catch (e) {
+      console.error("Erro ao processar mensagem MQTT:", e.message);
     }
-  } catch (e) {
-    console.error("Erro ao processar mensagem MQTT:", e.message);
   }
 });
 
@@ -94,6 +97,7 @@ router.post('/register', (req, res) => {
     existente.registradoPor = req.session.user.username;
     existente.data = new Date().toISOString();
     console.log('Registro atualizado:', existente);
+    client.publish('logs/vaquinha','Registro atualizado:', existente);
   } else {
     const novo = {
       identifier,
@@ -104,14 +108,22 @@ router.post('/register', (req, res) => {
     };
     registrosProjeto1.push(novo);
     console.log('Novo registro:', novo);
+    client.publish('logs/vaquinha','Novo registro:', novo);
   }
 
 
   // Envia mensagem MQTT com 'id,allowed'
   const mensagemMQTT = JSON.stringify({ identifier, allowed });
   client.publish(mqtt_topic, mensagemMQTT, {}, (err) => {
-    if (err) console.error('Erro ao enviar mensagem MQTT:', err);
-    else console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
+    if (err){ 
+      console.error('Erro ao enviar mensagem MQTT:', err);
+      client.publish('logs/vaquinha', `Erro ao enviar mensagem MQTT:'`);
+
+    }
+    else {
+      console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
+      client.publish('logs/vaquinha', `Mensagem enviada via MQTT: ${mensagemMQTT}`);
+  }
 
   });
 
@@ -125,9 +137,12 @@ router.post('/delete/:identifier', (req, res) => {
   const index = registrosProjeto1.findIndex(r => r.identifier === identifier);
   if (index !== -1) {
     registrosProjeto1.splice(index, 1);
-    console.log(`Animal ${identifier} removido.`);
+    //console.log(`Animal ${identifier} removido.`);
+    client.publish('logs/vaquinha', `Animal ${identifier} removido.`);
+
   } else {
-    console.log(`Animal ${identifier} não encontrado para remoção.`);
+    //console.log(`Animal ${identifier} não encontrado para remoção.`);
+    client.publish('logs/vaquinha', `Animal ${identifier} não encontrado para remoção.`);
   }
 
   res.redirect('/projeto1');

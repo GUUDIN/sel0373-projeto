@@ -65,6 +65,9 @@ app.use("/send-files", sendFiles);
 const projeto1 = require("./routes/projeto1");
 app.use("/projeto1", projeto1);
 
+const projeto2 = require("./routes/projeto2");
+app.use("/projeto2", projeto2);
+
 // Inicia o servidor na porta 6005
 app.listen(PORT, '0.0.0.0', () => {
   console.log("Server on port 6005");

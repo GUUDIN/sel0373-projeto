@@ -51,7 +51,7 @@ router.post("/login", (req, res) => {
         return res.redirect("/projeto1");
       }
       else{
-        return res.redirect("/send-files");
+        return res.redirect("/projeto2");
       }
       
     } else {
