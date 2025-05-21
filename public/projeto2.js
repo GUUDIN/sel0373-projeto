@@ -12,7 +12,7 @@ L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
 
 // Adiciona marcador inicial
 let marker = L.marker([-23.5505, -46.6333]).addTo(map)
-  .bindPopup("Posição inicial")
+  .bindPopup("Posição doida")
   .openPopup();
 
 // Escuta coordenadas vindas via WebSocket

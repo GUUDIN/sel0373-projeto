@@ -72,7 +72,7 @@ const sendFiles = require("./routes/send-files");
 app.use("/send-files", sendFiles);
 
 // Importa e utiliza o roteador de envio de arquivos
-const projeto1 = require("./routes/projeto1");
+const projeto1 = require("./routes/projeto1")(io);
 app.use("/projeto1", projeto1);
 
 

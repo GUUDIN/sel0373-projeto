@@ -32,7 +32,7 @@ html(lang="pt-BR")
             p.text-white.mb-1  #{user.username}
           a.btn.btn-sm.btn-outline-light.mb-2(href="/export") Exportar dados
           a.btn.btn-sm.btn-outline-light.mb-2(href="/") Voltar ao início
-          a.btn.btn-sm.btn-outline-danger.mt-auto(href="/logout") Sair
+          a.btn.btn-sm.btn-outline-danger.mt-auto(href="/") Sair
 
         // Conteúdo principal
         .col-md-10
@@ -72,17 +72,23 @@ html(lang="pt-BR")
           // Linha com cards de métricas
           .row.mb-4
             .col-md-4
+              if registrostemp
               .card-metric
-                h6 Temperatura
-                p.mb-0#card-temp --
+                h5 Temperatura
+                p.mb-0#card-temp 
+                  #{registrostemp.temperatura}| Temperatura Externa: Zero graus ta otimo
             .col-md-4
+              if registrosumidade
               .card-metric
-                h6 Umidade
-                p.mb-0#card-umidade --
+                h5 Umidade
+                p.mb-0#card-umidade 
+                  #{registrosumidade.umidade}| Umidade 
             .col-md-4
+              if registrosvento
               .card-metric
-                h6 Velocidade do Vento
-                p.mb-0#card-vento --
+                h5 Velocidade do Vento
+                p.mb-0#card-vento 
+                  #{registrosvento.velocidade}| Vento externo: no aguardo dos vento...
 
     // Scripts
     script(src="https://cdn.jsdelivr.net/npm/chart.js")

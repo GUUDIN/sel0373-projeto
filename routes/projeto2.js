@@ -112,14 +112,17 @@ client.on('message', async (topic, payload) => {
 
 
 
-
-
-
-
-router.get('/', (req, res) => {
-    //res.send('OI GRUPO 2')
-    res.render('projeto2')
-});
+  router.get('/', (req, res) => {
+    res.render('projeto2', {
+      success: req.query.success,
+      error: req.query.error,
+      registrosmapa: registrosmapa,
+      registrostemp: registrostemp,
+      registrosvento: registrosvento,
+      registrosumidade: registrosumidade,
+      user: req.session.user
+    });  
+  });
 
 return router;
 }

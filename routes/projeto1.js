@@ -5,6 +5,10 @@ const mqtt = require('mqtt');
 const path = require("path");
 const fileUpload = require("express-fileupload");
 
+module.exports = function(io) {
+
+const router = express.Router();
+
 // Vetor para armazenar os registros
 const registrosProjeto1 = [];
 
@@ -18,8 +22,8 @@ const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
 });
 
 // Definição do topico associado ao projeto 1
-const mqtt_topic = 'vaquinha';
-
+const mqtt_topic = 'vaquinha/echo';//recebe dados de id, peso. é subscribed
+const mqtt_topic_send = 'vaquinha'; //envia dados id, allowed
 // Qnd conectar ao broker MQTT ...
 client.on('connect', () => {
   client.subscribe(mqtt_topic, (err) => {
@@ -31,9 +35,10 @@ client.on('connect', () => {
   });
 });
 
+
 //Recebimento dos dados via mqtt 
 client.on('message', (topic, payload) => {
-  if (topic === 'vaquinha') {
+  if (topic === 'vaquinha/echo') {
     try {
       const mensagem = JSON.parse(payload.toString());
       const { identifier, peso } = mensagem;
@@ -45,6 +50,8 @@ client.on('message', (topic, payload) => {
         };
         console.log(`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
         client.publish('logs/vaquinha',`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
+        //console.log("Emitindo socket pesoAtualizado:", { identifier, peso });
+        io.emit('pesoAtualizado', { identifier, peso });
       }
     } catch (e) {
       console.error("Erro ao processar mensagem MQTT:", e.message);
@@ -52,7 +59,8 @@ client.on('message', (topic, payload) => {
   }
 });
 
-// Middleware de teste para simular sessão de usuário caso login dê errado
+
+// Middleware de teste para simular sessão de usuário caso login dê errado tirar fim do projeto
 router.use((req, res, next) => {
   if (!req.session.user) {
     req.session.user = { id: 1, username: 'vitorinha123_noUser' }; 
@@ -86,7 +94,7 @@ router.post('/register', (req, res) => {
     identifier,
     allowed,
     peso: registroPeso?.peso || "Não recebido",
-    dataPesoAtualizado: registroPeso?.dataAtualizacao || null,
+    dataPesoAtualizado: registroPeso?.dataAtualizacao || "Não atualizado",
     registradoPor: req.session.user.username,
     data: new Date().toISOString()
   };
@@ -113,15 +121,15 @@ router.post('/register', (req, res) => {
 
 
   // Envia mensagem MQTT com 'id,allowed'
+
   const mensagemMQTT = JSON.stringify({ identifier, allowed });
-  client.publish(mqtt_topic, mensagemMQTT, {}, (err) => {
+  client.publish(mqtt_topic_send, mensagemMQTT, {}, (err) => {
     if (err){ 
       console.error('Erro ao enviar mensagem MQTT:', err);
-      client.publish('logs/vaquinha', `Erro ao enviar mensagem MQTT:'`);
-
+      //client.publish('logs/vaquinha', `Erro ao enviar mensagem MQTT:'`);
     }
     else {
-      console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
+      //console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
       client.publish('logs/vaquinha', `Mensagem enviada via MQTT: ${mensagemMQTT}`);
   }
 
@@ -154,4 +162,6 @@ router.get('/registered', (req, res) => {
 });
 
 // Exporta o router
-module.exports = router;
+//module.exports = router;
+return router;
+}
