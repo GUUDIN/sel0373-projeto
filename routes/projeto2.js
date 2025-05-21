@@ -1,8 +1,14 @@
-// Importações
-const express = require("express");
-const router = express.Router();
+const axios = require("axios");
 const mqtt = require('mqtt');
 const path = require("path");
+const express = require("express");
+
+module.exports = function(io) {
+// Importações
+
+const router = express.Router();
+
+
 
 const registrosmapa = [];
 const registrostemp = [];
@@ -37,28 +43,50 @@ client.on('connect', () => {
 
 
 //Recebimento dos dados via mqtt 
-client.on('message', (topic, payload) => {
-    if (topic === 'mapa') {
-      try {
-        const mensagem = JSON.parse(payload.toString());
-        const { lat , long } = mensagem;
-        registrosmapa.push(mensagem);
-        console.log(`MQTT: Mapa atualizado - ${lat}: ${long}`);
-      } catch (e) {
-        console.error("Erro ao processar mensagem MQTT:", e.message);
-      }
+client.on('message', async (topic, payload) => {
+  if (topic === 'mapa') {
+    try {
+      const mensagem = JSON.parse(payload.toString());
+      const { lat, long } = mensagem;
 
+      registrosmapa.push(mensagem);
+      console.log(`MQTT: Mapa atualizado - ${lat}: ${long}`);
+
+      // Emite coordenadas para o frontend
+      io.emit('nova-coordenada', { lat, lon: long });
+
+      // Faz requisição à API de clima
+      const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current_weather=true`;
+      const { data } = await axios.get(url);
+
+      const clima = {
+        temperatura: data.current_weather.temperature,
+        vento: data.current_weather.windspeed,
+        codigoTempo: data.current_weather.weathercode,
+        horario: data.current_weather.time
+      };
+      
+
+      // Envia dados meteorológicos para o frontend
+      io.emit('dados-clima', clima);
+      console.log("Emitido dados-clima:", clima);
+
+    } catch (e) {
+      console.error("Erro ao processar mensagem MQTT:", e.message);
     }
+  }
     if (topic ==='temperatura'){
         try {
             const mensagem = JSON.parse(payload.toString());
             const { temperatura } = mensagem;
             registrostemp.push(mensagem);
             console.log(`MQTT: Temp atualizado - ${temperatura}`);
+            
           } catch (e) {
             console.error("Erro ao processar mensagem MQTT:", e.message);
           }
     }
+
     if (topic ==='umidade'){
         try {
             const mensagem = JSON.parse(payload.toString());
@@ -93,6 +121,7 @@ router.get('/', (req, res) => {
     res.render('projeto2')
 });
 
-
+return router;
+}
 // Exporta o router
-module.exports = router;
+//module.exports = router;rs

@@ -1,6 +1,5 @@
 // Carrega variáveis de ambiente do arquivo .env
 require("dotenv").config();
-
 // Importa o módulo Express e cria uma instância da aplicação
 const express = require("express");
 const app = express();
@@ -16,6 +15,15 @@ const session = require("express-session");
 const MongoStore = require("connect-mongo");
 
 
+const http = require("http");
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server); // cria o socket
+
+// Passa o socket para todas as rotas (como middleware ou em app.locals)
+app.set("io", io);
+
+
 // Configura o body-parser para interpretar dados URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -24,7 +32,7 @@ const sessionOptions = {
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 } // 1 hour
+  cookie: { maxAge: 1000 * 60 * 60 } 
 };
 
 app.use(session(sessionOptions));
@@ -49,6 +57,8 @@ app.get("/", (req, res) => {
   res.render("index", { title: "Home" });
 });
 
+
+
 // Middleware para processar dados enviados via URL-encoded e JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -65,11 +75,11 @@ app.use("/send-files", sendFiles);
 const projeto1 = require("./routes/projeto1");
 app.use("/projeto1", projeto1);
 
-const projeto2 = require("./routes/projeto2");
+
+const projeto2 = require("./routes/projeto2")(io);
 app.use("/projeto2", projeto2);
 
-// Inicia o servidor na porta 6005
-app.listen(PORT, '0.0.0.0', () => {
+// Inicia o servidor
+server.listen(PORT, '0.0.0.0', () => {
   console.log("Server on port 6005");
 });
-
