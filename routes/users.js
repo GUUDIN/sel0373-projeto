@@ -6,32 +6,24 @@ const router = express.Router();
 const bcrypt = require("bcrypt");
 const saltRounds = 10; // Define a quantidade de rounds para gerar o salt
 
-// Variável para armazenar os usuários (in-memory, apenas para teste)
-let users = [];
+// Importa o modelo User
+const User = require("../models/user");
 
 // Rota GET para exibir a página de registro de novo usuário
 router.get("/register", (req, res) => {
-  // Renderiza a view "register" e passa um erro nulo inicialmente
   res.render("register", { error: null });
 });
 
 // Rota GET para exibir a página de login
 router.get("/", (req, res) => {
-  // Renderiza a view "login" e passa um erro nulo inicialmente
   res.render("login", { error: null });
 });
 
 // Rota POST para processar o login do usuário
-router.post("/login", (req, res) => {
-  const { username, password, project } = req.body;
-  
-  // Procura um usuário com o username fornecido
-  const user = users.find(u => u.username === username);
-  if (!user) {
-    // Se o usuário não for encontrado, renderiza a página de login com mensagem de erro
-    return res.render("login", { error: "Usuário ou senha incorretos!" });
-  }
+router.post("/login", async (req, res) => {
+  const { username, password } = req.body;
 
+<<<<<<< Updated upstream
   // Compara a senha fornecida com o hash armazenado usando bcrypt
   bcrypt.compare(password, user.password, (err, result) => {
     if (err) {
@@ -56,35 +48,60 @@ router.post("/login", (req, res) => {
       
     } else {
       // Se não coincidirem, renderiza a página de login com mensagem de erro
+=======
+  try {
+    const user = await User.findOne({ username });
+
+    if (!user) {
+>>>>>>> Stashed changes
       return res.render("login", { error: "Usuário ou senha incorretos!" });
     }
-  });
+
+    const match = await bcrypt.compare(password, user.password);
+
+    if (match) {
+      req.session.user = { username: user.username };
+
+      if (user.project == 1) {
+        return res.redirect("/projeto1");
+      } else {
+        return res.redirect("/projeto2");
+      }
+    } else {
+      return res.render("login", { error: "Usuário ou senha incorretos!" });
+    }
+  } catch (err) {
+    console.error("Erro no login:", err);
+    return res.status(500).send("Erro na autenticação!");
+  }
 });
 
 // Rota POST para registrar um novo usuário
-router.post("/register", (req, res) => {
+router.post("/register", async (req, res) => {
   const { username, password, project } = req.body;
-  
-  // Verifica se já existe um usuário com o mesmo username
-  const userExists = users.some(user => user.username === username);
-  if (userExists) {
-    // Se o usuário já existe, renderiza a página de registro com uma mensagem de erro
-    return res.render("register", { error: "Usuário já existe!" });
-  }
-  
-  // Hash a senha usando bcrypt antes de armazenar o usuário
-  bcrypt.hash(password, saltRounds, (err, hash) => {
-    if (err) {
-      // Em caso de erro durante o hash, retorna erro 500
-      return res.status(500).send("Erro ao processar a senha.");
+
+  try {
+    const existingUser = await User.findOne({ username });
+
+    if (existingUser) {
+      return res.render("register", { error: "Usuário já existe!" });
     }
-    console.log("Hashed password:", hash); // Log do hash (remova em produção)
-    // Adiciona o novo usuário ao array, armazenando o username e o hash da senha
-    users.push({ username, password: hash, project });
-    console.log("Projeto:", project);
-    // Redireciona para a página de login após o registro bem-sucedido
+
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+    const newUser = new User({
+      username,
+      password: hashedPassword,
+      project
+    });
+
+    await newUser.save();
+
     res.redirect("/users");
-  });
+  } catch (err) {
+    console.error("Erro no registro:", err);
+    return res.status(500).send("Erro ao registrar usuário.");
+  }
 });
 
 // Rota GET para logout: destrói a sessão e redireciona para login
@@ -97,5 +114,4 @@ router.get("/logout", (req, res) => {
   });
 });
 
-// Exporta o roteador para utilização em outras partes da aplicação
 module.exports = router;
