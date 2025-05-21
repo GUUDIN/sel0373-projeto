@@ -25,14 +25,14 @@ jobs:
           rsync -avz -e "ssh -p 22 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" \
             --delete \
             --exclude='.ssh' \
-            ./ farmbot@igbt.eesc.usp.br:~/backend
+            ./ farmbot@igbt.eesc.usp.br:~
 
       - name: Criar .env no servidor com SESSION_SECRET
         run: |
           ssh -p 22 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes \
-          farmbot@igbt.eesc.usp.br "echo 'SESSION_SECRET=${{ secrets.SESSION_SECRET }}' > ~/backend/.env"
+          farmbot@igbt.eesc.usp.br "echo 'SESSION_SECRET=${{ secrets.SESSION_SECRET }}' > ~/.env"
 
       - name: Rodar npm install no servidor
         run: |
           ssh -p 22 -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes \
-          farmbot@igbt.eesc.usp.br "cd ~/backend && npm install"
+          farmbot@igbt.eesc.usp.br "cd ~ && npm install"
