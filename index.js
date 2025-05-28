@@ -14,6 +14,8 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 
+const conn = require("./db/conn");
+conn();
 
 const http = require("http");
 const server = http.createServer(app);

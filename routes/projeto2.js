@@ -86,7 +86,6 @@ client.on('message', async (topic, payload) => {
             console.error("Erro ao processar mensagem MQTT:", e.message);
           }
     }
-
     if (topic ==='umidade'){
         try {
             const mensagem = JSON.parse(payload.toString());
@@ -123,6 +122,7 @@ client.on('message', async (topic, payload) => {
       user: req.session.user
     });  
   });
+
 
 return router;
 }
