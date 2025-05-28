@@ -122,14 +122,16 @@ router.post('/register', (req, res) => {
 
   // Envia mensagem MQTT com 'id,allowed'
 
-  const mensagemMQTT = JSON.stringify({ identifier, allowed });
+  //const mensagemMQTT = JSON.stringify({identifier, allowed});
+  const mensagemMQTT = `${identifier},${allowed}`;
+
   client.publish(mqtt_topic_send, mensagemMQTT, {}, (err) => {
     if (err){ 
       console.error('Erro ao enviar mensagem MQTT:', err);
       //client.publish('logs/vaquinha', `Erro ao enviar mensagem MQTT:'`);
     }
     else {
-      //console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
+      console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
       client.publish('logs/vaquinha', `Mensagem enviada via MQTT: ${mensagemMQTT}`);
   }
 

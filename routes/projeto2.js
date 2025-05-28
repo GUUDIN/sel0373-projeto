@@ -127,4 +127,4 @@ client.on('message', async (topic, payload) => {
 return router;
 }
 // Exporta o router
-//module.exports = router;rs
+//module.exports = router;
