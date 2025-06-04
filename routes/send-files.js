@@ -2,6 +2,9 @@
 const express = require("express")
 const router = express.Router()
 
+// Importa a configuração de projetos
+const { getActiveProjects } = require('../config/projects');
+
 // Importa o módulo MQTT para comunicação com o broker
 const mqtt = require('mqtt');
 // Importa o módulo 'url' para trabalhar com URLs (não utilizado atualmente, mas pode ser útil)
@@ -45,7 +48,11 @@ router.use(fileUpload());
 
 // Rota GET para exibir a página de envio de arquivos
 router.get("/", (req, res) => {
-  res.render('send-files', { user: req.session.user })
+  const activeProjects = getActiveProjects();
+  res.render('send-files', { 
+    user: req.session.user,
+    projects: activeProjects
+  })
 });
 
 // Rota POST para processar o upload de arquivos
@@ -53,7 +60,12 @@ router.post("/upload", (req, res) => {
   // Verifica se algum arquivo foi enviado
   if (!req.files || Object.keys(req.files).length === 0) {
     // Re-renderiza a página de envio de arquivos com uma mensagem de erro
-    return res.render("send-files", { error: "Nenhum arquivo foi enviado", user: req.session.user });
+    const activeProjects = getActiveProjects();
+    return res.render("send-files", { 
+      error: "Nenhum arquivo foi enviado", 
+      user: req.session.user,
+      projects: activeProjects
+    });
   }
   
   // Recupera o arquivo enviado com o nome "file1"

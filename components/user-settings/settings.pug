@@ -8,8 +8,15 @@
       form(action="/users/settings" method="POST")
         select.project-select(name="project" required)
           option(value="" disabled selected) Selecione um projeto
-          option(value="1", selected=(user && user.project == '1')) Projeto 1
-          option(value="2", selected=(user && user.project == '2')) Projeto 2
+          if projects
+            each project in projects
+              option(
+                value=project.id
+                selected=(user && user.project == project.id)
+              ) #{project.name}
+          else
+            option(value="1", selected=(user && user.project == '1')) Cadastro de Animais
+            option(value="2", selected=(user && user.project == '2')) Envio de Arquivos
         button(type="submit" class="save-btn") Salvar
       form(action="/users/logout" method="POST")
         button(type="submit" class="logout-btn") Sair

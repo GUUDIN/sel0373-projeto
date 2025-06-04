@@ -5,6 +5,9 @@ const mqtt = require('mqtt');
 const path = require("path");
 const fileUpload = require("express-fileupload");
 
+// Importa a configuração de projetos
+const { getActiveProjects } = require('../config/projects');
+
 // Vetor para armazenar os registros
 const registrosProjeto1 = [];
 
@@ -59,11 +62,13 @@ router.use((req, res, next) => {
 
 // Rota GET principal do projeto
 router.get('/', (req, res) => {
+  const activeProjects = getActiveProjects();
   res.render('projeto1', {
     success: req.query.success,
     error: req.query.error,
     registros: registrosProjeto1,
-    user: req.session.user
+    user: req.session.user,
+    projects: activeProjects
   });  
 });
 

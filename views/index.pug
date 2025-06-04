@@ -6,6 +6,7 @@ html(lang="pt-BR")
     title Projetos IOT
     include ./partials/styles.pug
     script(src="/components/user-settings/settings.js")
+    script(src="/js/index.js")
   body
     // Barra de navegação superior
     header.navbar
@@ -33,8 +34,57 @@ html(lang="pt-BR")
         h1.hero-title Projetos IOT
         // Descrição do projeto
         p.hero-description Plataforma unificada para múltiplos projetos IoT, com comunicação bidirecional via MQTT e dashboards de dados.
-        // Botão para começar (leva para a página de registro)
-        a.get-started-button(href="/users/register") Começar
+        if user && userProject
+          // Botão para acessar o projeto do usuário
+          a.get-started-button(href=userProject.route) Acessar #{userProject.name}
+        else if user
+          // Fallback se não tiver projeto definido
+          a.get-started-button(href="/send-files") Acessar Meus Projetos
+        else
+          // Botão para começar (leva para a página de registro)
+          a.get-started-button(href="/users/register") Começar
+    
+    // Indicador de scroll para mostrar que há mais conteúdo abaixo
+    if projects && projects.length > 0
+      .scroll-indicator
+        .scroll-text Veja os projetos disponíveis
+        .scroll-arrow ↓
+
+  // Seção de Projetos Disponíveis - agora fora da seção hero
+  if projects && projects.length > 0
+    section.projects-section
+      .container
+        h2.section-title Projetos Disponíveis
+        .projects-grid
+          each project in projects
+            .project-card
+              .project-header
+                .project-icon
+                  // Ícone do projeto (fallback se não tiver)
+                  if project.icon
+                    img(src=project.icon alt=`Ícone ${project.name}`)
+                  else
+                    .default-icon 📡
+                h3.project-name #{project.name}
+              .project-content
+                p.project-description #{project.description}
+                .project-technologies
+                  each tech in project.technologies
+                    span.tech-tag #{tech}
+                .project-features
+                  each feature in project.features
+                    .feature-item
+                      span.feature-icon ✓
+                      span.feature-text #{feature}
+              .project-footer
+                if user && user.project === project.id
+                  span.current-project Projeto Atual
+                else if user
+                  form.switch-project-form(action="/users/settings" method="post")
+                    input(type="hidden" name="project" value=project.id)
+                    button.btn.btn-outline(type="submit") Trocar para este projeto
+                else
+                  a.btn.btn-primary(href="/users/register") Registrar-se
 
     // Incluir o card de configurações do usuário
     if user
