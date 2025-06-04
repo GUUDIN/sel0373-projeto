@@ -3,7 +3,8 @@ const express = require("express");
 const router = express.Router();
 const mqtt = require('mqtt');
 const path = require("path");
-const projeto_1 = require("./models/projeto_1"); // ALTERAÇÃO
+const Projeto1 = require('../models/projeto_1');
+
 const fileUpload = require("express-fileupload");
 
 module.exports = function(io) {
@@ -190,6 +191,9 @@ router.post('/delete/:identifier', async (req, res) => {
  res.status(500).send('Erro ao buscar registros');
  }
 });
+
+
+
 
 // Exporta o router
 //module.exports = router;

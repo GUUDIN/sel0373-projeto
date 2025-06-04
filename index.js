@@ -13,6 +13,7 @@ const bodyParser = require("body-parser");
 // Sessões
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
+//const projeto_1 = require("./models/projeto_1"); // ALTERAÇÃO
 
 const conn = require("./db/conn");
 conn();
