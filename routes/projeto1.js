@@ -61,9 +61,6 @@ client.on('message', (topic, payload) => {
   }
 });
 
-
-
-// Middleware de teste para simular sessão de usuário caso login dê errado tirar fim do projeto
  
 // Middleware de teste para simular sessão de usuário caso login dê errado
 router.use((req, res, next) => {

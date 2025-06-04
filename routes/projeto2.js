@@ -20,8 +20,15 @@ const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
   username: 'mqtt',
   password: 'mqtt_123_abc'
 });
-
+/*
 const mqtt_topics = [
+    'mapa/echo',
+    'temperatura/echo',
+    'umidade/echo',
+    'sensor-de-vento/echo'
+  ];
+*/
+  const mqtt_topics = [
     'mapa',
     'temperatura',
     'umidade',

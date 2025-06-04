@@ -16,6 +16,7 @@ const MongoStore = require("connect-mongo");
 
 const conn = require("./db/conn");
 conn();
+//main();
 
 const http = require("http");
 const server = http.createServer(app);

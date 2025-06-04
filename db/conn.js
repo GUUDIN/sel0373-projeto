@@ -11,5 +11,5 @@ async function main(){
         console.log(`Erro: ${error}`);
     }
 }
-
+main();
 module.exports = main;
