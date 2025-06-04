@@ -3,7 +3,7 @@ const express = require("express");
 const router = express.Router();
 const mqtt = require('mqtt');
 const path = require("path");
-const projeto_1 = require("../models/projeto_1"); // ALTERAÇÃO
+const projeto_1 = require("./models/projeto_1"); // ALTERAÇÃO
 const fileUpload = require("express-fileupload");
 
 module.exports = function(io) {
