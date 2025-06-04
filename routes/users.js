@@ -12,13 +12,13 @@ let users = [];
 // Rota GET para exibir a página de registro de novo usuário
 router.get("/register", (req, res) => {
   // Renderiza a view "register" e passa um erro nulo inicialmente
-  res.render("register", { error: null });
+  res.render("register", { error: null, user: req.session.user });
 });
 
 // Rota GET para exibir a página de login
 router.get("/", (req, res) => {
   // Renderiza a view "login" e passa um erro nulo inicialmente
-  res.render("login", { error: null });
+  res.render("login", { error: null, user: req.session.user });
 });
 
 // Rota POST para processar o login do usuário
@@ -43,7 +43,8 @@ router.post("/login", (req, res) => {
     if (result) {
       // Se as senhas coincidirem, redireciona para a rota de envio de arquivos
       req.session.user = {
-        username: user.username
+        username: user.username,
+        project: user.project
       };
       console.log("User logado", user.username)
       //req.session.user = { username }; // salva usuário na sessão
@@ -69,7 +70,7 @@ router.post("/register", (req, res) => {
   const userExists = users.some(user => user.username === username);
   if (userExists) {
     // Se o usuário já existe, renderiza a página de registro com uma mensagem de erro
-    return res.render("register", { error: "Usuário já existe!" });
+    return res.render("register", { error: "Usuário já existe!", user: req.session.user });
   }
   
   // Hash a senha usando bcrypt antes de armazenar o usuário
@@ -85,6 +86,30 @@ router.post("/register", (req, res) => {
     // Redireciona para a página de login após o registro bem-sucedido
     res.redirect("/users");
   });
+});
+
+// Rota POST para atualizar as configurações do usuário
+router.post("/settings", (req, res) => {
+  const { project } = req.body;
+  
+  if (!req.session.user) {
+    return res.redirect("/users");
+  }
+  
+  // Encontra e atualiza o usuário
+  const userIndex = users.findIndex(u => u.username === req.session.user.username);
+  if (userIndex !== -1) {
+    users[userIndex].project = project;
+    req.session.user.project = project;
+    console.log("Projeto atualizado para:", project);
+  }
+  
+  // Redireciona baseado no projeto selecionado
+  if (project === '1') {
+    return res.redirect("/projeto1");
+  } else {
+    return res.redirect("/send-files");
+  }
 });
 
 // Rota GET para logout: destrói a sessão e redireciona para login

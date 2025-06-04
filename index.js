@@ -35,6 +35,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Exemplo em app.js
+app.use((req, res, next) => {
+  res.locals.user = req.user || {}; // req.user geralmente vem do Passport
+  next();
+});
+
 // Configura o middleware para servir arquivos estáticos da pasta "public"
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -46,7 +52,7 @@ app.set("view engine", "pug");
 app.get("/", (req, res) => {
   console.log("User session:", req.session.user); // Log para verificação (depuração)
   console.log("Session ID:", req.session.id); // Log para verificação (depuração)
-  res.render("index", { title: "Home" });
+  res.render("index", { title: "Home", user: req.session.user });
 });
 
 // Middleware para processar dados enviados via URL-encoded e JSON

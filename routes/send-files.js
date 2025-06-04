@@ -45,7 +45,7 @@ router.use(fileUpload());
 
 // Rota GET para exibir a página de envio de arquivos
 router.get("/", (req, res) => {
-  res.render('send-files')
+  res.render('send-files', { user: req.session.user })
 });
 
 // Rota POST para processar o upload de arquivos
@@ -53,7 +53,7 @@ router.post("/upload", (req, res) => {
   // Verifica se algum arquivo foi enviado
   if (!req.files || Object.keys(req.files).length === 0) {
     // Re-renderiza a página de envio de arquivos com uma mensagem de erro
-    return res.render("send-files", { error: "Nenhum arquivo foi enviado" });
+    return res.render("send-files", { error: "Nenhum arquivo foi enviado", user: req.session.user });
   }
   
   // Recupera o arquivo enviado com o nome "file1"

@@ -14,6 +14,8 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
+
+  /* --------------------------------------------------- */
   
   /* Navbar */
   /* Barra de navegação com fundo azul escuro e espaçamento interno */
@@ -33,26 +35,9 @@
     color: #FFF; /* Texto branco */
     text-decoration: none;
   }
-  
-  /* Botão de login (canto superior direito) */
-  /* Botão com fundo igual ao fundo da página, borda azul escuro e transição suave */
-  .login-button {
-    background-color: #f3f9f8; /* Mesma cor do fundo da página */
-    color: #25256a;           /* Texto azul escuro */
-    padding: 8px 16px;
-    text-decoration: none;
-    border: 2px solid #25256a;
-    border-radius: 4px;
-    transition: background 0.3s ease, color 0.3s ease;
-  }
-  
-  /* Efeito hover para o botão de login */
-  /* Inverte as cores ao passar o mouse */
-  .login-button:hover {
-    background-color: #25256a;
-    color: #f3f9f8;
-  }
-  
+
+  /* --------------------------------------------------- */
+
   /* Seção Hero */
   /* Área principal com altura total da tela menos a navbar, centralizada e com fundo igual ao body */
   .hero {
@@ -90,25 +75,8 @@
     color: #2B2A77; /* Outro tom de azul */
   }
   
-  /* Botão "Começar" */
-  /* Botão chamativo com fundo azul claro, texto branco, padding generoso e bordas arredondadas */
-  .get-started-button {
-    display: inline-block;
-    background-color: #53BADB; /* Azul claro */
-    color: #fff;              /* Texto branco */
-    padding: 18px 36px;
-    text-decoration: none;
-    font-size: 1.25rem;
-    border-radius: 10px;
-    transition: background-color 0.3s ease;
-  }
-  
-  /* Efeito hover para o botão "Get Started" */
-  /* Muda para um azul um pouco mais escuro quando o mouse passa sobre o botão */
-  .get-started-button:hover {
-    background-color: #399EBB; /* Azul escuro */
-  }
-  
+  /* --------------------------------------------------- */
+
   /* Estilização responsiva */
   /* Ajusta os tamanhos de fonte do título e descrição em telas menores */
   @media (max-width: 768px) {

@@ -1,0 +1,15 @@
+// Card de configurações do usuário (overlay)
+#settingsOverlay
+  #settingsCard.card-container
+    button#closeSettings(type="button" aria-label="Fechar") ×
+    .card-inner
+      img.profile-avatar(src=(user && user.avatarUrl) || "/img/default-avatar.png", alt="Avatar do usuário")
+      h2.greeting Olá, #{user && user.username ? user.username : 'User'}!
+      form(action="/users/settings" method="POST")
+        select.project-select(name="project" required)
+          option(value="" disabled selected) Selecione um projeto
+          option(value="1", selected=(user && user.project == '1')) Projeto 1
+          option(value="2", selected=(user && user.project == '2')) Projeto 2
+        button(type="submit" class="save-btn") Salvar
+      form(action="/users/logout" method="POST")
+        button(type="submit" class="logout-btn") Sair

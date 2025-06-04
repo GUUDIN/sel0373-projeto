@@ -1,0 +1,62 @@
+  /* Botão "Começar" */
+  /* Botão chamativo com fundo azul claro, texto branco, padding generoso e bordas arredondadas */
+  .get-started-button {
+    display: inline-block;
+    background-color: #53BADB; /* Azul claro */
+    color: #fff;              /* Texto branco */
+    padding: 18px 36px;
+    text-decoration: none;
+    font-size: 1.25rem;
+    border-radius: 10px;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Efeito hover para o botão "Get Started" */
+  /* Muda para um azul um pouco mais escuro quando o mouse passa sobre o botão */
+  .get-started-button:hover {
+    background-color: #399EBB; /* Azul escuro */
+  }
+
+  /* --------------------------------------------------- */
+  
+  /* Botão de login (canto superior direito) */
+  /* Botão com fundo igual ao fundo da página, borda azul escuro e transição suave */
+  .login-button {
+    background-color: #f3f9f8; /* Mesma cor do fundo da página */
+    color: #25256a;           /* Texto azul escuro */
+    padding: 8px 16px;
+    text-decoration: none;
+    border: 2px solid #25256a;
+    border-radius: 4px;
+    transition: background 0.3s ease, color 0.3s ease;
+  }
+  
+  /* Efeito hover para o botão de login */
+  /* Inverte as cores ao passar o mouse */
+  .login-button:hover {
+    background-color: #25256a;
+    color: #f3f9f8;
+  }
+
+  /* --------------------------------------------------- */
+
+  /* Estilização do botão de envio */
+  /* Botão com fundo azul claro, texto claro, bordas arredondadas e transição suave */
+  .send-button button {
+    background-color: #53BADB;
+    color: #f3f9f8;
+    border: none;
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+
+  /* Efeito hover para o botão de envio */
+  .send-button button:hover {
+    background-color: #399EBB;
+  }
+
+  /* --------------------------------------------------- */
+
