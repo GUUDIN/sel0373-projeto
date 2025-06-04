@@ -1,6 +1,5 @@
 // Importações
 const express = require("express");
-const router = express.Router();
 const mqtt = require('mqtt');
 const path = require("path");
 const fileUpload = require("express-fileupload");
@@ -8,20 +7,24 @@ const fileUpload = require("express-fileupload");
 // Importa a configuração de projetos
 const { getActiveProjects } = require('../config/projects');
 
-// Vetor para armazenar os registros
-const registrosProjeto1 = [];
-
-// Variável para guardar o último peso recebido
-const pesosPorIdentificador = {};
-
-// Conexão MQTT
-const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
-  username: 'mqtt',
-  password: 'mqtt_123_abc'
-});
-
-// Definição do topico associado ao projeto 1
-const mqtt_topic = 'vaquinha';
+// Export function that receives io instance
+module.exports = function(io) {
+  const router = express.Router();
+  
+  // Vetor para armazenar os registros
+  const registrosProjeto1 = [];
+  
+  // Variável para guardar o último peso recebido
+  const pesosPorIdentificador = {};
+  
+  // Conexão MQTT
+  const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
+    username: 'mqtt',
+    password: 'mqtt_123_abc'
+  });
+  
+  // Definição do topico associado ao projeto 1
+  const mqtt_topic = 'vaquinha';
 
 // Qnd conectar ao broker MQTT ...
 client.on('connect', () => {
@@ -46,6 +49,13 @@ client.on('message', (topic, payload) => {
         dataAtualizacao: new Date().toISOString()
       };
       console.log(`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
+      
+      // Emit real-time update via Socket.IO
+      io.emit('peso-atualizado', {
+        identifier,
+        peso,
+        dataAtualizacao: new Date().toISOString()
+      });
     }
   } catch (e) {
     console.error("Erro ao processar mensagem MQTT:", e.message);
@@ -99,6 +109,9 @@ router.post('/register', (req, res) => {
     existente.registradoPor = req.session.user.username;
     existente.data = new Date().toISOString();
     console.log('Registro atualizado:', existente);
+    
+    // Emit real-time update via Socket.IO
+    io.emit('registro-atualizado', existente);
   } else {
     const novo = {
       identifier,
@@ -109,6 +122,9 @@ router.post('/register', (req, res) => {
     };
     registrosProjeto1.push(novo);
     console.log('Novo registro:', novo);
+    
+    // Emit real-time update via Socket.IO
+    io.emit('novo-registro', novo);
   }
 
 
@@ -143,5 +159,6 @@ router.get('/registered', (req, res) => {
   res.json(registrosProjeto1);
 });
 
-// Exporta o router
-module.exports = router;
+// Return the router
+return router;
+};

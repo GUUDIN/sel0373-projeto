@@ -1,19 +1,22 @@
-// Uses bootstrap for styling, must change it to use custom css
+// Uses bootstrap for styling, must chang                option(value="1") Cadastro de Animais
+                option(value="2") Envio de Arquivos
+            button.btn.btn-primary.w-100(type="submit") Criar conta
+            p
+              | Já possui uma conta? 
+              a(href="/users") Faça logint to use custom css
 
 doctype html
 html
   head
-    title Registrar novo usuario
+    title Registrar - Projetos IOT
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css")
+    link(rel="stylesheet" href="/css/auth-pages.css")
   body
-    // Barra de navegação superior
-    header.navbar.bg-dark.p-3.mb-4
-      .container.d-flex.justify-content-between.align-items-center
-        a.logo(href="/")
-          // Logo clicável que redireciona para a página inicial
-          a.logo-text.text-white(href="/") Projetos IOT
+    // Barra de navegação
+    header.navbar
+      .logo
+        a.logo-text(href="/") Projetos IOT
         nav.nav-right
           if user
             span.text-white.me-3 Olá, #{user.username}
@@ -23,16 +26,16 @@ html
 
 
     // Container para o formulário de registro
-    .container.d-flex.justify-content-center.align-items-center(style="height: 100vh;")
-      .card.shadow-lg(style="width: 300px;")
+    .container
+      .card
         .card-body
-          h2.card-title.text-center Registrar
+          h2.card-title Registrar
           // Mensagem de erro se houver
           if error
-            .alert.alert-danger.text-center.mb-3 #{error}
+            .alert.alert-danger= error
           form(action="/users/register" method="POST")
             .mb-3
-              label.form-label(for="username") Username
+              label.form-label(for="username") Usuário
               input#username.form-control(type="text" name="username" placeholder="Digite seu usuário" required)
             .mb-3
               label.form-label(for="password") Senha

@@ -6,6 +6,12 @@ const express = require("express");
 const app = express();
 const PORT = 6005
 
+// Socket.IO setup
+const { createServer } = require('http');
+const { Server } = require('socket.io');
+const server = createServer(app);
+const io = new Server(server);
+
 // Importa o módulo path para manipulação de caminhos de diretórios
 const path = require("path");
 
@@ -85,12 +91,16 @@ app.use("/users", userRouter);
 const sendFiles = require("./routes/send-files");
 app.use("/send-files", sendFiles);
 
-// Importa e utiliza o roteador de envio de arquivos
-const projeto1 = require("./routes/projeto1");
+// Importa e utiliza o roteador do projeto1
+const projeto1 = require("./routes/projeto1")(io);
 app.use("/projeto1", projeto1);
 
+// Importa e utiliza o roteador do projeto2
+const projeto2 = require("./routes/projeto2")(io);
+app.use("/projeto2", projeto2);
+
 // Inicia o servidor na porta 6005
-app.listen(PORT, '0.0.0.0', () => {
+server.listen(PORT, '0.0.0.0', () => {
   console.log("Server on port 6005");
 });
 

@@ -19,14 +19,32 @@ const projectConfig = {
     status: 'active'
   },
   
-  // Projeto 2: Envio de Arquivos
+  // Projeto 2: Monitoramento Climático
   '2': {
     id: '2',
+    name: 'Monitoramento Climático',
+    description: 'Sistema de monitoramento ambiental com dados climáticos e geolocalização',
+    route: '/projeto2',
+    icon: '/img/icons/dashboard.svg',
+    color: '#2196F3',
+    technologies: ['MQTT', 'Maps', 'Weather API', 'Real-time'],
+    features: [
+      'Monitoramento climático',
+      'Visualização em mapa',
+      'Gráficos em tempo real',
+      'Dados de sensores'
+    ],
+    status: 'active'
+  },
+  
+  // Projeto 3: Envio de Arquivos
+  '3': {
+    id: '3',
     name: 'Envio de Arquivos',
     description: 'Sistema de upload e gerenciamento de arquivos para dispositivos IoT',
     route: '/send-files',
     icon: '/img/icons/files.svg',
-    color: '#2196F3',
+    color: '#FF9800',
     technologies: ['File Upload', 'Storage', 'Processing'],
     features: [
       'Upload de múltiplos arquivos',
@@ -37,14 +55,14 @@ const projectConfig = {
     status: 'active'
   },
   
-  // Projeto 3: Dashboard de Sensores (exemplo futuro)
-  '3': {
-    id: '3',
+  // Projeto 4: Dashboard de Sensores (exemplo futuro)
+  '4': {
+    id: '4',
     name: 'Dashboard de Sensores',
     description: 'Visualização de dados de sensores em tempo real',
     route: '/dashboard',
     icon: '/img/icons/dashboard.svg',
-    color: '#FF9800',
+    color: '#9C27B0',
     technologies: ['WebSockets', 'Chart.js', 'Real-time'],
     features: [
       'Gráficos em tempo real',
@@ -55,14 +73,14 @@ const projectConfig = {
     status: 'development' // em desenvolvimento
   },
   
-  // Projeto 4: Controle de Dispositivos (exemplo futuro)
-  '4': {
-    id: '4',
+  // Projeto 5: Controle de Dispositivos (exemplo futuro)
+  '5': {
+    id: '5',
     name: 'Controle de Dispositivos',
     description: 'Interface para controle remoto de dispositivos IoT',
     route: '/control',
     icon: '/img/icons/control.svg',
-    color: '#9C27B0',
+    color: '#4CAF50',
     technologies: ['MQTT', 'Remote Control', 'Automation'],
     features: [
       'Controle remoto',
@@ -97,7 +115,7 @@ function getProjectsByStatus(status) {
 // Função para redirecionar baseado no projeto do usuário
 function getProjectRedirectUrl(projectId) {
   const project = getProjectById(projectId);
-  return project ? project.route : '/send-files'; // fallback para projeto 2
+  return project ? project.route : '/projeto1'; // fallback para projeto 1
 }
 
 module.exports = {

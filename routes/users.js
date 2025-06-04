@@ -141,5 +141,15 @@ router.get("/logout", (req, res) => {
   });
 });
 
+// Rota POST para logout: destrói a sessão e redireciona para login
+router.post("/logout", (req, res) => {
+  req.session.destroy(err => {
+    if (err) {
+      console.error("Erro ao encerrar sessão:", err);
+    }
+    res.redirect("/");
+  });
+});
+
 // Exporta o roteador para utilização em outras partes da aplicação
 module.exports = router;

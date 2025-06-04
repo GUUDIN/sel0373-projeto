@@ -1,4 +1,4 @@
-// Uses bootstrap for styling, must change it to use custom css
+// Uses glassmorphism design system
 
 doctype html
 html(lang="pt-BR")
@@ -6,16 +6,19 @@ html(lang="pt-BR")
     title Cadastro de Animal
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css")
-    link(rel="stylesheet" href="/custom.css")
+    link(rel="stylesheet" href="/css/design-system.css")
+    link(rel="stylesheet" href="/css/projeto1.css")
     include ./partials/styles.pug
     script(src="/components/user-settings/settings.js")
   body
-    // Barra de navegação
-    header.navbar.bg-dark.p-3.mb-4
-      .container.d-flex.justify-content-between.align-items-center
-        a.logo-text(href="/")
-          span.text-white Projetos IOT
+    // Animated background
+    .glass-background
+    
+    // Glass navigation
+    header.glass-navbar
+      .container
+        a.glass-logo(href="/")
+          span Projetos IOT
         nav.nav-right
           if user
             button.profile-button(type="button")
@@ -25,65 +28,77 @@ html(lang="pt-BR")
               )
               span.username #{user.username}
 
-    // Container do conteúdo dividido em 2 colunas
-    .container
-      .row
-        // Coluna do formulário
-        .col-md-6.d-flex.flex-column.align-items-center.justify-content-start
-          .card.shadow-lg.w-100.mb-3(style="max-width: 400px; margin-top: 0px;")
-            .card-body
-              h4.card-title.text-center Cadastro de Animal
+    // Main content container
+    .projeto1-container
+      .container
+        .content-grid
+          // Form column
+          .form-section
+            .glass-card.form-card
+              h4.card-title Cadastro de Animal
 
               if error
-                .alert.alert-danger.text-center.mb-3= error
+                .alert.glass-alert.alert-error= error
               if success
-                .alert.alert-success.text-center Animal registrado com sucesso!
+                .alert.glass-alert.alert-success Animal registrado com sucesso!
 
-              form(action="/projeto1/register" method="POST")
-                .mb-3
+              form.glass-form(action="/projeto1/register" method="POST")
+                .form-group
                   label.form-label(for="identifier") Identificador do animal
-                  input#identifier.form-control(type="text" name="identifier" placeholder="Ex: A123" required)
-                .mb-3
+                  input#identifier.glass-input(type="text" name="identifier" placeholder="Ex: A123" required)
+                .form-group
                   label.form-label(for="allowed") Permitido
-                  select#allowed.form-select(name="allowed" required)
+                  select#allowed.glass-select(name="allowed" required)
                     option(value="" disabled selected) Selecione uma opção
                     option(value="sim") Sim
                     option(value="nao") Não
-                button.btn.btn-success.w-100(type="submit") Cadastrar
-                p.text-center.mt-3
-                  a(href="/") Voltar à página inicial
+                button.glass-button.glass-button-primary(type="submit") 
+                  span.icon 🐄
+                  span Cadastrar
+                
+                .form-footer
+                  a.glass-link(href="/") Voltar à página inicial
 
-          // Botão fora da card, mas ainda dentro da coluna
-          a.btn.btn-outline-secondary.mt-2(href="/projeto1/registered" target="_blank") Histórico completo dos animais
+            // History button
+            a.glass-button.glass-button-secondary.history-button(href="/projeto1/registered" target="_blank") 
+              span.icon 📋
+              span Histórico completo dos animais
 
-        // Coluna da lista de animais com rolagem
-        .col-md-6(style="max-height: 80vh; overflow-y: auto;")
-          h4.mb-3.text-center Animais Registrados
-          if registros.length
-            each registro in registros
-              .border.p-3.mb-2.rounded.bg-light
-                strong Identificador: 
-                | #{registro.identifier}
-                br
-                strong Permitido: 
-                | #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
-                br
-                strong Peso (kg): 
-                | #{registro.peso}
-                if registro.dataPesoAtualizado
-                  br
-                  small.text-muted Peso atualizado em: #{new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR")}
-                if registro.registradoPor
-                  br
-                  small.text-muted Registrado por #{registro.registradoPor}
-                if registro.data
-                  br
-                  small.text-muted Data: #{new Date(registro.data).toLocaleString("pt-BR")}
-                br
-                form(action=`/projeto1/delete/${registro.identifier}` method="POST" style="display: inline;")
-                  button.btn.btn-sm.btn-danger.mt-2(type="submit") Excluir
-          else
-            p.text-muted Nenhum animal registrado ainda.
+        // Records list column
+        .records-section
+          .glass-card.records-card
+            h4.records-title Animais Registrados
+            .records-list
+              if registros.length
+                each registro in registros
+                  .glass-record-item
+                    .record-info
+                      .record-field
+                        strong.field-label Identificador: 
+                        span.field-value #{registro.identifier}
+                      .record-field
+                        strong.field-label Permitido: 
+                        span.field-value #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
+                      .record-field
+                        strong.field-label Peso (kg): 
+                        span.field-value #{registro.peso}
+                      if registro.dataPesoAtualizado
+                        .record-field.record-meta
+                          span.meta-text Peso atualizado em: #{new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR")}
+                      if registro.registradoPor
+                        .record-field.record-meta
+                          span.meta-text Registrado por #{registro.registradoPor}
+                      if registro.data
+                        .record-field.record-meta
+                          span.meta-text Data: #{new Date(registro.data).toLocaleString("pt-BR")}
+                    
+                    form.delete-form(action=`/projeto1/delete/${registro.identifier}` method="POST")
+                      button.glass-button.glass-button-danger.delete-button(type="submit") 
+                        span.icon 🗑️
+                        span Excluir
+              else
+                .empty-state
+                  p.empty-text Nenhum animal registrado ainda.
 
     // Incluir o card de configurações do usuário
     if user
