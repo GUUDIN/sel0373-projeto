@@ -34,7 +34,9 @@ router.post("/login", async (req, res) => {
 
     if (match) {
       req.session.user = { username: user.username };
-
+      req.session.project = user.project; // Armazena o projeto na sessão
+      console.log("Usuário autenticado:", req.session.user);
+      console.log("Projeto do usuário:", req.session.project);
       if (user.project == 1) {
         return res.redirect("/projeto1");
       } else {
