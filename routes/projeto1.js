@@ -91,70 +91,60 @@ router.get('/', async (req, res) => {
  });
 
 
-// Rota POST para registrar um animal
 router.post('/register', async (req, res) => {
- const { identifier, allowed } = req.body;
+  const { identifier, allowed } = req.body;
 
- if (!req.session.user) {
-   return res.status(401).send('Usuário não autenticado');
- }
+  if (!req.session.user) {
+    return res.status(401).send('Usuário não autenticado');
+  }
 
-  const peso = pesosPorIdentificador[identifier] || "Não recebido";
-  const existente = registrosProjeto1.find(reg => reg.identifier === identifier);
   const registroPeso = pesosPorIdentificador[identifier];
-  
 
-  try{
-        const existente = await projeto_1.findOne({ identifier });
-        const novoRegistro = new projeto_1({
-          identifier,
-          allowed,
-          peso: registroPeso?.peso || "Não recebido",
-          registradoPor: req.session.user.username,//Add commentMore actions
-          data: new Date().toISOString()
-        });
+  try {
+    let existente = await projeto_1.findOne({ identifier });
+
+    if (existente) {
+      // Atualiza o registro existente
+      existente.allowed = allowed;
+      existente.peso = registroPeso?.peso || existente.peso;
+      existente.dataPesoAtualizado = registroPeso?.dataAtualizacao || existente.dataPesoAtualizado;
+      existente.registradoPor = req.session.user.username;
+      existente.data = new Date().toISOString();
+
+      await existente.save();
+      console.log('Registro atualizado:', existente);
+    } else {
+      // Cria novo registro
+      const novoRegistro = new projeto_1({
+        identifier,
+        allowed,
+        peso: registroPeso?.peso || "Não recebido",
+        registradoPor: req.session.user.username,
+        data: new Date().toISOString()
+      });
+
+      await novoRegistro.save();
+      console.log('Novo registro:', novoRegistro);
+    }
+
+    const mensagemMQTT = `${identifier},${allowed}`;
+    client.publish(mqtt_topic_send, mensagemMQTT, {}, (err) => {
+      if (err) {
+        console.error('Erro ao enviar mensagem MQTT:', err);
+      } else {
+        console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
+        client.publish('logs/vaquinha', `Mensagem enviada via MQTT: ${mensagemMQTT}`);
+      }
+    });
+
+    res.status(200).send("Registro processado com sucesso");
+
   } catch (err) {
     console.error("Erro ao buscar ou criar registro:", err);
     return res.status(500).send("Erro ao processar o registro");
   }
-
-
- if (existente) {
-// Atualiza o registro existente
- //existente.identifier = identifier;
- existente.allowed = allowed;
- existente.peso = registroPeso?.peso || existente.peso; // Mantém o peso antigo se não houver atualização via MQTT
- existente.dataPesoAtualizado = registroPeso?.dataAtualizacao || existente.dataPesoAtualizado;
- existente.registradoPor = req.session.user.username;
- existente.data = new Date().toISOString();
-
-
- await existente.save(); // Salva as alterações no banco
- console.log('Registro atualizado:', existente);
-
-} else {
-// Se não existir, cria um novo registro
-   await novoRegistro.save(); // Salva no bancoAdd commentMore actions
-   console.log('Novo registro:', novoRegistro);
-  }
-
-  
-  // Envia mensagem MQTT com 'id,allowed'
-
-  //const mensagemMQTT = JSON.stringify({identifier, allowed});
-  const mensagemMQTT = `${identifier},${allowed}`;
-
-  client.publish(mqtt_topic_send, mensagemMQTT, {}, (err) => {
-    if (err){ 
-      console.error('Erro ao enviar mensagem MQTT:', err);
-      //client.publish('logs/vaquinha', `Erro ao enviar mensagem MQTT:'`);
-    }
-    else {
-      console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
-      client.publish('logs/vaquinha', `Mensagem enviada via MQTT: ${mensagemMQTT}`);
-  }
 });
-});
+
 
 // Rota para excluir um animal pelo identifier
 router.post('/delete/:identifier', async (req, res) => {
