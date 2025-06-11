@@ -35,12 +35,11 @@ console.error(`Erro ao se inscrever no tópico ${mqtt_topic}: ${err}`);
  console.log(`Inscrito com sucesso no tópico: ${mqtt_topic}`);
  }
 });
-
 });
 
 
 //Recebimento dos dados via mqtt 
-client.on('message', async(topic, payload) => {
+client.on('message', (topic, payload) => {
   if (topic === 'vaquinha/echo') {
     try {
       const mensagem = JSON.parse(payload.toString());
