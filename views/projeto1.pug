@@ -46,7 +46,7 @@ html(lang="pt-BR")
           h4.mb-3.text-center Animais Registrados
           if registros.length
             each registro in registros
-              - const valorPeso = (registro.peso) ? registro.peso : 'Não recebido'
+              - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : 'Não recebido'
               .border.p-3.mb-2.rounded.bg-light
                 strong Identificador: 
                 | #{registro.identifier}

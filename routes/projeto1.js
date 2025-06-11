@@ -12,7 +12,7 @@ module.exports = function(io) {
 const router = express.Router();
 
 // Vetor para armazenar os registros
-const registrosProjeto1 = [];
+//const registrosProjeto1 = [];
 
 // Objeto para armazenar os pesos recebidos via MQTT
 const pesosPorIdentificador = {};
@@ -46,10 +46,10 @@ client.on('message', async(topic, payload) => {
       const { identifier, peso } = mensagem;
 
       if (identifier && peso != null) {
-      //  pesosPorIdentificador[identifier] = {
-      //    peso,
-      //    dataAtualizacao: new Date().toISOString()
-      //  };
+        pesosPorIdentificador[identifier] = {
+          peso,
+          dataAtualizacao: new Date().toISOString()
+        };
 
         await Projeto1.findOneAndUpdate({identifier: identifier},{peso:peso, dataPesoAtualizado: new Date().toISOString()});
         
@@ -77,11 +77,11 @@ router.use((req, res, next) => {
 // Rota GET principal do projeto
 router.get('/', async (req, res) => {
  try {
-   const registros = await Projeto1.find(); // Busca os registros no banco de dados
+   const registros = await Projeto1.find(); 
    res.render('projeto1', {
    success: req.query.success,
    error: req.query.error,
-   registros: registros, // Mudança de registrosProjeto1 --> registros
+   registros: registros, 
    user: req.session.user
 });
    } catch (err) {
@@ -127,6 +127,7 @@ router.post('/register', async (req, res) => {
       console.log('Novo registro:', novoRegistro);
     }
 
+    
     const mensagemMQTT = `${identifier},${allowed}`;
     client.publish(mqtt_topic_send, mensagemMQTT, {}, (err) => {
       if (err) {
@@ -137,11 +138,11 @@ router.post('/register', async (req, res) => {
       }
     });
 
-    res.status(200).send("Registro processado com sucesso");
+    //res.status(200).send("Registro processado com sucesso");
 
   } catch (err) {
     console.error("Erro ao buscar ou criar registro:", err);
-    return res.status(500).send("Erro ao processar o registro");
+    //return res.status(500).send("Erro ao processar o registro");
   }
 });
 
@@ -165,14 +166,14 @@ router.post('/delete/:identifier', async (req, res) => {
 
  if (result.deletedCount === 1) { // Correção: 'deleteCount' para 'deletedCount'
  console.log(`Animal ${identifier} removido.`);
- res.redirect('/projeto1?success=Animal removido com sucesso'); // Adicionei mensagem de sucesso
+ //res.redirect('/projeto1?success=Animal removido com sucesso'); // Adicionei mensagem de sucesso
 } else {
  console.log(`Animal ${identifier} não encontrado para remoção`);
- res.redirect('/projeto1?error=Animal não encontrado para remoção'); // Adicionei mensagem de erro
+ //res.redirect('/projeto1?error=Animal não encontrado para remoção'); // Adicionei mensagem de erro
  }
 } catch (err) {
  console.log('Erro ao remover o registro:', err);
- res.status(500).send('Erro ao excluir o registro');
+ //res.status(500).send('Erro ao excluir o registro');
 }
 });
 
@@ -186,7 +187,5 @@ router.post('/delete/:identifier', async (req, res) => {
  }
 });
 
-// Exporta o router
-//module.exports = router;
 return router;
 }
