@@ -132,6 +132,7 @@ router.post('/register', async (req, res) => {
         data: new Date().toISOString()
       });
 
+      
       console.log('Novo registro:', novoRegistro);
     }
 

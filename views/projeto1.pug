@@ -95,27 +95,29 @@ html(lang="pt-BR")
         }
       });
 
+    script.
       socket.on('registroNovo', function(data) {
-      const container = document.querySelector('.col-md-6:last-child');
+        const container = document.querySelector('.col-md-6:last-child');
 
-      const novoHTML = `
-        <div class="border p-3 mb-2 rounded bg-light">
-          <strong>Identificador:</strong> ${data.identifier}<br>
-          <strong>Permitido:</strong> ${data.allowed === 'sim' ? 'Sim' : 'Não'}<br>
-          <strong>Peso (kg):</strong> <span id="peso-${data.identifier}">${data.peso}</span><br>
-          <small class="text-muted" id="data-${data.identifier}">
-            Atualizado em: ${new Date().toLocaleString("pt-BR")}
-          </small><br>
-          <small class="text-muted">Registrado por: ${data.registradoPor}</small><br>
-          <small class="text-muted">Registrado em: ${new Date(data.data).toLocaleString("pt-BR")}</small><br>
-          <form action="/projeto1/delete/${data.identifier}" method="POST" style="display:inline;">
-            <button class="btn btn-sm btn-danger mt-2" type="submit">Excluir</button>
-          </form>
-        </div>
-      `;
+        const novoHTML = `
+          <div class="border p-3 mb-2 rounded bg-light">
+            <strong>Identificador:</strong> ${data.identifier}<br>
+            <strong>Permitido:</strong> ${data.allowed === 'sim' ? 'Sim' : 'Não'}<br>
+            <strong>Peso (kg):</strong> <span id="peso-${data.identifier}">${data.peso}</span><br>
+            <small class="text-muted" id="data-${data.identifier}">
+              Atualizado em: ${new Date().toLocaleString("pt-BR")}
+            </small><br>
+            <small class="text-muted">Registrado por: ${data.registradoPor}</small><br>
+            <small class="text-muted">Registrado em: ${new Date(data.data).toLocaleString("pt-BR")}</small><br>
+            <form action="/projeto1/delete/${data.identifier}" method="POST" style="display:inline;">
+              <button class="btn btn-sm btn-danger mt-2" type="submit">Excluir</button>
+            </form>
+          </div>
+        `;
 
-      container.insertAdjacentHTML('afterbegin', novoHTML);
-    });
+        container.insertAdjacentHTML('afterbegin', novoHTML);
+      });
+
 
 
       socket.on('connect', () => console.log('Socket.IO conectado'));
