@@ -121,6 +121,7 @@ router.post('/register', async (req, res) => {
 
  if (existente) {
 // Atualiza o registro existente
+ //existente.identifier = identifier;
  existente.allowed = allowed;
  existente.peso = registroPeso?.peso || existente.peso; // Mantém o peso antigo se não houver atualização via MQTT
  existente.dataPesoAtualizado = registroPeso?.dataAtualizacao || existente.dataPesoAtualizado;
@@ -136,7 +137,7 @@ router.post('/register', async (req, res) => {
    await novoRegistro.save(); // Salva no bancoAdd commentMore actions
    console.log('Novo registro:', novoRegistro);
   }
-});
+
   
   // Envia mensagem MQTT com 'id,allowed'
 
@@ -153,7 +154,7 @@ router.post('/register', async (req, res) => {
       client.publish('logs/vaquinha', `Mensagem enviada via MQTT: ${mensagemMQTT}`);
   }
 });
-
+});
 
 // Rota para excluir um animal pelo identifier
 router.post('/delete/:identifier', async (req, res) => {
