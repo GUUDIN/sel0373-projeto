@@ -39,19 +39,20 @@ console.error(`Erro ao se inscrever no tópico ${mqtt_topic}: ${err}`);
 
 
 //Recebimento dos dados via mqtt 
-client.on('message', (topic, payload) => {
+client.on('message', async(topic, payload) => {
   if (topic === 'vaquinha/echo') {
     try {
       const mensagem = JSON.parse(payload.toString());
       const { identifier, peso } = mensagem;
 
       if (identifier && peso != null) {
-        pesosPorIdentificador[identifier] = {
-          peso,
-          dataAtualizacao: new Date().toISOString()
-        };
+      //  pesosPorIdentificador[identifier] = {
+      //    peso,
+      //    dataAtualizacao: new Date().toISOString()
+      //  };
 
         await projeto_1.findOneAndUpdate({identifier: identifier},{peso:peso, dataPesoAtualizado: new Date().toISOString()});
+        
         console.log(`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
         client.publish('logs/vaquinha',`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
         //console.log("Emitindo socket pesoAtualizado:", { identifier, peso });
@@ -101,16 +102,6 @@ router.post('/register', async (req, res) => {
   const peso = pesosPorIdentificador[identifier] || "Não recebido";
   const existente = registrosProjeto1.find(reg => reg.identifier === identifier);
   const registroPeso = pesosPorIdentificador[identifier];
- 
-
-  const novoRegistro = {
-    identifier,
-    allowed,
-    peso: registroPeso?.peso || "Não recebido",
-    dataPesoAtualizado: registroPeso?.dataAtualizacao || "Não atualizado",
-    registradoPor: req.session.user.username,
-    data: new Date().toISOString()
-  };
   
 
   try{
