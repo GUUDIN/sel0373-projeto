@@ -124,6 +124,7 @@ router.post('/register', async (req, res) => {
       });
 
       await novoRegistro.save();
+
       io.emit('registroNovo', {
         identifier,
         allowed,
@@ -132,8 +133,9 @@ router.post('/register', async (req, res) => {
         data: new Date().toISOString()
       });
 
-      
+
       console.log('Novo registro:', novoRegistro);
+      //res.status(200).send("OK"); 
     }
 
 
@@ -147,11 +149,11 @@ router.post('/register', async (req, res) => {
       }
     });
 
-    //res.status(200).send("Registro processado com sucesso");
+    res.status(200).send("Registro processado com sucesso");
 
   } catch (err) {
     console.error("Erro ao buscar ou criar registro:", err);
-    //return res.status(500).send("Erro ao processar o registro");
+    return res.status(500).send("Erro ao processar o registro");
   }
 });
 
