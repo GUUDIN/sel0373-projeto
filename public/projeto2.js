@@ -12,6 +12,7 @@ let marker = L.marker([-23.5505, -46.6333]).addTo(map)
 // Histórico de dados
 const historico = [];
 
+
 // Chart.js: inicializa o gráfico
 const ctx = document.getElementById('grafico')?.getContext('2d');
 const chart = new Chart(ctx, {
