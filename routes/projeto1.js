@@ -158,6 +158,7 @@ router.post('/register', async (req, res) => {
 });
 
 
+
 // Rota para excluir um animal pelo identifier
 router.post('/delete/:identifier', async (req, res) => {
  const { identifier } = req.params;
