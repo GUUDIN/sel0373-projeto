@@ -51,7 +51,7 @@ client.on('message', async(topic, payload) => {
       //    dataAtualizacao: new Date().toISOString()
       //  };
 
-        await projeto_1.findOneAndUpdate({identifier: identifier},{peso:peso, dataPesoAtualizado: new Date().toISOString()});
+        await Projeto1.findOneAndUpdate({identifier: identifier},{peso:peso, dataPesoAtualizado: new Date().toISOString()});
         
         console.log(`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
         client.publish('logs/vaquinha',`MQTT: Peso atualizado - ${identifier}: ${peso}kg`);
@@ -77,7 +77,7 @@ router.use((req, res, next) => {
 // Rota GET principal do projeto
 router.get('/', async (req, res) => {
  try {
-   const registros = await projeto_1.find(); // Busca os registros no banco de dados
+   const registros = await Projeto1.find(); // Busca os registros no banco de dados
    res.render('projeto1', {
    success: req.query.success,
    error: req.query.error,
@@ -101,7 +101,7 @@ router.post('/register', async (req, res) => {
   const registroPeso = pesosPorIdentificador[identifier];
 
   try {
-    let existente = await projeto_1.findOne({ identifier });
+    let existente = await Projeto1.findOne({ identifier });
 
     if (existente) {
       // Atualiza o registro existente
@@ -115,7 +115,7 @@ router.post('/register', async (req, res) => {
       console.log('Registro atualizado:', existente);
     } else {
       // Cria novo registro
-      const novoRegistro = new projeto_1({
+      const novoRegistro = new Projeto1({
         identifier,
         allowed,
         peso: registroPeso?.peso || "Não recebido",
@@ -161,7 +161,7 @@ router.post('/delete/:identifier', async (req, res) => {
     client.publish('logs/vaquinha', `Animal ${identifier} não encontrado para remoção.`);
   }
  try {
-  const result = await projeto_1.deleteOne({ identifier });
+  const result = await Projeto1.deleteOne({ identifier });
 
  if (result.deletedCount === 1) { // Correção: 'deleteCount' para 'deletedCount'
  console.log(`Animal ${identifier} removido.`);
@@ -179,7 +179,7 @@ router.post('/delete/:identifier', async (req, res) => {
 // Rota GET para ver os registros como JSON
  router.get('/registered', async (req, res) => {
  try {
- const registros = await projeto_1.find(); // Busca todos os registros no banco
+ const registros = await Projeto1.find(); // Busca todos os registros no banco
  res.json(registros);
  } catch (err) {
  res.status(500).send('Erro ao buscar registros');
