@@ -113,6 +113,14 @@ router.post('/register', async (req, res) => {
 
       await existente.save();
       console.log('Registro atualizado:', existente);
+
+      io.emit('registroAtualizado', {
+        identifier,
+        allowed,
+        peso: registroPeso?.peso || existente.peso,
+        registradoPor: req.session.user.username,
+        data: new Date().toISOString()
+      });
     } else {
       // Cria novo registro
       const novoRegistro = new Projeto1({

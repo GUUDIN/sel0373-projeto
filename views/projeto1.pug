@@ -16,6 +16,7 @@ html(lang="pt-BR")
 
     .container
       .row
+        // COLUNA ESQUERDA – FORMULÁRIO
         .col-md-6.d-flex.flex-column.align-items-center.justify-content-start
           .card.shadow-lg.w-100.mb-3(style="max-width: 400px; margin-top: 0px;")
             .card-body
@@ -24,7 +25,7 @@ html(lang="pt-BR")
               if error
                 .alert.alert-danger.text-center.mb-3= error
               if success
-                .alert.alert-success.text-center Animal registrado com sucesso!
+                .alert.alert-success.text-center= success
 
               form#formCadastro
                 .mb-3
@@ -42,64 +43,43 @@ html(lang="pt-BR")
 
           a.btn.btn-outline-secondary.mt-2(href="/projeto1/registered" target="_blank") Histórico completo dos animais
 
+        // COLUNA DIREITA – LISTA DE REGISTROS
         .col-md-6(style="max-height: 80vh; overflow-y: auto;")
           h4.mb-3.text-center Animais Registrados
-          if registros.length
-            each registro in registros
-              - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : 'Não recebido'
-              .border.p-3.mb-2.rounded.bg-light
-                strong Identificador: 
-                | #{registro.identifier}
-                br
-                strong Permitido: 
-                | #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
-                br
-                strong Peso (kg): 
-                span(id=`peso-${registro.identifier}`) #{valorPeso}
-                br
-                small.text-muted(id=`data-${registro.identifier}`)| Atualizado em: #{registro.dataPesoAtualizado ? new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR") : 'Sem registro'}
-                if registro.registradoPor
+          #lista-registros
+            if registros.length
+              each registro in registros
+                - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : registro.peso || 'Não recebido'
+                .border.p-3.mb-2.rounded.bg-light
+                  strong Identificador: 
+                  | #{registro.identifier}
                   br
-                  small.text-muted Registrado por: #{registro.registradoPor}
-                if registro.data
+                  strong Permitido: 
+                  | #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
                   br
-                  small.text-muted Registrado em: #{new Date(registro.data).toLocaleString("pt-BR")}
-                br
-                form(action=`/projeto1/delete/${registro.identifier}` method="POST" style="display: inline;")
-                  button.btn.btn-sm.btn-danger.mt-2(type="submit") Excluir
-          else
-            p.text-muted Nenhum animal registrado ainda.
+                  strong Peso (kg): 
+                  span(id=`peso-${registro.identifier}`) #{valorPeso}
+                  br
+                  small.text-muted(id=`data-${registro.identifier}`)| Atualizado em: #{registro.dataPesoAtualizado ? new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR") : 'Sem registro'}
+                  if registro.registradoPor
+                    br
+                    small.text-muted Registrado por: #{registro.registradoPor}
+                  if registro.data
+                    br
+                    small.text-muted Registrado em: #{new Date(registro.data).toLocaleString("pt-BR")}
+                  br
+                  form(action=`/projeto1/delete/${registro.identifier}` method="POST" style="display: inline;")
+                    button.btn.btn-sm.btn-danger.mt-2(type="submit") Excluir
+            else
+              p.text-muted#mensagem-vazia Nenhum animal registrado ainda.
 
     script(src="/socket.io/socket.io.js")
     script.
       const socket = io();
-
-      socket.on('pesoAtualizado', function(data) {
-        console.log("Recebido via socket:", data);
-
-        const pesoSpan = document.getElementById(`peso-${data.identifier}`);
-        const dataSpan = document.getElementById(`data-${data.identifier}`);
-
-        const valorPeso = typeof data.peso === 'object' ? data.peso.peso : data.peso;
-        const dataAtualizacao = typeof data.peso === 'object' 
-          ? data.peso.dataAtualizacao 
-          : new Date().toISOString();
-
-        if (pesoSpan) {
-          pesoSpan.textContent = valorPeso;
-        }
-
-        if (dataSpan) {
-          const dataFormatada = new Date(dataAtualizacao).toLocaleString("pt-BR");
-          dataSpan.textContent = `Atualizado em: ${dataFormatada}`;
-        }
-      });
-
-    script.
       const form = document.getElementById('formCadastro');
 
       form.addEventListener('submit', async function(event) {
-        event.preventDefault(); // 🚫 Impede o comportamento de recarregar a página
+        event.preventDefault();
 
         const identifier = document.getElementById('identifier').value.trim();
         const allowed = document.getElementById('allowed').value;
@@ -119,7 +99,7 @@ html(lang="pt-BR")
           });
 
           if (response.ok) {
-            form.reset(); // ✅ Limpa o formulário após cadastro
+            form.reset();
           } else {
             alert('Erro ao registrar animal');
           }
@@ -130,7 +110,9 @@ html(lang="pt-BR")
       });
 
       socket.on('registroNovo', function(data) {
-        const container = document.querySelector('.col-md-6:last-child');
+        const lista = document.getElementById('lista-registros');
+        const vazioMsg = document.getElementById('mensagem-vazia');
+        if (vazioMsg) vazioMsg.remove();
 
         const novoHTML = `
           <div class="border p-3 mb-2 rounded bg-light">
@@ -148,11 +130,28 @@ html(lang="pt-BR")
           </div>
         `;
 
-        container.insertAdjacentHTML('afterbegin', novoHTML);
+        lista.insertAdjacentHTML('afterbegin', novoHTML);
       });
 
+      socket.on('pesoAtualizado', function(data) {
+        console.log("Recebido via socket:", data);
+        const pesoSpan = document.getElementById(`peso-${data.identifier}`);
+        const dataSpan = document.getElementById(`data-${data.identifier}`);
 
+        const valorPeso = typeof data.peso === 'object' ? data.peso.peso : data.peso;
+        const dataAtualizacao = typeof data.peso === 'object' 
+          ? data.peso.dataAtualizacao 
+          : new Date().toISOString();
 
+        if (pesoSpan) {
+          pesoSpan.textContent = valorPeso;
+        }
+
+        if (dataSpan) {
+          const dataFormatada = new Date(dataAtualizacao).toLocaleString("pt-BR");
+          dataSpan.textContent = `Atualizado em: ${dataFormatada}`;
+        }
+      });
 
       socket.on('connect', () => console.log('Socket.IO conectado'));
       socket.on('disconnect', () => console.log('Socket.IO desconectado'));
