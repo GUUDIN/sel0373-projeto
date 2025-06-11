@@ -124,10 +124,18 @@ router.post('/register', async (req, res) => {
       });
 
       await novoRegistro.save();
+      io.emit('registroNovo', {
+        identifier,
+        allowed,
+        peso: registroPeso?.peso || "Não recebido",
+        registradoPor: req.session.user.username,
+        data: new Date().toISOString()
+      });
+
       console.log('Novo registro:', novoRegistro);
     }
 
-    
+
     const mensagemMQTT = `${identifier},${allowed}`;
     client.publish(mqtt_topic_send, mensagemMQTT, {}, (err) => {
       if (err) {
