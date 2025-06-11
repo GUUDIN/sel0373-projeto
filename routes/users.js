@@ -21,7 +21,7 @@ router.get("/", (req, res) => {
 
 // Rota POST para processar o login do usuário
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body;
+  const { username, password, project } = req.body;
 
   try {
     const user = await User.findOne({ username });
@@ -45,7 +45,7 @@ router.post("/login", async (req, res) => {
     }
   } catch (err) {
     console.error("Erro no login:", err);
-    return res.status(500).send("Erro na autenticação!");
+    return res.send("Erro na autenticação!");
   }
 });
 
