@@ -12,7 +12,7 @@ module.exports = function(io) {
 const router = express.Router();
 
 // Vetor para armazenar os registros
-//const registrosProjeto1 = [];
+const registrosProjeto1 = [];
 
 // Objeto para armazenar os pesos recebidos via MQTT
 const pesosPorIdentificador = {};
@@ -133,7 +133,7 @@ router.post('/register', async (req, res) => {
 
       await novoRegistro.save();
 
-      io.emit('registroNovo', {
+      io.emit('novoRegistro', {
         identifier,
         allowed,
         peso: registroPeso?.peso || "Não recebido",
@@ -143,7 +143,7 @@ router.post('/register', async (req, res) => {
 
 
       console.log('Novo registro:', novoRegistro);
-      //res.status(200).send("OK"); 
+      res.send("OK"); 
     }
 
 

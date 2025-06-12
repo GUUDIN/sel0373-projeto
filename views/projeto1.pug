@@ -109,22 +109,22 @@ html(lang="pt-BR")
         }
       });
 
-      socket.on('registroNovo', function(data) {
+      socket.on('registroNovo', function(novoRegistro) {
         const lista = document.getElementById('lista-registros');
         const vazioMsg = document.getElementById('mensagem-vazia');
         if (vazioMsg) vazioMsg.remove();
 
         const novoHTML = `
           <div class="border p-3 mb-2 rounded bg-light">
-            <strong>Identificador:</strong> ${data.identifier}<br>
-            <strong>Permitido:</strong> ${data.allowed === 'sim' ? 'Sim' : 'Não'}<br>
-            <strong>Peso (kg):</strong> <span id="peso-${data.identifier}">${data.peso}</span><br>
-            <small class="text-muted" id="data-${data.identifier}">
+            <strong>Identificador:</strong> ${novoRegistro.identifier}<br>
+            <strong>Permitido:</strong> ${novoRegistro.allowed === 'sim' ? 'Sim' : 'Não'}<br>
+            <strong>Peso (kg):</strong> <span id="peso-${novoRegistro.identifier}">${novoRegistro.peso}</span><br>
+            <small class="text-muted" id="data-${novoRegistro.identifier}">
               Atualizado em: ${new Date().toLocaleString("pt-BR")}
             </small><br>
-            <small class="text-muted">Registrado por: ${data.registradoPor}</small><br>
-            <small class="text-muted">Registrado em: ${new Date(data.data).toLocaleString("pt-BR")}</small><br>
-            <form action="/projeto1/delete/${data.identifier}" method="POST" style="display:inline;">
+            <small class="text-muted">Registrado por: ${novoRegistro.registradoPor}</small><br>
+            <small class="text-muted">Registrado em: ${new Date(novoRegistro.data).toLocaleString("pt-BR")}</small><br>
+            <form action="/projeto1/delete/${novoRegistro.identifier}" method="POST" style="display:inline;">
               <button class="btn btn-sm btn-danger mt-2" type="submit">Excluir</button>
             </form>
           </div>
