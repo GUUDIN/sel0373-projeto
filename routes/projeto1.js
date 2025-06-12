@@ -186,14 +186,14 @@ router.post('/delete/:identifier', async (req, res) => {
 
  if (result.deletedCount === 1) { // Correção: 'deleteCount' para 'deletedCount'
  console.log(`Animal ${identifier} removido.`);
- //res.redirect('/projeto1?success=Animal removido com sucesso'); // Adicionei mensagem de sucesso
+ res.redirect('/projeto1?success=Animal removido com sucesso'); // Adicionei mensagem de sucesso
 } else {
  console.log(`Animal ${identifier} não encontrado para remoção`);
- //res.redirect('/projeto1?error=Animal não encontrado para remoção'); // Adicionei mensagem de erro
+ res.redirect('/projeto1?error=Animal não encontrado para remoção'); // Adicionei mensagem de erro
  }
 } catch (err) {
  console.log('Erro ao remover o registro:', err);
- //res.status(500).send('Erro ao excluir o registro');
+ res.status(500).send('Erro ao excluir o registro');
 }
 });
 

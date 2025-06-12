@@ -133,15 +133,13 @@ html(lang="pt-BR")
         lista.insertAdjacentHTML('afterbegin', novoHTML);
       });
 
-      socket.on('pesoAtualizado', function(data) {
-        console.log("Recebido via socket:", data);
-        const pesoSpan = document.getElementById(`peso-${data.identifier}`);
-        const dataSpan = document.getElementById(`data-${data.identifier}`);
+      socket.on('pesoAtualizado', function(registroAtualizado) {
+        console.log("Recebido via socket:", registroAtualizado);
+        const pesoSpan = document.getElementById(`peso-${registroAtualizado.identifier}`);
+        const dataSpan = document.getElementById(`data-${registroAtualizado.identifier}`);
 
-        const valorPeso = typeof data.peso === 'object' ? data.peso.peso : data.peso;
-        const dataAtualizacao = typeof data.peso === 'object' 
-          ? data.peso.dataAtualizacao 
-          : new Date().toISOString();
+        const valorPeso = typeof registroAtualizado.peso === 'object' ? registroAtualizado.peso.peso : data.peso;
+        const dataAtualizacao = typeof registroAtualizado.peso === 'object' ? registroAtualizado.peso.dataAtualizacao : new Date().toISOString();
 
         if (pesoSpan) {
           pesoSpan.textContent = valorPeso;
