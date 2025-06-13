@@ -143,7 +143,9 @@ router.post('/register', async (req, res) => {
 
 
       console.log('Novo registro:', novoRegistro);
-      res.send("OK"); 
+      //res.send("OK"); 
+      res.status(200).json({ message: "Registro criado com sucesso" });
+
     }
 
 
@@ -161,7 +163,9 @@ router.post('/register', async (req, res) => {
 
   } catch (err) {
     console.error("Erro ao buscar ou criar registro:", err);
-    return res.status(500).send("Erro ao processar o registro");
+    //return res.status(500).send("Erro ao processar o registro");
+    res.status(500).json({ error: "Erro ao processar o registro" });
+
   }
 });
 
