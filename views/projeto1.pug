@@ -149,6 +149,30 @@ html(lang="pt-BR")
           dataSpan.textContent = `Atualizado em: ${dataFormatada}`;
         }
       });
+      socket.on('registroRemovido', function(dado) {
+        const elemento = document.querySelector(`form[action="/projeto1/delete/${dado.identifier}"]`);
+        if (elemento) {
+          const container = elemento.closest('.border');
+          if (container) container.remove();
+        }
+      });
+
+      socket.on('registroAtualizado', function(registroAtualizado) {
+        const pesoSpan = document.getElementById(`peso-${registroAtualizado.identifier}`);
+        const dataSpan = document.getElementById(`data-${registroAtualizado.identifier}`);
+        const container = pesoSpan?.closest('.border');
+
+        if (container) {
+          container.querySelector('strong + br + strong + br + strong + span').textContent = registroAtualizado.peso;
+          container.querySelector(`#data-${registroAtualizado.identifier}`).textContent = `Atualizado em: ${new Date().toLocaleString("pt-BR")}`;
+
+          const permitidoText = registroAtualizado.allowed === 'sim' ? 'Sim' : 'Não';
+          const permitidoEl = Array.from(container.childNodes).find(el => el?.textContent?.includes("Permitido:"));
+          if (permitidoEl) permitidoEl.nextSibling.textContent = ` ${permitidoText}`;
+        }
+      });
+
+
 
 
       socket.on('connect', () => console.log('Socket.IO conectado'));
