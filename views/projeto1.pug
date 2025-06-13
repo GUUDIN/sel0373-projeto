@@ -90,23 +90,27 @@ html(lang="pt-BR")
         }
 
         try {
-          const response = await fetch('/projeto1/register', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ identifier, allowed })
-          });
+        const response = await fetch('/projeto1/register', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ identifier, allowed })
+        });
 
-          if (response.ok) {
+        if (response.ok) {
           form.reset();
           alert('Animal registrado com sucesso');
         } else {
           const result = await response.json();
           alert(result?.error || 'Erro ao registrar animal');
         }
-
+      } catch (err) {
+        console.error('Erro no envio:', err);
+        alert('Erro inesperado');
+      }
       });
+
 
       socket.on('novoRegistro', function(novoRegistro) {
         const lista = document.getElementById('lista-registros');
@@ -156,41 +160,29 @@ html(lang="pt-BR")
         }
       });
       
-      socket.on('registroAtualizado', function(registroAtualizado) {
-        const pesoSpan = document.getElementById(`peso-${registroAtualizado.identifier}`);
-        const dataSpan = document.getElementById(`data-${registroAtualizado.identifier}`);
-        const container = pesoSpan?.closest('.border');
-
-        if (container) {
-          container.querySelector('strong + br + strong + br + strong + span').textContent = registroAtualizado.peso;
-          container.querySelector(`#data-${registroAtualizado.identifier}`).textContent = `Atualizado em: ${new Date().toLocaleString("pt-BR")}`;
-
-          const permitidoText = registroAtualizado.allowed === 'sim' ? 'Sim' : 'Não';
-          const permitidoEl = Array.from(container.childNodes).find(el => el?.textContent?.includes("Permitido:"));
-          if (permitidoEl) permitidoEl.nextSibling.textContent = ` ${permitidoText}`;
-        }
-      });
-
       socket.on('registroAtualizado', function(registro) {
         const container = document.querySelector(`#peso-${registro.identifier}`)?.closest('.border');
         if (!container) return;
 
-        // Atualiza o valor do peso
+        // Atualiza o peso
         const pesoEl = document.querySelector(`#peso-${registro.identifier}`);
         if (pesoEl) pesoEl.textContent = registro.peso;
 
-        // Atualiza o "Permitido"
-        const permitidoLine = Array.from(container.childNodes).find(n => n.nodeType === Node.TEXT_NODE && n.textContent.includes("Permitido:"));
-        if (permitidoLine && permitidoLine.nextSibling) {
-          permitidoLine.nextSibling.textContent = ` ${registro.allowed === 'sim' ? 'Sim' : 'Não'}`;
+        // Atualiza o texto "Permitido"
+        const permitidoEl = Array.from(container.children).find(el =>
+          el.textContent.includes('Permitido:')
+        );
+        if (permitidoEl && permitidoEl.childNodes.length > 1) {
+          permitidoEl.childNodes[1].textContent = ` ${registro.allowed === 'sim' ? 'Sim' : 'Não'}`;
         }
 
-        // Atualiza a data
+        // Atualiza data
         const dataEl = document.querySelector(`#data-${registro.identifier}`);
         if (dataEl) {
           dataEl.textContent = `Atualizado em: ${new Date().toLocaleString("pt-BR")}`;
         }
       });
+
 
 
       setTimeout(() => {

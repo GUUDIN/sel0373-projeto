@@ -187,7 +187,7 @@ router.post('/delete/:identifier', async (req, res) => {
   }
  try {
   const result = await Projeto1.deleteOne({ identifier });
-
+  
  if (result.deletedCount === 1) { // Correção: 'deleteCount' para 'deletedCount'
  console.log(`Animal ${identifier} removido.`);
  res.redirect('/projeto1?success=Animal removido com sucesso'); // Adicionei mensagem de sucesso
