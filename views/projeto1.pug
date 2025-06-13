@@ -193,13 +193,13 @@ html(lang="pt-BR")
       });
 
 
-
+      setTimeout(() => {
+        const alert = document.querySelector('.alert-success, .alert-danger');
+        if (alert) alert.remove();
+      }, 5000);
 
       socket.on('connect', () => console.log('Socket.IO conectado'));
       socket.on('disconnect', () => console.log('Socket.IO desconectado'));
 
-          // Esconde alertas automaticamente após 5 segundos
-    setTimeout(() => {
-      const alert = document.querySelector('.alert-success, .alert-danger');
-      if (alert) alert.remove();
-    }, 5000);
+
+      // Esconde alertas automaticamente após 5 segundos
