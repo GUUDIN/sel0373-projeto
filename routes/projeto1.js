@@ -95,7 +95,7 @@ router.post('/register', async (req, res) => {
   const { identifier, allowed } = req.body;
 
   if (!req.session.user) {
-    return res.status(401).send('Usuário não autenticado');
+    return res.status(401).json({ error: 'Usuário não autenticado' });
   }
 
   const registroPeso = pesosPorIdentificador[identifier];
@@ -104,29 +104,31 @@ router.post('/register', async (req, res) => {
     let existente = await Projeto1.findOne({ identifier });
 
     if (existente) {
-      // Atualiza o registro existente
       existente.allowed = allowed;
-      existente.peso = registroPeso?.peso || existente.peso;
-      existente.dataPesoAtualizado = registroPeso?.dataAtualizacao || existente.dataPesoAtualizado;
+      if (registroPeso?.peso) {
+        existente.peso = registroPeso.peso;
+        existente.dataPesoAtualizado = registroPeso.dataAtualizacao;
+      }
       existente.registradoPor = req.session.user.username;
       existente.data = new Date().toISOString();
 
       await existente.save();
-      console.log('Registro atualizado:', existente);
 
       io.emit('registroAtualizado', {
         identifier,
         allowed,
-        peso: registroPeso?.peso || existente.peso,
+        peso: existente.peso,
         registradoPor: req.session.user.username,
-        data: new Date().toISOString()
+        data: existente.data
       });
+
+      return res.status(200).json({ message: 'Registro atualizado com sucesso' });
     } else {
-      // Cria novo registro
+      // novo
       const novoRegistro = new Projeto1({
         identifier,
         allowed,
-        peso: registroPeso?.peso || "Não recebido",
+        peso: registroPeso?.peso || 'Não recebido',
         registradoPor: req.session.user.username,
         data: new Date().toISOString()
       });
@@ -136,41 +138,22 @@ router.post('/register', async (req, res) => {
       io.emit('novoRegistro', {
         identifier,
         allowed,
-        peso: registroPeso?.peso || "Não recebido",
-        registradoPor: req.session.user.username,
-        data: new Date().toISOString()
+        peso: novoRegistro.peso,
+        registradoPor: novoRegistro.registradoPor,
+        data: novoRegistro.data
       });
 
-
-      console.log('Novo registro:', novoRegistro);
-      //res.send("OK"); 
-      res.status(200).json({ message: "Registro criado com sucesso" });
-
+      return res.status(200).json({ message: 'Animal cadastrado com sucesso' });
     }
 
-
-    const mensagemMQTT = `${identifier},${allowed}`;
-    client.publish(mqtt_topic_send, mensagemMQTT, {}, (err) => {
-      if (err) {
-        console.error('Erro ao enviar mensagem MQTT:', err);
-      } else {
-        console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
-        client.publish('logs/vaquinha', `Mensagem enviada via MQTT: ${mensagemMQTT}`);
-      }
-    });
-
-    res.status(200).send("Registro processado com sucesso");
-
   } catch (err) {
-    console.error("Erro ao buscar ou criar registro:", err);
-    //return res.status(500).send("Erro ao processar o registro");
-    res.status(500).json({ error: "Erro ao processar o registro" });
-
+    console.error('Erro no /register:', err);
+    return res.status(500).json({ error: 'Erro ao processar o registro' });
   }
 });
 
 
-// Rota para excluir um animal pelo identifier
+
 router.post('/delete/:identifier', async (req, res) => {
   const { identifier } = req.params;
 
@@ -178,17 +161,19 @@ router.post('/delete/:identifier', async (req, res) => {
     const result = await Projeto1.deleteOne({ identifier });
 
     if (result.deletedCount === 1) {
-      io.emit('registroRemovido', { identifier }); // adiciona o evento socket
       console.log(`Animal ${identifier} removido.`);
+      io.emit('registroRemovido', { identifier });
       return res.status(200).json({ message: 'Animal removido com sucesso' });
     } else {
-      return res.status(404).json({ error: 'Animal não encontrado' });
+      console.warn(`Animal ${identifier} não encontrado.`);
+      return res.status(404).json({ error: 'Animal não encontrado para exclusão' });
     }
   } catch (err) {
-    console.error('Erro ao excluir:', err);
-    return res.status(503).json({ error: 'Erro no servidor ao excluir' });
+    console.error('Erro ao excluir animal:', err);
+    return res.status(503).json({ error: 'Erro ao excluir animal' });
   }
 });
+
 
 
 // Rota GET para ver os registros como JSON
