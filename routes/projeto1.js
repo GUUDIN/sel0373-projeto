@@ -173,32 +173,21 @@ router.post('/register', async (req, res) => {
 // Rota para excluir um animal pelo identifier
 router.post('/delete/:identifier', async (req, res) => {
   const { identifier } = req.params;
-  io.emit('registroRemovido', { identifier });
 
-  const index = registrosProjeto1.findIndex(r => r.identifier === identifier);
-  if (index !== -1) {
-    registrosProjeto1.splice(index, 1);
-    //console.log(`Animal ${identifier} removido.`);
-    client.publish('logs/vaquinha', `Animal ${identifier} removido.`);
+  try {
+    const result = await Projeto1.deleteOne({ identifier });
 
-  } else {
-    //console.log(`Animal ${identifier} não encontrado para remoção.`);
-    client.publish('logs/vaquinha', `Animal ${identifier} não encontrado para remoção.`);
+    if (result.deletedCount === 1) {
+      io.emit('registroRemovido', { identifier }); // adiciona o evento socket
+      console.log(`Animal ${identifier} removido.`);
+      return res.status(200).json({ message: 'Animal removido com sucesso' });
+    } else {
+      return res.status(404).json({ error: 'Animal não encontrado' });
+    }
+  } catch (err) {
+    console.error('Erro ao excluir:', err);
+    return res.status(503).json({ error: 'Erro no servidor ao excluir' });
   }
- try {
-  const result = await Projeto1.deleteOne({ identifier });
-  
- if (result.deletedCount === 1) { // Correção: 'deleteCount' para 'deletedCount'
- console.log(`Animal ${identifier} removido.`);
- res.redirect('/projeto1?success=Animal removido com sucesso'); // Adicionei mensagem de sucesso
-} else {
- console.log(`Animal ${identifier} não encontrado para remoção`);
- res.redirect('/projeto1?error=Animal não encontrado para remoção'); // Adicionei mensagem de erro
- }
-} catch (err) {
- console.log('Erro ao remover o registro:', err);
- res.status(500).send('Erro ao excluir o registro');
-}
 });
 
 // Rota GET para ver os registros como JSON

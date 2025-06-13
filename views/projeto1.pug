@@ -22,10 +22,7 @@ html(lang="pt-BR")
             .card-body
               h4.card-title.text-center Cadastro de Animal
 
-              if error
-                .alert.alert-danger.text-center.mb-3= error
-              if success
-                .alert.alert-success.text-center= success
+              div#mensagemUsuario.mt-2
 
               form#formCadastro
                 .mb-3
@@ -54,8 +51,8 @@ html(lang="pt-BR")
                   strong Identificador: 
                   | #{registro.identifier}
                   br
-                  strong Permitido: 
-                  | #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
+                  strong Permitido:
+                  span(id=`allowed-${registro.identifier}`) #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
                   br
                   strong Peso (kg): 
                   span(id=`peso-${registro.identifier}`) #{valorPeso}
@@ -85,32 +82,36 @@ html(lang="pt-BR")
         const allowed = document.getElementById('allowed').value;
 
         if (!identifier || !allowed) {
-          alert('Preencha todos os campos');
+          exibirMensagem('Preencha todos os campos', 'danger');
           return;
         }
 
         try {
-        const response = await fetch('/projeto1/register', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({ identifier, allowed })
-        });
+          const response = await fetch('/projeto1/register', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ identifier, allowed })
+          });
 
-        if (response.ok) {
-          form.reset();
-          alert('Animal registrado com sucesso');
-        } else {
-          const result = await response.json();
-          alert(result?.error || 'Erro ao registrar animal');
+          const msgEl = document.getElementById('mensagemUsuario');
+          if (response.ok) {
+            form.reset();
+            msgEl.innerHTML = `<div class="alert alert-success text-center">Animal registrado com sucesso</div>`;
+          } else {
+            const result = await response.json();
+            msgEl.innerHTML = `<div class="alert alert-danger text-center">${result?.error || 'Erro ao registrar animal'}</div>`;
+          }
+
+          setTimeout(() => msgEl.innerHTML = '', 4000);
+
+        } catch (err) {
+          const msgEl = document.getElementById('mensagemUsuario');
+          msgEl.innerHTML = `<div class="alert alert-danger text-center">Erro inesperado</div>`;
+          setTimeout(() => msgEl.innerHTML = '', 4000);
         }
-      } catch (err) {
-        console.error('Erro no envio:', err);
-        alert('Erro inesperado');
-      }
       });
-
 
       socket.on('novoRegistro', function(novoRegistro) {
         const lista = document.getElementById('lista-registros');
@@ -120,7 +121,7 @@ html(lang="pt-BR")
         const novoHTML = `
           <div class="border p-3 mb-2 rounded bg-light">
             <strong>Identificador:</strong> ${novoRegistro.identifier}<br>
-            <strong>Permitido:</strong> ${novoRegistro.allowed === 'sim' ? 'Sim' : 'Não'}<br>
+            <strong>Permitido:</strong> <span id="allowed-${novoRegistro.identifier}">${novoRegistro.allowed === 'sim' ? 'Sim' : 'Não'}</span><br>
             <strong>Peso (kg):</strong> <span id="peso-${novoRegistro.identifier}">${novoRegistro.peso}</span><br>
             <small class="text-muted" id="data-${novoRegistro.identifier}">
               Atualizado em: ${new Date().toLocaleString("pt-BR")}
@@ -152,6 +153,17 @@ html(lang="pt-BR")
           dataSpan.textContent = `Atualizado em: ${dataFormatada}`;
         }
       });
+
+      socket.on('registroAtualizado', function(registro) {
+        const pesoEl = document.getElementById(`peso-${registro.identifier}`);
+        const allowedEl = document.getElementById(`allowed-${registro.identifier}`);
+        const dataEl = document.getElementById(`data-${registro.identifier}`);
+
+        if (pesoEl) pesoEl.textContent = registro.peso;
+        if (allowedEl) allowedEl.textContent = registro.allowed === 'sim' ? 'Sim' : 'Não';
+        if (dataEl) dataEl.textContent = `Atualizado em: ${new Date().toLocaleString("pt-BR")}`;
+      });
+
       socket.on('registroRemovido', function(dado) {
         const elemento = document.querySelector(`form[action="/projeto1/delete/${dado.identifier}"]`);
         if (elemento) {
@@ -159,39 +171,6 @@ html(lang="pt-BR")
           if (container) container.remove();
         }
       });
-      
-      socket.on('registroAtualizado', function(registro) {
-        const container = document.querySelector(`#peso-${registro.identifier}`)?.closest('.border');
-        if (!container) return;
-
-        // Atualiza o peso
-        const pesoEl = document.querySelector(`#peso-${registro.identifier}`);
-        if (pesoEl) pesoEl.textContent = registro.peso;
-
-        // Atualiza o texto "Permitido"
-        const permitidoEl = Array.from(container.children).find(el =>
-          el.textContent.includes('Permitido:')
-        );
-        if (permitidoEl && permitidoEl.childNodes.length > 1) {
-          permitidoEl.childNodes[1].textContent = ` ${registro.allowed === 'sim' ? 'Sim' : 'Não'}`;
-        }
-
-        // Atualiza data
-        const dataEl = document.querySelector(`#data-${registro.identifier}`);
-        if (dataEl) {
-          dataEl.textContent = `Atualizado em: ${new Date().toLocaleString("pt-BR")}`;
-        }
-      });
-
-
-
-      setTimeout(() => {
-        const alert = document.querySelector('.alert-success, .alert-danger');
-        if (alert) alert.remove();
-      }, 5000);
 
       socket.on('connect', () => console.log('Socket.IO conectado'));
       socket.on('disconnect', () => console.log('Socket.IO desconectado'));
-
-
-      // Esconde alertas automaticamente após 5 segundos
