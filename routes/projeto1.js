@@ -190,6 +190,7 @@ router.post('/delete/:identifier', async (req, res) => {
   }
 });
 
+
 // Rota GET para ver os registros como JSON
  router.get('/registered', async (req, res) => {
  try {

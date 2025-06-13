@@ -51,7 +51,7 @@ html(lang="pt-BR")
                   strong Identificador: 
                   | #{registro.identifier}
                   br
-                  strong Permitido:
+                  strong Permitido: 
                   span(id=`allowed-${registro.identifier}`) #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
                   br
                   strong Peso (kg): 
@@ -65,8 +65,7 @@ html(lang="pt-BR")
                     br
                     small.text-muted Registrado em: #{new Date(registro.data).toLocaleString("pt-BR")}
                   br
-                  form(action=`/projeto1/delete/${registro.identifier}` method="POST" style="display: inline;")
-                    button.btn.btn-sm.btn-danger.mt-2(type="submit") Excluir
+                  button.btn.btn-sm.btn-danger.mt-2(type="button" data-id=registro.identifier) Excluir
             else
               p.text-muted#mensagem-vazia Nenhum animal registrado ainda.
 
@@ -80,9 +79,11 @@ html(lang="pt-BR")
 
         const identifier = document.getElementById('identifier').value.trim();
         const allowed = document.getElementById('allowed').value;
+        const msgEl = document.getElementById('mensagemUsuario');
 
         if (!identifier || !allowed) {
-          exibirMensagem('Preencha todos os campos', 'danger');
+          msgEl.innerHTML = `<div class="alert alert-danger text-center">Preencha todos os campos</div>`;
+          setTimeout(() => msgEl.innerHTML = '', 4000);
           return;
         }
 
@@ -95,7 +96,6 @@ html(lang="pt-BR")
             body: JSON.stringify({ identifier, allowed })
           });
 
-          const msgEl = document.getElementById('mensagemUsuario');
           if (response.ok) {
             form.reset();
             msgEl.innerHTML = `<div class="alert alert-success text-center">Animal registrado com sucesso</div>`;
@@ -105,9 +105,7 @@ html(lang="pt-BR")
           }
 
           setTimeout(() => msgEl.innerHTML = '', 4000);
-
         } catch (err) {
-          const msgEl = document.getElementById('mensagemUsuario');
           msgEl.innerHTML = `<div class="alert alert-danger text-center">Erro inesperado</div>`;
           setTimeout(() => msgEl.innerHTML = '', 4000);
         }
@@ -128,9 +126,7 @@ html(lang="pt-BR")
             </small><br>
             <small class="text-muted">Registrado por: ${novoRegistro.registradoPor}</small><br>
             <small class="text-muted">Registrado em: ${new Date(novoRegistro.data).toLocaleString("pt-BR")}</small><br>
-            <form action="/projeto1/delete/${novoRegistro.identifier}" method="POST" style="display:inline;">
-              <button class="btn btn-sm btn-danger mt-2" type="submit">Excluir</button>
-            </form>
+            <button class="btn btn-sm btn-danger mt-2" type="button" data-id="${novoRegistro.identifier}">Excluir</button>
           </div>
         `;
 
@@ -144,10 +140,7 @@ html(lang="pt-BR")
         const valorPeso = typeof registroAtualizado.peso === 'object' ? registroAtualizado.peso.peso : registroAtualizado.peso;
         const dataAtualizacao = new Date().toISOString();
 
-        if (pesoSpan) {
-          pesoSpan.textContent = valorPeso;
-        }
-
+        if (pesoSpan) pesoSpan.textContent = valorPeso;
         if (dataSpan) {
           const dataFormatada = new Date(dataAtualizacao).toLocaleString("pt-BR");
           dataSpan.textContent = `Atualizado em: ${dataFormatada}`;
@@ -165,10 +158,30 @@ html(lang="pt-BR")
       });
 
       socket.on('registroRemovido', function(dado) {
-        const elemento = document.querySelector(`form[action="/projeto1/delete/${dado.identifier}"]`);
+        const elemento = document.querySelector(`button[data-id="${dado.identifier}"]`);
         if (elemento) {
           const container = elemento.closest('.border');
           if (container) container.remove();
+        }
+      });
+
+      document.addEventListener('click', async (e) => {
+        if (e.target.matches('button[data-id]')) {
+          const identifier = e.target.getAttribute('data-id');
+          if (!confirm(`Deseja excluir ${identifier}?`)) return;
+
+          try {
+            const res = await fetch(`/projeto1/delete/${identifier}`, { method: 'POST' });
+            if (res.ok) {
+              const container = e.target.closest('.border');
+              if (container) container.remove();
+            } else {
+              const result = await res.json();
+              alert(result?.error || 'Erro ao excluir');
+            }
+          } catch (err) {
+            alert('Erro inesperado ao excluir');
+          }
         }
       });
 
