@@ -123,7 +123,7 @@ router.post('/register', async (req, res) => {
       });
       
 
-    const allowedBinary = existente.allowed === 'sim' ? 1 : 0;
+    const allowedBinary = existente.allowed === 'sim' ? 0 : 1;
     client.publish('vaquinha', `${existente.identifier}, ${allowedBinary}`);
      // }
 
@@ -149,14 +149,14 @@ router.post('/register', async (req, res) => {
         data: novoRegistro.data
       });
 
-      const allowedBinary = allowed === 'sim' ? 1 : 0;
+      const allowedBinary = allowed === 'sim' ? 0 : 1;
       client.publish('vaquinha', `${identifier}, ${allowedBinary}`);
       return res.status(200).json({ message: 'Animal cadastrado com sucesso' });
     }
 
   } catch (err) {
     console.error('Erro no /register:', err);
-     client.publish('vaquinha', 'erro no registro');
+    client.publish('vaquinha', 'erro no registro');
     return res.status(500).json({ error: 'Erro ao processar o registro' });
   }
 });
