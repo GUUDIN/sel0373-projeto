@@ -113,27 +113,19 @@ router.post('/register', async (req, res) => {
       existente.data = new Date().toISOString();
 
       await existente.save();
-      if(allowed == 'sim'){
-        io.emit('registroAtualizado', {
-          identifier,
-          allowed:0,
-          peso: existente.peso,
-          registradoPor: req.session.user.username,
-          data: existente.data
-        });
-      }else{
-          io.emit('registroAtualizado', {
-          identifier,
-          allowed:1,
-          peso: existente.peso,
-          registradoPor: req.session.user.username,
-          data: existente.data
-        });
-      }
+      //if(allowed == 'sim'){
+      io.emit('registroAtualizado', {
+        identifier,
+        allowed,
+        peso: existente.peso,
+        registradoPor: req.session.user.username,
+        data: existente.data
+      });
+     // }
 
 
       return res.status(200).json({ message: 'Registro atualizado com sucesso' });
-    }else {
+    } else {
       // novo
       const novoRegistro = new Projeto1({
         identifier,
@@ -143,26 +135,18 @@ router.post('/register', async (req, res) => {
         data: new Date().toISOString()
       });
 
-    await novoRegistro.save();
-    if(allowed == 'sim'){
-        o.emit('novoRegistro', {
-          identifier,
-          allowed:0,
-          peso: novoRegistro.peso,
-          registradoPor: novoRegistro.registradoPor,
-          data: novoRegistro.data
-        });
-        }else{
+      await novoRegistro.save();
+
       io.emit('novoRegistro', {
-          identifier,
-          allowed:1,
-          peso: novoRegistro.peso,
-          registradoPor: novoRegistro.registradoPor,
-          data: novoRegistro.data
-        });
-        }
-          return res.status(200).json({ message: 'Animal cadastrado com sucesso' });
-        }
+        identifier,
+        allowed,
+        peso: novoRegistro.peso,
+        registradoPor: novoRegistro.registradoPor,
+        data: novoRegistro.data
+      });
+
+      return res.status(200).json({ message: 'Animal cadastrado com sucesso' });
+    }
 
   } catch (err) {
     console.error('Erro no /register:', err);
