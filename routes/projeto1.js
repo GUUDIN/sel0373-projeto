@@ -40,7 +40,7 @@ console.error(`Erro ao se inscrever no tópico ${mqtt_topic}: ${err}`);
 
 //Recebimento dos dados via mqtt 
 client.on('message', async(topic, payload) => {
-  if (topic === 'vaquinha/echo') {
+  if (topic === mqtt_topic) {
     try {
       const mensagem = JSON.parse(payload.toString());
       const { identifier, peso } = mensagem;
@@ -150,13 +150,13 @@ router.post('/register', async (req, res) => {
       });
 
       const allowedBinary = allowed === 'sim' ? 0 : 1;
-      client.publish('vaquinha', `${identifier}, ${allowedBinary}`);
+      client.publish(mqtt_topic_send, `${identifier}, ${allowedBinary}`);
       return res.status(200).json({ message: 'Animal cadastrado com sucesso' });
     }
 
   } catch (err) {
     console.error('Erro no /register:', err);
-    client.publish('vaquinha', 'erro no registro');
+    client.publish(mqtt_topic_send, 'erro no registro');
     return res.status(500).json({ error: 'Erro ao processar o registro' });
   }
 });
@@ -164,13 +164,16 @@ router.post('/register', async (req, res) => {
 
 
 router.post('/delete/:identifier', async (req, res) => {
-  const { identifier } = req.params;
+  const { identifier, allowed} = req.params;
 
   try {
     const result = await Projeto1.deleteOne({ identifier });
 
     if (result.deletedCount === 1) {
       console.log(`Animal ${identifier} removido.`);
+      const allowedBinary = allowed == 0;;
+      client.publish(mqtt_topic_send, `${identifier}, ${allowedBinary}`);
+
       io.emit('registroRemovido', { identifier });
       return res.status(200).json({ message: 'Animal removido com sucesso' });
     } else {
