@@ -3,20 +3,19 @@
   #settingsCard.card-container
     button#closeSettings(type="button" aria-label="Fechar") ×
     .card-inner
-      img.profile-avatar(src=(user && user.avatarUrl) || "/img/default-avatar.png", alt="Avatar do usuário")
+      - const avatarUrl = (user && user.avatarUrl) ? user.avatarUrl : '/img/default-avatar.png';
+      img.profile-avatar(src=avatarUrl alt="Avatar do usuário")
       h2.greeting Olá, #{user && user.username ? user.username : 'User'}!
       form(action="/users/settings" method="POST")
         select.project-select(name="project" required)
           option(value="" disabled selected) Selecione um projeto
           if projects
             each project in projects
-              option(
-                value=project.id
-                selected=(user && user.project == project.id)
-              ) #{project.name}
+              - const isSelected = (user && user.project == project.id) ? 'selected' : false;
+              option(value=project.id selected=isSelected) #{project.name}
           else
-            option(value="1", selected=(user && user.project == '1')) Cadastro de Animais
-            option(value="2", selected=(user && user.project == '2')) Monitoramento Ambiental
+            option(value="1" selected=(user && user.project == '1' ? 'selected' : false)) Cadastro de Animais
+            option(value="2" selected=(user && user.project == '2' ? 'selected' : false)) Monitoramento Ambiental
         button(type="submit" class="save-btn") Salvar
       form(action="/users/logout" method="POST")
         button(type="submit" class="logout-btn") Sair

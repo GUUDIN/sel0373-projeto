@@ -84,8 +84,8 @@ router.get('/', async(req, res) => {
   res.render('projeto1', {
     success: req.query.success,
     error: req.query.error,
-    registros: registrosProjeto1,
-    //registros: registros, 
+    //registros: registrosProjeto1,
+    registros: registros, 
     user: req.session.user,
     projects: activeProjects
   });  
@@ -155,7 +155,7 @@ router.post('/register', async (req, res) => {
       });
 
 
-      
+
       const allowedBinary = allowed === 'sim' ? 0 : 1;
       client.publish(mqtt_topic_send, `${identifier}, ${allowedBinary}`);
       return res.status(200).json({ message: 'Animal cadastrado com sucesso' });
