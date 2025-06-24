@@ -1,0 +1,179 @@
+doctype html
+html(lang="pt-BR")
+  head
+    title Monitoramento Climático
+    meta(charset="UTF-8")
+    meta(name="viewport" content="width=device-width, initial-scale=1.0")
+    link(rel="stylesheet" href="/css/design-system.css")
+    link(rel="stylesheet" href="/css/projeto2.css")
+    
+    // Leaflet CSS para mapas
+    link(rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css")
+    
+    // Chart.js para gráficos
+    script(src="https://cdn.jsdelivr.net/npm/chart.js")
+    
+    include ./partials/styles.pug
+    script(src="/components/user-settings/settings.js")
+    
+  body
+    // Animated background
+    .glass-background
+    
+    // Glass navigation
+    header.glass-navbar
+      .container
+        a.glass-logo(href="/")
+          span Projetos IOT
+        nav.nav-right
+          if user
+            button.profile-button(type="button")
+              img.profile-photo(
+                src=user.avatarUrl || '/img/default-avatar.png'
+                alt=`${user.username}`
+              )
+              span.username #{user.username}
+
+    // Main content container
+    .projeto2-container
+      .container
+        .page-header
+          h1.page-title Monitoramento Climático
+          p.page-subtitle Dados ambientais e geolocalização em tempo real
+
+        if error
+          .glass-alert.alert-error= error
+        if success
+          .glass-alert.alert-success= success
+
+        // Dashboard grid
+        .dashboard-grid
+          // Mapa e informações climáticas
+          .map-section
+            .glass-card.map-card
+              .card-header
+                h3.card-title 
+                  span.icon 🗺️
+                  span Localização
+              .card-content
+                #map
+                #clima-info.climate-info
+                  span Aguardando dados climáticos...
+
+          // Métricas em tempo real
+          .metrics-section
+            .metrics-grid
+              .glass-card.metric-card
+                .metric-header
+                  span.metric-icon 🌡️
+                  span.metric-label Temperatura
+                .metric-value#card-temp --°C
+                
+              .glass-card.metric-card
+                .metric-header
+                  span.metric-icon 💨
+                  span.metric-label Vento
+                .metric-value#card-vento -- m/s
+                
+              .glass-card.metric-card
+                .metric-header
+                  span.metric-icon 💧
+                  span.metric-label Umidade
+                .metric-value#card-umidade --%
+
+          // Gráfico de dados
+          .chart-section
+            .glass-card.chart-card
+              .card-header
+                h3.card-title
+                  span.icon 📊
+                  span Gráfico Ambiental
+                .chart-controls
+                  select#eixoY.glass-select
+                    option(value="temperatura") Temperatura
+                    option(value="umidade") Umidade
+                    option(value="vento") Velocidade do Vento
+                  select#eixoX.glass-select
+                    option(value="tempo") Tempo
+              .card-content
+                .chart-container
+                  canvas#grafico
+
+          // Dados históricos
+          .data-section
+            .glass-card.data-card
+              .card-header
+                h3.card-title
+                  span.icon 📋
+                  span Dados Recentes
+              .card-content
+                .data-tabs
+                  button.tab-button.active(data-tab="mapa") Localização
+                  button.tab-button(data-tab="temp") Temperatura  
+                  button.tab-button(data-tab="umidade") Umidade
+                  button.tab-button(data-tab="vento") Vento
+                
+                .tab-content#tab-mapa.active
+                  .data-list
+                    if registrosmapa && registrosmapa.length
+                      each registro in registrosmapa.slice(-5)
+                        .data-item
+                          .data-field
+                            strong Lat: 
+                            span #{registro.lat}
+                          .data-field
+                            strong Long: 
+                            span #{registro.long}
+                    else
+                      .empty-state
+                        p Nenhum dado de localização disponível
+                
+                .tab-content#tab-temp
+                  .data-list
+                    if registrostemp && registrostemp.length
+                      each registro in registrostemp.slice(-5)
+                        .data-item
+                          .data-field
+                            strong Temperatura: 
+                            span #{registro.temperatura}°C
+                    else
+                      .empty-state
+                        p Nenhum dado de temperatura disponível
+                
+                .tab-content#tab-umidade
+                  .data-list
+                    if registrosumidade && registrosumidade.length
+                      each registro in registrosumidade.slice(-5)
+                        .data-item
+                          .data-field
+                            strong Umidade: 
+                            span #{registro.umidade}%
+                    else
+                      .empty-state
+                        p Nenhum dado de umidade disponível
+                
+                .tab-content#tab-vento
+                  .data-list
+                    if registrosvento && registrosvento.length
+                      each registro in registrosvento.slice(-5)
+                        .data-item
+                          .data-field
+                            strong Velocidade: 
+                            span #{registro.velocidade} m/s
+                    else
+                      .empty-state
+                        p Nenhum dado de vento disponível
+
+        .actions-section
+          a.glass-button.glass-button-secondary(href="/") 
+            span.icon 🏠
+            span Voltar à página inicial
+
+    // Scripts
+    script(src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js")
+    script(src="/socket.io/socket.io.js")
+    script(src="/js/projeto2.js")
+
+    // Incluir o card de configurações do usuário
+    if user
+      include ../components/user-settings/settings.pug

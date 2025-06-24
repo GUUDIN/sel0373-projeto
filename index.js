@@ -77,6 +77,10 @@ app.use("/send-files", sendFiles);
 const projeto1 = require("./routes/projeto1")(io);
 app.use("/projeto1", projeto1);
 
+// Importa e utiliza o roteador do projeto2
+const projeto2 = require("./routes/projeto2");
+app.use("/projeto2", projeto2);
+
 // Inicia o servidor
 server.listen(PORT, '0.0.0.0', () => {
   console.log("Server on port 6005");
