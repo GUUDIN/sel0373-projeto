@@ -7,11 +7,7 @@ const projeto_1 = require("../models/projeto_1"); // ALTERAÇÃO
 const fileUpload = require("express-fileupload");
 
 module.exports = function(io) {
-
 const router = express.Router();
-
-// Vetor para armazenar os registros
-const registrosProjeto1 = [];
 
 // Objeto para armazenar os pesos recebidos via MQTT
 const pesosPorIdentificador = {};
@@ -25,6 +21,7 @@ const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
 // Definição do topico associado ao projeto 1
 const mqtt_topic = 'vaquinha/echo';//recebe dados de id, peso. é subscribed
 const mqtt_topic_send = 'vaquinha'; //envia dados id, allowed
+
 // Qnd conectar ao broker MQTT ...
 client.on('connect', () => {
 client.subscribe(mqtt_topic, (err) => {
@@ -34,9 +31,7 @@ console.error(`Erro ao se inscrever no tópico ${mqtt_topic}: ${err}`);
  console.log(`Inscrito com sucesso no tópico: ${mqtt_topic}`);
  }
 });
-
 });
-
 
 //Recebimento dos dados via mqtt 
 client.on('message', (topic, payload) => {
@@ -44,7 +39,6 @@ client.on('message', (topic, payload) => {
     try {
       const mensagem = JSON.parse(payload.toString());
       const { identifier, peso } = mensagem;
-
       if (identifier && peso != null) {
         pesosPorIdentificador[identifier] = {
           peso,
@@ -61,10 +55,6 @@ client.on('message', (topic, payload) => {
   }
 });
 
-
-
-// Middleware de teste para simular sessão de usuário caso login dê errado tirar fim do projeto
- 
 // Middleware de teste para simular sessão de usuário caso login dê errado
 router.use((req, res, next) => {
  if (!req.session.user) {
@@ -72,7 +62,6 @@ router.use((req, res, next) => {
  }
  next();
 });
-
 
 // Rota GET principal do projeto
 router.get('/', async (req, res) => {
@@ -90,101 +79,84 @@ router.get('/', async (req, res) => {
  }
  });
 
-
 // Rota POST para registrar um animal
 router.post('/register', async (req, res) => {
  const { identifier, allowed } = req.body;
- 
- // Converter checkbox para formato adequado
- const allowedValue = allowed === 'sim' ? 'sim' : 'nao';
-
  if (!req.session.user) {
    return res.status(401).send('Usuário não autenticado');
  }
 
-  const peso = pesosPorIdentificador[identifier] || "Não recebido";
-  const existente = registrosProjeto1.find(reg => reg.identifier === identifier);
-  const registroPeso = pesosPorIdentificador[identifier];
- 
-  const novoRegistro = {
-    identifier,
-    allowed: allowedValue,
-    peso: registroPeso?.peso || "Não recebido",
-    dataPesoAtualizado: registroPeso?.dataAtualizacao || "Não atualizado",
-    registradoPor: req.session.user.username,
-    data: new Date().toISOString()
-  };
-  
-  if (existente) {
-    existente.allowed = allowedValue;
-    existente.peso = peso;
-    existente.registradoPor = req.session.user.username;
-    existente.data = new Date().toISOString();
-    console.log('Registro atualizado:', existente);
-    client.publish('logs/vaquinha','Registro atualizado:', existente);
-    await existente.save(); // Salva as alterações no banco
-  console.log('Registro atualizado:', existente);
-  } else {
-    const novo = {
-      identifier,
-      allowed,
-      peso,
-      registradoPor: req.session.user.username,
-      data: new Date().toISOString()
-    };
-    registrosProjeto1.push(novo);
-    console.log('Novo registro:', novo);
-    client.publish('logs/vaquinha','Novo registro:', novo);
-    await novoRegistro.save(); // Salva no banco
-  }
+ try {
+   const peso = pesosPorIdentificador[identifier] || "Não recebido";
+   const registroPeso = pesosPorIdentificador[identifier];
+   
+   // Verificar se já existe no banco
+   const existente = await projeto_1.findOne({ identifier });
+   
+   if (existente) {
+     // Atualizar registro existente
+     existente.allowed = allowed;
+     existente.peso = registroPeso?.peso || "Não recebido";
+     existente.dataPesoAtualizado = registroPeso?.dataAtualizacao || "Não atualizado";
+     existente.registradoPor = req.session.user.username;
+     existente.data = new Date().toISOString();
+     
+     await existente.save();
+     console.log('Registro atualizado:', existente);
+     client.publish('logs/vaquinha', 'Registro atualizado: ' + JSON.stringify(existente));
+   } else {
+     // Criar novo registro
+     const novoRegistro = new projeto_1({
+       identifier,
+       allowed,
+       peso: registroPeso?.peso || "Não recebido",
+       dataPesoAtualizado: registroPeso?.dataAtualizacao || "Não atualizado",
+       registradoPor: req.session.user.username,
+       data: new Date().toISOString()
+     });
+     
+     await novoRegistro.save();
+     console.log('Novo registro:', novoRegistro);
+     client.publish('logs/vaquinha', 'Novo registro: ' + JSON.stringify(novoRegistro));
+   }
 
-  // Envia mensagem MQTT com 'id,allowed'
-
-  //const mensagemMQTT = JSON.stringify({identifier, allowed});
-  const mensagemMQTT = `${identifier},${allowed}`;
-
-  client.publish(mqtt_topic_send, mensagemMQTT, {}, (err) => {
-    if (err){ 
-      console.error('Erro ao enviar mensagem MQTT:', err);
-      //client.publish('logs/vaquinha', `Erro ao enviar mensagem MQTT:'`);
-    }
-    else {
-      console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
-      client.publish('logs/vaquinha', `Mensagem enviada via MQTT: ${mensagemMQTT}`);
-  }
-});
-
-  res.redirect('/projeto1?success=Animal registrado/atualizado com sucesso'); // Adicionei mensagem de sucesso
+   // Envia mensagem MQTT com 'id,allowed'
+   const mensagemMQTT = `${identifier},${allowed}`;
+   client.publish(mqtt_topic_send, mensagemMQTT, {}, (err) => {
+     if (err){ 
+       console.error('Erro ao enviar mensagem MQTT:', err);
+     } else {
+       console.log(`Mensagem enviada via MQTT: ${mensagemMQTT}`);
+       client.publish('logs/vaquinha', `Mensagem enviada via MQTT: ${mensagemMQTT}`);
+     }
+   });
+   
+   res.redirect('/projeto1?success=Animal registrado/atualizado com sucesso');
+ } catch (err) {
+   console.error('Erro ao salvar registro:', err);
+   res.redirect('/projeto1?error=Erro ao salvar registro');
+ }
 });
 
 // Rota para excluir um animal pelo identifier
 router.post('/delete/:identifier', async (req, res) => {
  const { identifier } = req.params;
-
-  const index = registrosProjeto1.findIndex(r => r.identifier === identifier);
-  if (index !== -1) {
-    registrosProjeto1.splice(index, 1);
-    //console.log(`Animal ${identifier} removido.`);
-    client.publish('logs/vaquinha', `Animal ${identifier} removido.`);
-
-  } else {
-    //console.log(`Animal ${identifier} não encontrado para remoção.`);
-    client.publish('logs/vaquinha', `Animal ${identifier} não encontrado para remoção.`);
-  }
+ 
  try {
-  const result = await projeto_1.deleteOne({ identifier });
-
- if (result.deletedCount === 1) { // Correção: 'deleteCount' para 'deletedCount'
- console.log(`Animal ${identifier} removido.`);
- res.redirect('/projeto1?success=Animal removido com sucesso'); // Adicionei mensagem de sucesso
-} else {
- console.log(`Animal ${identifier} não encontrado para remoção`);
- res.redirect('/projeto1?error=Animal não encontrado para remoção'); // Adicionei mensagem de erro
+   const result = await projeto_1.deleteOne({ identifier });
+   if (result.deletedCount === 1) {
+     console.log(`Animal ${identifier} removido.`);
+     client.publish('logs/vaquinha', `Animal ${identifier} removido.`);
+     res.redirect('/projeto1?success=Animal removido com sucesso');
+   } else {
+     console.log(`Animal ${identifier} não encontrado para remoção`);
+     client.publish('logs/vaquinha', `Animal ${identifier} não encontrado para remoção.`);
+     res.redirect('/projeto1?error=Animal não encontrado para remoção');
+   }
+ } catch (err) {
+   console.log('Erro ao remover o registro:', err);
+   res.status(500).send('Erro ao excluir o registro');
  }
-} catch (err) {
- console.log('Erro ao remover o registro:', err);
- res.status(500).send('Erro ao excluir o registro');
-}
 });
 
 // Rota GET para ver os registros como JSON
@@ -197,7 +169,21 @@ router.post('/delete/:identifier', async (req, res) => {
  }
 });
 
+// Rota GET para histórico
+router.get('/history', async (req, res) => {
+ try {
+   const registros = await projeto_1.find();
+   res.render('projeto1-history', {
+     registros: registros,
+     user: req.session.user
+   });
+ } catch (err) {
+   console.error("Erro ao buscar registros para histórico:", err);
+   res.status(500).send("Erro ao carregar histórico");
+ }
+});
+
 // Exporta o router
 //module.exports = router;
 return router;
-}
+};

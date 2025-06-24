@@ -40,7 +40,7 @@ html(lang="pt-BR")
         if success
           .glass-alert.alert-success= success
 
-        // Cards grid - layout original
+        // Cards grid - layout original adaptado para glassmorphism
         .cards-grid
           // Card de Cadastro
           .card.form-card
@@ -56,58 +56,58 @@ html(lang="pt-BR")
                 
                 .form-group
                   label.form-label(for="allowed") Permitido
-                  .toggle-container
-                    input#allowed.toggle-input(type="checkbox" name="allowed" value="sim")
-                    label.toggle-label(for="allowed")
-                      span.toggle-slider
-                      span.toggle-text-off Negado
-                      span.toggle-text-on Permitido
+                  select#allowed.glass-select(name="allowed" required)
+                    option(value="" disabled selected) Selecione uma opção
+                    option(value="sim") Sim
+                    option(value="nao") Não
                 
                 .form-actions
                   button.glass-button-primary(type="submit") Cadastrar
 
-          // Card de Monitor
+          // Card de Animais Registrados
           .card.records-card
             .card-header
               span.card-icon 📋
               h3.card-title Animais Registrados
             
             .card-content
-              .animals-section
-                .animals-list
-                  if registros.length
-                    each registro in registros
-                      .animal-item
-                        .animal-main
-                          .animal-id #{registro.identifier}
-                          .animal-status(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
-                            .status-indicator
-                            span.status-text #{registro.allowed === 'sim' ? 'Permitido' : 'Negado'}
+              .animals-list
+                if registros.length
+                  each registro in registros
+                    - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : 'Não recebido'
+                    .animal-item
+                      .animal-main
+                        .animal-id #{registro.identifier}
+                        .animal-status(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
+                          .status-indicator
+                          span.status-text #{registro.allowed === 'sim' ? 'Permitido' : 'Negado'}
+                      
+                      .animal-details
+                        .detail-row
+                          span.detail-label Peso (kg):
+                          span.detail-value(id=`peso-${registro.identifier}`) #{valorPeso}
                         
-                        .animal-details
-                          if registro.peso
-                            .detail-row
-                              span.detail-label Peso:
-                              span.detail-value #{registro.peso}kg
-                          
-                          if registro.dataPesoAtualizado
-                            .detail-row
-                              span.detail-label Atualizado:
-                              span.detail-value #{new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR")}
-                          
-                          if registro.registradoPor
-                            .detail-row
-                              span.detail-label Cadastrado por:
-                              span.detail-value #{registro.registradoPor}
-                          
-                          if registro.data
-                            .detail-row.timestamp
-                              span.detail-value #{new Date(registro.data).toLocaleString("pt-BR")}
-                  else
-                    .empty-state
-                      .empty-icon 🐄
-                      .empty-title Nenhum animal cadastrado
-                      .empty-subtitle Use o formulário ao lado para cadastrar o primeiro animal
+                        .detail-row
+                          span.detail-label Atualizado em:
+                          span.detail-value(id=`data-${registro.identifier}`) #{registro.dataPesoAtualizado ? new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR") : 'Sem registro'}
+                        
+                        if registro.registradoPor
+                          .detail-row
+                            span.detail-label Cadastrado por:
+                            span.detail-value #{registro.registradoPor}
+                        
+                        if registro.data
+                          .detail-row.timestamp
+                            span.detail-value #{new Date(registro.data).toLocaleString("pt-BR")}
+                      
+                      .animal-actions
+                        form(action=`/projeto1/delete/${registro.identifier}` method="POST" style="display: inline;")
+                          button.glass-button-danger.delete-button(type="submit") Excluir
+                else
+                  .empty-state
+                    .empty-icon 🐄
+                    .empty-title Nenhum animal cadastrado
+                    .empty-subtitle Use o formulário ao lado para cadastrar o primeiro animal
 
         // Botão de histórico
         .history-section
@@ -120,3 +120,24 @@ html(lang="pt-BR")
       include ../components/user-settings/settings.pug
 
     script(src="/components/user-settings/settings.js")
+    script(src="/socket.io/socket.io.js")
+    script.
+      const socket = io();
+      socket.on('pesoAtualizado', function(data) {
+        console.log("Recebido via socket:", data);
+        const pesoSpan = document.getElementById(`peso-${data.identifier}`);
+        const dataSpan = document.getElementById(`data-${data.identifier}`);
+        const valorPeso = typeof data.peso === 'object' ? data.peso.peso : data.peso;
+        const dataAtualizacao = typeof data.peso === 'object' 
+          ? data.peso.dataAtualizacao 
+          : new Date().toISOString();
+        if (pesoSpan) {
+          pesoSpan.textContent = valorPeso;
+        }
+        if (dataSpan) {
+          const dataFormatada = new Date(dataAtualizacao).toLocaleString("pt-BR");
+          dataSpan.textContent = `Atualizado em: ${dataFormatada}`;
+        }
+      });
+      socket.on('connect', () => console.log('Socket.IO conectado'));
+      socket.on('disconnect', () => console.log('Socket.IO desconectado'));
