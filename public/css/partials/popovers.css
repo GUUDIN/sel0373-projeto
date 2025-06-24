@@ -1,0 +1,42 @@
+/* User pill-shaped popover */
+
+/* Profile popover trigger button (pill shape) */
+.profile-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-decoration: none;
+  background-color: #ffffff;
+  color: #1d1d3e;
+  padding: 8px 20px;
+  border-radius: 100px;
+  border: 2px solid #1d1d3e;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+/* Hover effect */
+.profile-button:hover {
+  background-color: #1d1d3e;
+  color: #ffffff;
+}
+
+/* Profile icon inside the button */
+.profile-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: inline-block;
+}
+
+/* Optional profile name inside button */
+.profile-name {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+  /* --------------------------------------------------- */

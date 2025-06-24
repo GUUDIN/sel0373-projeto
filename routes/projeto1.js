@@ -6,10 +6,12 @@ const path = require("path");
 const Projeto1 = require('../models/projeto_1');
 
 const fileUpload = require("express-fileupload");
+const { getActiveProjects } = require('../config/projects');
 
 module.exports = function(io) {
 
 const router = express.Router();
+// Importa a configuração de projetos
 
 // Vetor para armazenar os registros
 const registrosProjeto1 = [];
@@ -75,15 +77,18 @@ router.use((req, res, next) => {
 
 
 // Rota GET principal do projeto
-router.get('/', async (req, res) => {
- try {
-   const registros = await Projeto1.find(); 
-   res.render('projeto1', {
-   success: req.query.success,
-   error: req.query.error,
-   registros: registros, 
-   user: req.session.user
-});
+router.get('/', async(req, res) => {
+  const activeProjects = getActiveProjects();
+  try {
+  const registros = await Projeto1.find(); 
+  res.render('projeto1', {
+    success: req.query.success,
+    error: req.query.error,
+    registros: registrosProjeto1,
+    //registros: registros, 
+    user: req.session.user,
+    projects: activeProjects
+  });  
    } catch (err) {
       console.error("Erro ao buscar registros do banco:", err);
    res.status(500).send("Erro ao carregar registros");

@@ -5,12 +5,22 @@ html(lang="pt-BR")
     meta(name="viewport", content="width=device-width, initial-scale=1.0")
     title Projetos IOT - Envios de arquivos via MQTT
     link(rel="stylesheet", href="/css/sendfiles.css")
+    include ./partials/styles.pug
+    script(src="/components/user-settings/settings.js")
   body
     // Container para o formulário de envio de arquivos
     .container
       header.header
         a(href="/")
           h1.title Projetos IOT
+        nav.nav-right
+          if user
+            button.profile-button(type="button")
+              img.profile-photo(
+                src=user.avatarUrl || '/img/default-avatar.png'
+                alt=`${user.username}`
+              )
+              span.username #{user.username}
         h2.subtitle Envios de arquivos via MQTT
       // Exibe mensagem de erro se houver
       main
@@ -24,3 +34,7 @@ html(lang="pt-BR")
             button(type="submit") Enviar Arquivo
       footer.footer
         p © 2025 Projetos IOT
+
+    // Incluir o card de configurações do usuário
+    if user
+      include ../components/user-settings/settings.pug

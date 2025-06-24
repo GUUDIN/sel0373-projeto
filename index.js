@@ -47,6 +47,12 @@ app.use((req, res, next) => {
   next();
 });
 
+// Exemplo em app.js
+app.use((req, res, next) => {
+  res.locals.user = req.user || {}; // req.user geralmente vem do Passport
+  next();
+});
+
 // Configura o middleware para servir arquivos estáticos da pasta "public"
 app.use(express.static(path.join(__dirname, "public")));
 
@@ -54,11 +60,29 @@ app.use(express.static(path.join(__dirname, "public")));
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
 
+// Importa a configuração de projetos
+const { getProjectById, getActiveProjects, getAllProjects } = require('./config/projects');
+
 // Rota para a página inicial (index.pug) passando o título "Home"
 app.get("/", (req, res) => {
   console.log("User session:", req.session.user); // Log para verificação (depuração)
   console.log("Session ID:", req.session.id); // Log para verificação (depuração)
-  res.render("index", { title: "Home" });
+  
+  // Preparar dados do projeto para o usuário logado
+  let userProject = null;
+  if (req.session.user && req.session.user.project) {
+    userProject = getProjectById(req.session.user.project) || getProjectById('2');
+  }
+  
+  // Obter todos os projetos ativos para exibir na página
+  const activeProjects = getActiveProjects();
+  
+  res.render("index", { 
+    title: "Home", 
+    user: req.session.user,
+    userProject: userProject,
+    projects: activeProjects
+  });
 });
 
 

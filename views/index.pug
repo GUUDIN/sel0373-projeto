@@ -4,7 +4,9 @@ html(lang="pt-BR")
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title Projetos IOT
-    link(rel="stylesheet", href="/css/index.css")
+    include ./partials/styles.pug
+    script(src="/components/user-settings/settings.js")
+    script(src="/js/index.js")
   body
     // Barra de navegação superior
     header.navbar
@@ -12,17 +14,78 @@ html(lang="pt-BR")
         // Logo clicável que redireciona para a página inicial
         a.logo-text(href="/") Projetos IOT
       nav.nav-right
-        // Botão de login no canto superior direito
-        a.login-button(href="/users") Login
+        if user
+          button.profile-button(type="button")
+            img.profile-photo(
+              src=user.avatarUrl || '/img/default-avatar.png'
+              alt=`${user.username}`
+            )
+            span.username #{user.username}
+        else
+          // Botão de login no canto superior direito
+          a.login-button(href="/users") Login
 
-    // Seção principal (Hero)
-    section.hero
-      // Camada de sobreposição para aplicar estilo ao fundo
-      .overlay 
-        .hero-content
-          // Título principal do projeto
-          h1.hero-title Projetos IOT
-          // Descrição do projeto
-          p.hero-description Plataforma unificada para múltiplos projetos IoT, com comunicação bidirecional via MQTT e dashboards de dados.
+  // Seção principal (Hero)
+  section.hero
+    // Camada de sobreposição para aplicar estilo ao fundo
+    .overlay 
+      .hero-content
+        // Título principal do projeto
+        h1.hero-title Projetos IOT
+        // Descrição do projeto
+        p.hero-description Plataforma unificada para múltiplos projetos IoT, com comunicação bidirecional via MQTT e dashboards de dados
+        if user && userProject
+          // Botão para acessar o projeto do usuário
+          a.get-started-button(href=userProject.route) Acessar #{userProject.name}
+        else if user
+          // Fallback se não tiver projeto definido
+          a.get-started-button(href="/send-files") Acessar Meus Projetos
+        else
           // Botão para começar (leva para a página de registro)
           a.get-started-button(href="/users/register") Começar
+    
+    // Indicador de scroll para mostrar que há mais conteúdo abaixo
+    if projects && projects.length > 0
+      .scroll-indicator
+        .scroll-text Veja os projetos disponíveis
+        .scroll-arrow ↓
+
+  // Seção de Projetos Disponíveis - agora fora da seção hero
+  if projects && projects.length > 0
+    section.projects-section
+      .container
+        h2.section-title Projetos Disponíveis
+        .projects-grid
+          each project in projects
+            .project-card
+              .project-header
+                .project-icon
+                  // Ícone do projeto (fallback se não tiver)
+                  if project.icon
+                    img(src=project.icon alt=`Ícone ${project.name}`)
+                  else
+                    .default-icon 📡
+                h3.project-name #{project.name}
+              .project-content
+                p.project-description #{project.description}
+                .project-technologies
+                  each tech in project.technologies
+                    span.tech-tag #{tech}
+                .project-features
+                  each feature in project.features
+                    .feature-item
+                      span.feature-icon ✓
+                      span.feature-text #{feature}
+              .project-footer
+                if user && user.project === project.id
+                  span.current-project Projeto Atual
+                else if user
+                  form.switch-project-form(action="/users/settings" method="post")
+                    input(type="hidden" name="project" value=project.id)
+                    button.btn.btn-outline(type="submit") Trocar para este projeto
+                else
+                  a.btn.btn-primary(href="/users/register") Registrar-se
+
+    // Incluir o card de configurações do usuário
+    if user
+      include ../components/user-settings/settings.pug
