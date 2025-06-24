@@ -1,132 +1,397 @@
-/* Reset e estilos básicos */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-}
+/* Design System para Página de Envio de Arquivos - Apple Glassmorphism */
+@import url('./design-system.css');
 
-/* Estilização do body */
-/* Define a fonte Futura, cor de fundo mint claro e texto em azul escuro */
+/* Body com fundo animado */
 body {
-  font-family: Futura, sans-serif;
-  background-color: #f3f9f8;
-  color: #25256a;
+  background-image: url('/img/glass-background.svg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  min-height: 100vh;
+  margin: 0;
+  font-family: var(--font-family);
+  color: var(--text-primary);
   line-height: 1.6;
 }
 
-/* Container para toda a página */
-/* Limita a largura máxima, centraliza e adiciona espaçamento interno */
+/* Container principal */
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 20px;
+  padding: var(--spacing-lg);
 }
 
-/* Estilos do cabeçalho */
-/* Centraliza o texto e adiciona margem inferior */
+/* Header com glassmorphism */
 .header {
-  text-align: center;
-  margin-bottom: 40px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: var(--spacing-2xl);
+  background: var(--glass-primary);
+  backdrop-filter: var(--blur-strong);
+  -webkit-backdrop-filter: var(--blur-strong);
+  border: 1px solid var(--glass-border);
+  padding: var(--spacing-xl);
+  border-radius: var(--radius-xl);
+  box-shadow: 
+    0 16px 40px var(--glass-shadow-strong),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.header::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, transparent 100%);
+  pointer-events: none;
+}
+
+.header a {
+  text-decoration: none;
+  position: relative;
+  z-index: 2;
 }
 
 .title {
   font-size: 2.5rem;
-  color: #25256a;
+  color: var(--text-primary);
+  margin: 0;
+  font-weight: 700;
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.9) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: 0 4px 12px rgba(255, 255, 255, 0.2);
+  position: relative;
+  z-index: 2;
 }
 
 .subtitle {
   font-size: 1.2rem;
-  color: #399EBB;
-  margin-top: 10px;
+  color: var(--text-secondary);
+  margin-top: var(--spacing-md);
+  text-align: center;
+  font-weight: 500;
 }
 
-/* Estilização do formulário e do card */
-/* Exibe o formulário em coluna e centraliza os itens */
+/* Formulário com glassmorphism */
 .upload-form {
   display: flex;
   flex-direction: column;
   align-items: center;
 }
 
-/* Card de upload */
-/* Fundo claro, bordas arredondadas, sombra e espaçamento interno */
+/* Card de upload com glass design */
 .upload-card {
-  background: #fff;
-  border-radius: 8px;
-  padding: 20px;
+  background: var(--glass-primary);
+  backdrop-filter: var(--blur-medium);
+  -webkit-backdrop-filter: var(--blur-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
   width: 100%;
   max-width: 500px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
+  box-shadow: 
+    0 12px 32px var(--glass-shadow-strong),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  margin-bottom: var(--spacing-lg);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Estilização dos labels dentro do card de upload */
+.upload-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, transparent 100%);
+  pointer-events: none;
+}
+
 .upload-card label {
   display: block;
-  margin-bottom: 10px;
-  font-weight: bold;
+  margin-bottom: var(--spacing-md);
+  font-weight: 600;
   font-size: 1.1rem;
+  color: var(--text-primary);
+  position: relative;
+  z-index: 2;
 }
 
-/* Estilização do input de arquivo */
 .upload-card input[type="file"] {
   width: 100%;
-  border: 1px solid #ccc;
-  padding: 10px;
-  border-radius: 4px;
+  background: var(--glass-secondary);
+  backdrop-filter: var(--blur-light);
+  -webkit-backdrop-filter: var(--blur-light);
+  border: 1px solid var(--glass-border);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-medium);
+  color: var(--text-primary);
+  font-size: 16px;
+  transition: all 0.3s ease;
+  position: relative;
+  z-index: 2;
 }
 
-/* Estilização do botão de envio */
-/* Botão com fundo azul claro, texto claro, bordas arredondadas e transição suave */
+.upload-card input[type="file"]:focus {
+  outline: none;
+  border-color: var(--accent-blue);
+  background: var(--glass-accent);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+}
+
+/* Botão de envio com glassmorphism */
 .send-button button {
-  background-color: #53BADB;
-  color: #f3f9f8;
-  border: none;
-  padding: 15px 30px;
+  background: var(--accent-blue);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: var(--spacing-md) var(--spacing-xl);
   font-size: 1.1rem;
-  border-radius: 5px;
+  font-weight: 600;
+  border-radius: var(--radius-medium);
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 
+    0 8px 24px rgba(0, 122, 255, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
 }
 
-/* Mensagem de Erro */
-.alert-danger {
-  text-align: center;  
-  color: red; 
-  background-color: #f8d7da; 
-  border: #f8d7da;
-  padding: 5px 10px;
-  border-radius: 5px;
-  margin-bottom: 20px; 
+.send-button button::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+  transition: left 0.5s;
+}
+
+.send-button button:hover::before {
+  left: 100%;
 }
 
 .send-button button:hover {
-  background-color: #399EBB;
+  background: var(--accent-blue-hover);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 12px 32px rgba(0, 122, 255, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
 }
 
-/* Estilização do rodapé */
-/* Texto centralizado, margem superior e cor específica */
+/* Mensagem de erro com glassmorphism */
+.alert-danger {
+  text-align: center;
+  color: #ff6b6b;
+  background: rgba(255, 59, 48, 0.15);
+  backdrop-filter: var(--blur-light);
+  -webkit-backdrop-filter: var(--blur-light);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  padding: var(--spacing-md);
+  border-radius: var(--radius-medium);
+  margin-bottom: var(--spacing-lg);
+  font-weight: 500;
+}
+
+/* Rodapé */
 .footer {
   text-align: center;
-  margin-top: 40px;
+  margin-top: var(--spacing-2xl);
   font-size: 0.9rem;
-  color: #399EBB;
+  color: var(--text-secondary);
+  background: var(--glass-secondary);
+  backdrop-filter: var(--blur-light);
+  -webkit-backdrop-filter: var(--blur-light);
+  padding: var(--spacing-lg);
+  border-radius: var(--radius-medium);
+  border: 1px solid var(--glass-border);
 }
 
-/* Ajustes responsivos */
-/* Reduz o tamanho do título e ajusta o card e botão em telas menores */
+/* Navegação no header */
+.nav-right {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-md);
+  position: relative;
+  z-index: 2;
+}
+
+.profile-button {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--glass-secondary);
+  backdrop-filter: var(--blur-light);
+  -webkit-backdrop-filter: var(--blur-light);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-large);
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.profile-button:hover {
+  background: var(--glass-accent);
+  transform: translateY(-1px);
+}
+
+.profile-photo {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--glass-border);
+}
+
+.username {
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Upload Success Page Styles */
+.success-card {
+  text-align: center;
+  padding: var(--spacing-2xl);
+  max-width: 500px;
+  margin: var(--spacing-2xl) auto;
+}
+
+.success-icon {
+  margin-bottom: var(--spacing-lg);
+  color: var(--accent-green);
+  opacity: 0;
+  animation: successIconSlide 1s ease-out 0.3s forwards;
+}
+
+@keyframes successIconSlide {
+  from {
+    opacity: 0;
+    transform: translateY(-20px) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.success-title {
+  color: var(--text-primary);
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: var(--spacing-xl);
+  opacity: 0;
+  animation: successTextSlide 1s ease-out 0.6s forwards;
+}
+
+@keyframes successTextSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.file-preview {
+  margin-bottom: var(--spacing-xl);
+  opacity: 0;
+  animation: successContentSlide 1s ease-out 0.9s forwards;
+}
+
+@keyframes successContentSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.image-preview {
+  border-radius: var(--radius-medium);
+  overflow: hidden;
+  background: var(--glass-secondary);
+  border: 1px solid var(--glass-border);
+  padding: var(--spacing-sm);
+}
+
+.preview-image {
+  max-width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: var(--radius-small);
+}
+
+.file-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-sm);
+  padding: var(--spacing-lg);
+  background: var(--glass-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+}
+
+.file-link svg {
+  color: var(--text-secondary);
+}
+
+.action-buttons {
+  opacity: 0;
+  animation: successButtonSlide 1s ease-out 1.2s forwards;
+}
+
+@keyframes successButtonSlide {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsividade */
 @media (max-width: 768px) {
   .title {
     font-size: 2rem;
   }
   
   .upload-card {
-    padding: 15px;
+    padding: var(--spacing-lg);
     max-width: 90%;
   }
   
   .send-button button {
     width: 100%;
-    padding: 15px;
+    padding: var(--spacing-md);
+  }
+  
+  .header {
+    flex-direction: column;
+    gap: var(--spacing-md);
+    text-align: center;
+  }
+  
+  .nav-right {
+    justify-content: center;
   }
 }
