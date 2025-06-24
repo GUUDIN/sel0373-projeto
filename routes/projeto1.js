@@ -128,7 +128,7 @@ router.post('/register', async (req, res) => {
       });
       
 
-    const allowedBinary = existente.allowed === 'sim' ? 0 : 1;
+    const allowedBinary = existente.allowed === 'sim' ? 1 : 0;
     client.publish('vaquinha', `${existente.identifier}, ${allowedBinary}`);
      // }
 
@@ -156,7 +156,7 @@ router.post('/register', async (req, res) => {
 
 
 
-      const allowedBinary = allowed === 'sim' ? 0 : 1;
+      const allowedBinary = allowed === 'sim' ? 1 : 0;
       client.publish(mqtt_topic_send, `${identifier}, ${allowedBinary}`);
       return res.status(200).json({ message: 'Animal cadastrado com sucesso' });
     }
