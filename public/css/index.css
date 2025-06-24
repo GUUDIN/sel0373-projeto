@@ -508,7 +508,9 @@ body {
 /* ================================================== */
 
 #settingsOverlay {
-  display: none;
+  display: flex;
+  opacity: 0;
+  pointer-events: none;
   position: fixed;
   top: 0;
   left: 0;
@@ -529,18 +531,19 @@ body {
 }
 
 #settingsCard {
-  background: rgba(255, 255, 255, 0.15);
+  background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  border-radius: 28px;
   padding: 2rem;
   width: 90%;
   max-width: 400px;
   position: relative;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1), 0 8px 32px rgba(72, 198, 239, 0.1);
   transform: scale(0.9);
   transition: transform 0.3s ease;
+  text-align: center;
 }
 
 #settingsOverlay.active #settingsCard {
@@ -581,7 +584,7 @@ body {
 
 .greeting {
   text-align: center;
-  color: var(--text-primary);
+  color: #1d1d3e !important;
   margin-bottom: 1.5rem;
   font-size: 1.2rem;
   font-weight: 600;

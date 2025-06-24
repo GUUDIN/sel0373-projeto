@@ -45,7 +45,11 @@ app.use((req, res, next) => {
 });
 
 // Configura o middleware para servir arquivos estáticos da pasta "public"
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
+app.use("/css", express.static(path.join(__dirname, "public/css")));
+app.use("/js", express.static(path.join(__dirname, "public/js")));
+app.use("/img", express.static(path.join(__dirname, "public/img")));
+app.use("/components", express.static(path.join(__dirname, "public/components")));
 
 // Configura o diretório de views e define o motor de templates para Pug
 app.set("views", path.join(__dirname, "views"));

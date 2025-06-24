@@ -5,24 +5,33 @@ document.addEventListener("DOMContentLoaded", () => {
   const closeButton = document.getElementById("closeSettings");
 
   function openSettingsCard() {
-    settingsOverlay?.classList.add("active");
-    document.body.style.overflow = "hidden"; // prevent scroll behind
+    if (settingsOverlay) {
+      settingsOverlay.classList.add("active");
+      document.body.style.overflow = "hidden";
+    }
   }
 
   function closeSettingsCard() {
-    settingsOverlay?.classList.remove("active");
-    document.body.style.overflow = ""; // restore scroll
+    if (settingsOverlay) {
+      settingsOverlay.classList.remove("active");
+      document.body.style.overflow = "";
+    }
   }
 
   if (profileButton) {
     profileButton.addEventListener("click", (e) => {
       e.preventDefault();
+      e.stopPropagation();
       openSettingsCard();
     });
   }
 
   if (closeButton) {
-    closeButton.addEventListener("click", closeSettingsCard);
+    closeButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeSettingsCard();
+    });
   }
 
   // Close when clicking outside the card

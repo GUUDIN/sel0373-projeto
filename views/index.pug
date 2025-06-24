@@ -5,8 +5,6 @@ html(lang="pt-BR")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     title Projetos IOT
     include ./partials/styles.pug
-    script(src="/components/user-settings/settings.js")
-    script(src="/js/index.js")
   body
     // Barra de navegação superior
     header.navbar
@@ -89,3 +87,6 @@ html(lang="pt-BR")
     // Incluir o card de configurações do usuário
     if user
       include ../components/user-settings/settings.pug
+
+    script(src="/components/user-settings/settings.js")
+    script(src="/js/index.js")

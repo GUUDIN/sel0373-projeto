@@ -9,6 +9,15 @@ const saltRounds = 10; // Define a quantidade de rounds para gerar o salt
 // Importa o modelo User
 const User = require("../models/user");
 
+// Middleware to check if user is authenticated
+const isAuthenticated = (req, res, next) => {
+  if (req.session && req.session.user) {
+    return next();
+  }
+  // Redirect to login page if not authenticated
+  res.redirect("/users");
+};
+
 // Rota GET para exibir a página de registro de novo usuário
 router.get("/register", (req, res) => {
   res.render("register", { error: null });
@@ -85,6 +94,29 @@ router.get("/logout", (req, res) => {
     }
     res.redirect("/users");
   });
+});
+
+// Rota POST para atualizar as configurações do usuário (troca de projeto)
+router.post("/settings", isAuthenticated, async (req, res) => {
+  const { project } = req.body;
+  const { username } = req.session.user;
+
+  try {
+    // Encontra e atualiza o usuário no banco de dados
+    await User.findOneAndUpdate({ username }, { project });
+
+    // Redireciona para a página inicial ou para o projeto selecionado
+    if (project == 1) {
+      res.redirect("/projeto1");
+    } else if (project == 2) {
+      res.redirect("/projeto2");
+    } else {
+      res.redirect("/"); // Fallback para a página inicial
+    }
+  } catch (err) {
+    console.error("Erro ao atualizar as configurações do usuário:", err);
+    res.status(500).send("Erro ao atualizar as configurações.");
+  }
 });
 
 module.exports = router;
