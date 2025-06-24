@@ -155,6 +155,7 @@ router.post('/register', async (req, res) => {
       });
 
 
+      
       const allowedBinary = allowed === 'sim' ? 0 : 1;
       client.publish(mqtt_topic_send, `${identifier}, ${allowedBinary}`);
       return res.status(200).json({ message: 'Animal cadastrado com sucesso' });

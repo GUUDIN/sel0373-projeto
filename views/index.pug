@@ -46,7 +46,7 @@ html(lang="pt-BR")
           a.get-started-button(href=userProject.route) Acessar #{userProject.name}
         else if user
           // Fallback se não tiver projeto definido
-          a.get-started-button(href=userProject.route) Acessar Meus Projetos
+          a.get-started-button(href="/") Acessar Meus Projetos
         else
           // Botão para começar (leva para a página de registro)
           a.get-started-button(href="/users/register") Começar
