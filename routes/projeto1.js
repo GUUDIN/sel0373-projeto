@@ -149,10 +149,11 @@ router.post('/register', async (req, res) => {
       io.emit('novoRegistro', {
         identifier,
         allowed,
-        peso: novoRegistro.peso,
+        peso: typeof novoRegistro.peso === 'object' && novoRegistro.peso !== null ? novoRegistro.peso.peso : novoRegistro.peso,
         registradoPor: novoRegistro.registradoPor,
         data: novoRegistro.data
       });
+
 
       const allowedBinary = allowed === 'sim' ? 0 : 1;
       client.publish(mqtt_topic_send, `${identifier}, ${allowedBinary}`);
