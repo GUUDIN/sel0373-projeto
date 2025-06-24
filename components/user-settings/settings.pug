@@ -16,7 +16,7 @@
               ) #{project.name}
           else
             option(value="1", selected=(user && user.project == '1')) Cadastro de Animais
-            option(value="2", selected=(user && user.project == '2')) Envio de Arquivos
+            option(value="2", selected=(user && user.project == '2')) Monitoramento Ambiental
         button(type="submit" class="save-btn") Salvar
       form(action="/users/logout" method="POST")
         button(type="submit" class="logout-btn") Sair

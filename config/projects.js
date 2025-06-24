@@ -27,7 +27,7 @@ const projectConfig = {
     route: '/projeto2',
     icon: '/img/icons/files.svg',
     color: '#2196F3',
-    technologies: ['File Upload', 'Storage', 'Processing'],
+    technologies: ['WebSockets', 'Chart.js', 'Real-time'],
     features: [
       'Monitoramento em tempo real',
       'Histórico de dados',
@@ -98,7 +98,7 @@ function getProjectsByStatus(status) {
 // Função para redirecionar baseado no projeto do usuário
 function getProjectRedirectUrl(projectId) {
   const project = getProjectById(projectId);
-  return project ? project.route : '/send-files'; // fallback para projeto 2
+  return project ? project.route : '/'; // fallback para projeto 2
 }
 
 module.exports = {
