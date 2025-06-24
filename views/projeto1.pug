@@ -1,192 +1,90 @@
+// Uses bootstrap for styling, must change it to use custom css
+
 doctype html
 html(lang="pt-BR")
   head
     title Cadastro de Animal
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet" href="/css/partials/modals.css")
-    link(rel="stylesheet" href="/css/partials/forms.css")
-    link(rel="stylesheet" href="/css/partials/popovers.css")
-    link(rel="stylesheet" href="/css/partials/buttons.css")
-    link(rel="stylesheet" href="/components/user-settings/settings.css")
-    link(rel="stylesheet" href="/css/index.css")
+    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css")
+    link(rel="stylesheet" href="/custom.css")
+    include ./partials/styles.pug
     script(src="/components/user-settings/settings.js")
-    script(src="/js/index.js")
   body
-    header.navbar
-      a.logo-text(href="/") Projetos IOT
-      nav.nav-right
-        if user
-          button.profile-button(type="button")
-            img.profile-photo(
-              src=user.avatarUrl || '/img/default-avatar.png'
-              alt=`${user.username}`
-            )
-            span.username #{user.username}
-        else
-          a.login-button(href="/users") Login
+    // Barra de navegação
+    header.navbar.bg-dark.p-3.mb-4
+      .container.d-flex.justify-content-between.align-items-center
+        a.logo-text(href="/")
+          span.text-white Projetos IOT
+        nav.nav-right
+          if user
+            button.profile-button(type="button")
+              img.profile-photo(
+                src=user.avatarUrl || '/img/default-avatar.png'
+                alt=`${user.username}`
+              )
+              span.username #{user.username}
 
-    section.hero
-      .hero-content
-        h1.hero-title Cadastro de Animal
-        div#mensagemUsuario
-        form#formCadastro
-          .form-group
-            label(for="identifier") Identificador do animal
-            input#identifier(type="text" name="identifier" placeholder="Ex: A123" required)
-          .form-group
-            label(for="allowed") Permitido
-            select#allowed(name="allowed" required)
-              option(value="" disabled selected) Selecione uma opção
-              option(value="sim") Sim
-              option(value="nao") Não
-          button.btn-outline(type="submit") Cadastrar
-          p
-            a(href="/") Voltar à página inicial
-          p
-            a(href="/projeto1/registered" target="_blank") Histórico completo dos animais
+    // Container do conteúdo dividido em 2 colunas
+    .container
+      .row
+        // Coluna do formulário
+        .col-md-6.d-flex.flex-column.align-items-center.justify-content-start
+          .card.shadow-lg.w-100.mb-3(style="max-width: 400px; margin-top: 0px;")
+            .card-body
+              h4.card-title.text-center Cadastro de Animal
 
-    section.projects-section
-      h2.section-title Animais Registrados
-      .projects-grid#lista-registros
-        if registros.length
-          each registro in registros
-            .project-card
-              .project-content
+              if error
+                .alert.alert-danger.text-center.mb-3= error
+              if success
+                .alert.alert-success.text-center Animal registrado com sucesso!
+
+              form(action="/projeto1/register" method="POST")
+                .mb-3
+                  label.form-label(for="identifier") Identificador do animal
+                  input#identifier.form-control(type="text" name="identifier" placeholder="Ex: A123" required)
+                .mb-3
+                  label.form-label(for="allowed") Permitido
+                  select#allowed.form-select(name="allowed" required)
+                    option(value="" disabled selected) Selecione uma opção
+                    option(value="sim") Sim
+                    option(value="nao") Não
+                button.btn.btn-success.w-100(type="submit") Cadastrar
+                p.text-center.mt-3
+                  a(href="/") Voltar à página inicial
+
+          // Botão fora da card, mas ainda dentro da coluna
+          a.btn.btn-outline-secondary.mt-2(href="/projeto1/registered" target="_blank") Histórico completo dos animais
+
+        // Coluna da lista de animais com rolagem
+        .col-md-6(style="max-height: 80vh; overflow-y: auto;")
+          h4.mb-3.text-center Animais Registrados
+          if registros.length
+            each registro in registros
+              .border.p-3.mb-2.rounded.bg-light
                 strong Identificador: 
                 | #{registro.identifier}
                 br
                 strong Permitido: 
-                span(id=`allowed-${registro.identifier}`) #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
+                | #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
                 br
                 strong Peso (kg): 
-                span(id=`peso-${registro.identifier}`) #{(registro.peso && registro.peso.peso) ? registro.peso.peso : registro.peso || 'Não recebido'}
-                br
-                small.text-muted(id=`data-${registro.identifier}`)
-                  | Atualizado em: #{registro.dataPesoAtualizado ? new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR") : 'Sem registro'}
+                | #{registro.peso}
+                if registro.dataPesoAtualizado
+                  br
+                  small.text-muted Peso atualizado em: #{new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR")}
                 if registro.registradoPor
                   br
-                  small.text-muted Registrado por: #{registro.registradoPor}
+                  small.text-muted Registrado por #{registro.registradoPor}
                 if registro.data
                   br
-                  small.text-muted Registrado em: #{new Date(registro.data).toLocaleString("pt-BR")}
-              .project-footer
-                button.btn-outline.btn-sm(type="button" data-id=registro.identifier) Excluir
-        else
-          p.text-muted#mensagem-vazia Nenhum animal registrado ainda.
+                  small.text-muted Data: #{new Date(registro.data).toLocaleString("pt-BR")}
+                br
+                form(action=`/projeto1/delete/${registro.identifier}` method="POST" style="display: inline;")
+                  button.btn.btn-sm.btn-danger.mt-2(type="submit") Excluir
+          else
+            p.text-muted Nenhum animal registrado ainda.
 
+    // Incluir o card de configurações do usuário
     if user
       include ../components/user-settings/settings.pug
-
-    script(src="/socket.io/socket.io.js")
-    script.
-      const socket = io();
-      const form = document.getElementById('formCadastro');
-
-      form.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        const identifier = document.getElementById('identifier').value.trim();
-        const allowed = document.getElementById('allowed').value;
-        const msgEl = document.getElementById('mensagemUsuario');
-
-        if (!identifier || !allowed) {
-          msgEl.innerHTML = `<div class="alert alert-danger text-center">Preencha todos os campos</div>`;
-          setTimeout(() => msgEl.innerHTML = '', 4000);
-          return;
-        }
-
-        try {
-          const response = await fetch('/projeto1/register', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ identifier, allowed })
-          });
-
-          if (response.ok) {
-            form.reset();
-            msgEl.innerHTML = `<div class="alert alert-success text-center">Animal registrado com sucesso</div>`;
-          } else {
-            const result = await response.json();
-            msgEl.innerHTML = `<div class="alert alert-danger text-center">${result?.error || 'Erro ao registrar animal'}</div>`;
-          }
-          setTimeout(() => msgEl.innerHTML = '', 4000);
-        } catch (err) {
-          msgEl.innerHTML = `<div class="alert alert-danger text-center">Erro inesperado</div>`;
-          setTimeout(() => msgEl.innerHTML = '', 4000);
-        }
-      });
-
-      socket.on('novoRegistro', function(novoRegistro) {
-        const lista = document.getElementById('lista-registros');
-        const vazioMsg = document.getElementById('mensagem-vazia');
-        if (vazioMsg) vazioMsg.remove();
-
-        const novoHTML = `
-          <div class="project-card">
-            <div class="project-content">
-              <strong>Identificador:</strong> ${novoRegistro.identifier}<br>
-              <strong>Permitido:</strong> <span id="allowed-${novoRegistro.identifier}">${novoRegistro.allowed === 'sim' ? 'Sim' : 'Não'}</span><br>
-              <strong>Peso (kg):</strong> <span id="peso-${novoRegistro.identifier}">${novoRegistro.peso}</span><br>
-              <small class="text-muted" id="data-${novoRegistro.identifier}">
-                Atualizado em: ${new Date().toLocaleString("pt-BR")}
-              </small><br>
-              <small class="text-muted">Registrado por: ${novoRegistro.registradoPor}</small><br>
-              <small class="text-muted">Registrado em: ${new Date(novoRegistro.data).toLocaleString("pt-BR")}</small><br>
-            </div>
-            <div class="project-footer">
-              <button class="btn-outline btn-sm" type="button" data-id="${novoRegistro.identifier}">Excluir</button>
-            </div>
-          </div>
-        `;
-        lista.insertAdjacentHTML('afterbegin', novoHTML);
-      });
-
-      socket.on('pesoAtualizado', function(registroAtualizado) {
-        const pesoSpan = document.getElementById(`peso-${registroAtualizado.identifier}`);
-        const dataSpan = document.getElementById(`data-${registroAtualizado.identifier}`);
-        const valorPeso = typeof registroAtualizado.peso === 'object' ? registroAtualizado.peso.peso : registroAtualizado.peso;
-        const dataAtualizacao = new Date().toISOString();
-        if (pesoSpan) pesoSpan.textContent = valorPeso;
-        if (dataSpan) {
-          const dataFormatada = new Date(dataAtualizacao).toLocaleString("pt-BR");
-          dataSpan.textContent = `Atualizado em: ${dataFormatada}`;
-        }
-      });
-
-      socket.on('registroAtualizado', function(registro) {
-        const pesoEl = document.getElementById(`peso-${registro.identifier}`);
-        const allowedEl = document.getElementById(`allowed-${registro.identifier}`);
-        const dataEl = document.getElementById(`data-${registro.identifier}`);
-        if (pesoEl) pesoEl.textContent = registro.peso;
-        if (allowedEl) allowedEl.textContent = registro.allowed === 'sim' ? 'Sim' : 'Não';
-        if (dataEl) dataEl.textContent = `Atualizado em: ${new Date().toLocaleString("pt-BR")}`;
-      });
-
-      socket.on('registroRemovido', function(dado) {
-        const elemento = document.querySelector(`button[data-id="${dado.identifier}"]`);
-        if (elemento) {
-          const container = elemento.closest('.project-card');
-          if (container) container.remove();
-        }
-      });
-
-      document.addEventListener('click', async (e) => {
-        if (e.target.matches('button[data-id]')) {
-          const identifier = e.target.getAttribute('data-id');
-          if (!confirm(`Deseja excluir ${identifier}?`)) return;
-          try {
-            const res = await fetch(`/projeto1/delete/${identifier}`, { method: 'POST' });
-            if (res.ok) {
-              const container = e.target.closest('.project-card');
-              if (container) container.remove();
-            } else {
-              const result = await res.json();
-              alert(result?.error || 'Erro ao excluir');
-            }
-          } catch (err) {
-            alert('Erro inesperado ao excluir');
-          }
-        }
-      });
-      socket.on('connect', () => console.log('Socket.IO conectado'));
-      socket.on('disconnect', () => console.log('Socket.IO desconectado'));

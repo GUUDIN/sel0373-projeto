@@ -24,6 +24,7 @@ router.get("/register", (req, res) => {
 });
 
 
+
 // Rota GET para exibir a página de login
 router.get("/", (req, res) => {
   // Renderiza a view "login" e passa um erro nulo inicialmente, junto com projetos ativos
