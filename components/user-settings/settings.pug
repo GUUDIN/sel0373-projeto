@@ -3,7 +3,7 @@
   #settingsCard.card-container
     button#closeSettings(type="button" aria-label="Fechar") ×
     .card-inner
-      img.profile-avatar(src=(user && user.avatarUrl) || "/img/default-avatar.png", alt="Avatar do usuário")
+      img.profile-avatar(src=(user && user.avatarUrl) || "/img/default-avatar.svg", alt="Avatar do usuário")
       h2.greeting Olá, #{user && user.username ? user.username : 'User'}!
       form(action="/users/settings" method="POST")
         select.project-select(name="project" required)
