@@ -99,35 +99,33 @@ router.post("/register", async (req, res) => {
 });
 
 // Rota POST para atualizar as configurações do usuário
-router.post("/settings", (req, res) => {
+router.post("/settings", async (req, res) => {
   const { project } = req.body;
-  
-  if (!req.session.user) {
-    return res.redirect("/users");
-  }
-  
-  // Verifica se o projeto existe
+
+  if (!req.session.user) return res.redirect("/users");
+
   const projectData = getProjectById(project);
-  if (!projectData) {
-    console.log("Projeto inválido:", project);
+  if (!projectData) return res.redirect("/");
+
+  try {
+    await User.updateOne(
+      { username: req.session.user.username },
+      { $set: { project } }
+    );
+
+    // Atualiza também a sessão para refletir a mudança
+    req.session.project = project;
+
+    const redirectUrl = getProjectRedirectUrl(project);
+    return res.redirect(redirectUrl);
+  } catch (err) {
+    console.error("Erro ao atualizar projeto:", err);
     return res.redirect("/");
   }
-  
-  // Encontra e atualiza o usuário
-  const userIndex = users.findIndex(u => u.username === req.session.user.username);
-  if (userIndex !== -1) {
-    users[userIndex].project = project;
-    req.session.user.project = project;
-    console.log("Projeto atualizado para:", projectData.name);
-  }
-  
-  // Usa a função helper para obter a URL de redirecionamento
-  const redirectUrl = getProjectRedirectUrl(project);
-  return res.redirect(redirectUrl);
 });
 
-// Rota GET para logout: destrói a sessão e redireciona para login
-router.get("/logout", (req, res) => {
+
+router.post("/logout", (req, res) => {
   req.session.destroy(err => {
     if (err) {
       console.error("Erro ao encerrar sessão:", err);
@@ -135,5 +133,6 @@ router.get("/logout", (req, res) => {
     res.redirect("/users");
   });
 });
+
 
 module.exports = router;
