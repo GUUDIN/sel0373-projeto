@@ -94,6 +94,9 @@ router.get('/', async (req, res) => {
 // Rota POST para registrar um animal
 router.post('/register', async (req, res) => {
  const { identifier, allowed } = req.body;
+ 
+ // Converter checkbox para formato adequado
+ const allowedValue = allowed === 'sim' ? 'sim' : 'nao';
 
  if (!req.session.user) {
    return res.status(401).send('Usuário não autenticado');
@@ -105,7 +108,7 @@ router.post('/register', async (req, res) => {
  
   const novoRegistro = {
     identifier,
-    allowed,
+    allowed: allowedValue,
     peso: registroPeso?.peso || "Não recebido",
     dataPesoAtualizado: registroPeso?.dataAtualizacao || "Não atualizado",
     registradoPor: req.session.user.username,
@@ -113,7 +116,7 @@ router.post('/register', async (req, res) => {
   };
   
   if (existente) {
-    existente.allowed = allowed;
+    existente.allowed = allowedValue;
     existente.peso = peso;
     existente.registradoPor = req.session.user.username;
     existente.data = new Date().toISOString();

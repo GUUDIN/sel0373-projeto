@@ -50,6 +50,81 @@ body {
   padding: 0 var(--spacing-lg);
 }
 
+/* Page header */
+.page-header {
+  text-align: center;
+  margin-bottom: var(--spacing-2xl);
+}
+
+.page-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-md);
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.page-subtitle {
+  font-size: 1.1rem;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+/* Cards Grid - layout original */
+.cards-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--spacing-xl);
+  margin-bottom: var(--spacing-xl);
+}
+
+.form-card {
+  grid-column: 1 / 2;
+}
+
+.records-card {
+  grid-column: 2 / 3;
+}
+
+/* Cards Base - estilo original */
+.card {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(20px);
+  border-radius: 20px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.card-header {
+  padding: 1.5rem 2rem 1rem;
+  text-align: center;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.card-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: block;
+}
+
+.card-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  margin: 0;
+}
+
+.card-content {
+  padding: 2rem;
+}
+
 .glass-logo {
   font-size: 1.5rem;
   font-weight: 700;
@@ -112,16 +187,9 @@ body {
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
   padding: 0 var(--spacing-lg);
-}
-
-.content-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--spacing-2xl);
-  align-items: start;
 }
 
 /* Form section */
@@ -154,12 +222,15 @@ body {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-sm);
+  margin-bottom: var(--spacing-lg);
 }
 
 .form-label {
   font-weight: 600;
   color: var(--text-primary);
-  font-size: 0.9rem;
+  font-size: 1rem;
+  text-align: center;
+  margin-bottom: var(--spacing-sm);
 }
 
 .glass-input,
@@ -174,10 +245,12 @@ body {
   font-size: 16px;
   transition: all 0.2s ease;
   width: 100%;
+  text-align: center;
 }
 
 .glass-input::placeholder {
   color: var(--text-muted);
+  text-align: center;
 }
 
 .glass-input:focus,
@@ -235,11 +308,15 @@ body {
   text-decoration: underline;
 }
 
-/* Button improvements for projeto1 */
-.form-card .glass-button-primary {
+/* Botão de formulário - estilo original com radius medium */
+.glass-form .glass-button-primary {
   width: 100%;
   justify-content: center;
-  margin-top: var(--spacing-md);
+  margin-top: 0;
+  font-size: 1rem;
+  font-weight: 600;
+  padding: var(--spacing-md) var(--spacing-xl);
+  border-radius: var(--radius-medium);
 }
 
 /* History button */
@@ -253,6 +330,20 @@ body {
 
 .history-button .icon {
   margin-right: var(--spacing-xs);
+}
+
+/* History section */
+.history-section {
+  text-align: center;
+  margin-top: var(--spacing-xl);
+}
+
+.history-button {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+  font-size: 1rem;
+  font-weight: 500;
 }
 
 /* Delete button in records */
@@ -384,55 +475,276 @@ body {
 /* Empty state */
 .empty-state {
   text-align: center;
-  padding: var(--spacing-2xl);
-  color: var(--text-muted);
+  padding: 2rem 1rem;
+  color: rgba(255, 255, 255, 0.6);
 }
 
-.empty-text {
+.empty-icon {
+  font-size: 3rem;
+  margin-bottom: 1rem;
+  display: block;
+}
+
+.empty-title {
   font-size: 1.1rem;
-  margin: 0;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: rgba(255, 255, 255, 0.8);
 }
 
-/* Responsive design */
-@media (max-width: 768px) {
-  .content-grid {
+.empty-subtitle {
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, 0.6);
+}
+
+/* Toggle iOS Style */
+.toggle-container {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  justify-content: center;
+  margin: 1rem 0;
+}
+
+.toggle-input {
+  display: none;
+}
+
+.toggle-label {
+  position: relative;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  gap: 1rem;
+}
+
+.toggle-slider {
+  width: 60px;
+  height: 34px;
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 34px;
+  position: relative;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.toggle-slider::before {
+  content: '';
+  position: absolute;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: white;
+  top: 2px;
+  left: 2px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-input:checked + .toggle-label .toggle-slider {
+  background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
+}
+
+.toggle-input:checked + .toggle-label .toggle-slider::before {
+  transform: translateX(26px);
+}
+
+.toggle-text-off,
+.toggle-text-on {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.8);
+  transition: color 0.3s ease;
+}
+
+.toggle-input:checked + .toggle-label .toggle-text-on {
+  color: #48c6ef;
+}
+
+.toggle-input:not(:checked) + .toggle-label .toggle-text-off {
+  color: #ff6b6b;
+}
+
+/* Form Styles */
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.9);
+  margin-bottom: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: #48c6ef;
+  box-shadow: 0 0 0 3px rgba(72, 198, 239, 0.2);
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.form-input::placeholder {
+  color: rgba(255, 255, 255, 0.5);
+}
+
+.form-actions {
+  margin-top: var(--spacing-xl);
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+
+/* Animals List */
+.animals-section {
+  margin-top: 1rem;
+}
+
+.section-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  margin-bottom: var(--spacing-lg);
+  text-align: center;
+}
+
+.animals-list {
+  max-height: 400px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+}
+
+.animal-item {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.animal-item:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: translateX(5px);
+}
+
+.animal-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+.animal-id {
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.95);
+  font-size: 1.1rem;
+}
+
+.animal-status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.status-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+}
+
+.status-allowed .status-indicator {
+  background: #4ade80;
+  box-shadow: 0 0 8px rgba(74, 222, 128, 0.5);
+}
+
+.status-denied .status-indicator {
+  background: #f87171;
+  box-shadow: 0 0 8px rgba(248, 113, 113, 0.5);
+}
+
+.status-text {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.status-allowed .status-text {
+  color: #4ade80;
+}
+
+.status-denied .status-text {
+  color: #f87171;
+}
+
+.animal-details {
+  margin-top: 0.5rem;
+}
+
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.25rem;
+  font-size: 0.85rem;
+}
+
+.detail-label {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.detail-value {
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+.timestamp {
+  margin-top: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  justify-content: center;
+}
+
+/* Responsive design - layout original */
+@media (max-width: 1024px) {
+  .cards-grid {
     grid-template-columns: 1fr;
     gap: var(--spacing-lg);
   }
   
-  .records-section {
-    max-height: 400px;
+  .form-card {
+    grid-column: 1 / 2;
   }
   
   .records-card {
-    max-height: 400px;
+    grid-column: 1 / 2;
   }
-  
+}
+
+@media (max-width: 768px) {
   .glass-navbar .container {
     flex-direction: column;
     gap: var(--spacing-md);
     text-align: center;
   }
   
-  .nav-right {
+  .page-title {
+    font-size: 2rem;
+  }
+  
+  .toggle-container {
     justify-content: center;
-  }
-  
-  .form-card {
-    padding: var(--spacing-lg);
-  }
-  
-  .records-card {
-    padding: var(--spacing-lg);
-  }
-  
-  .record-field {
-    flex-direction: column;
-    gap: var(--spacing-xs);
-  }
-  
-  .field-label {
-    min-width: auto;
   }
 }
 
@@ -445,8 +757,16 @@ body {
     padding: var(--spacing-md) 0;
   }
   
-  .content-grid {
+  .cards-grid {
     gap: var(--spacing-md);
+  }
+  
+  .page-title {
+    font-size: 1.8rem;
+  }
+  
+  .card-content {
+    padding: var(--spacing-md);
   }
 }
 

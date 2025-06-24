@@ -10,7 +10,6 @@
         h2.greeting Olá, Usuário!
       form(action="/users/settings" method="POST")
         select.project-select(name="project" required)
-          option(value="" disabled selected) Selecione um projeto
           if user && user.project == 1
             option(value="1" selected) Projeto 1 - Monitoramento Animal
             option(value="2") Projeto 2 - Monitoramento Climático
