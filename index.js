@@ -14,6 +14,17 @@ const bodyParser = require("body-parser");
 const session = require("express-session");
 const MongoStore = require("connect-mongo");
 
+const conn = require("./db/conn");
+conn();
+
+const http = require("http");
+const server = http.createServer(app);
+const { Server } = require("socket.io");
+const io = new Server(server); // cria o socket
+
+// Passa o socket para todas as rotas (como middleware ou em app.locals)
+app.set("io", io);
+
 
 // Configura o body-parser para interpretar dados URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -23,7 +34,7 @@ const sessionOptions = {
   secret: process.env.SESSION_SECRET,
   resave: false,
   saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 } // 1 hour
+  cookie: { maxAge: 1000 * 60 * 60 } 
 };
 
 app.use(session(sessionOptions));
@@ -48,6 +59,8 @@ app.get("/", (req, res) => {
   res.render("index", { title: "Home" });
 });
 
+
+
 // Middleware para processar dados enviados via URL-encoded e JSON
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -61,11 +74,10 @@ const sendFiles = require("./routes/send-files");
 app.use("/send-files", sendFiles);
 
 // Importa e utiliza o roteador de envio de arquivos
-const projeto1 = require("./routes/projeto1");
+const projeto1 = require("./routes/projeto1")(io);
 app.use("/projeto1", projeto1);
 
-// Inicia o servidor na porta 6005
-app.listen(PORT, '0.0.0.0', () => {
+// Inicia o servidor
+server.listen(PORT, '0.0.0.0', () => {
   console.log("Server on port 6005");
 });
-
