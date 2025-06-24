@@ -42,7 +42,10 @@ router.post("/login", async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
 
     if (match) {
-      req.session.user = { username: user.username };
+      req.session.user = { 
+        username: user.username,
+        project: user.project 
+      };
 
       if (user.project == 1) {
         return res.redirect("/projeto1");
@@ -103,7 +106,20 @@ router.post("/settings", isAuthenticated, async (req, res) => {
 
   try {
     // Encontra e atualiza o usuário no banco de dados
-    await User.findOneAndUpdate({ username }, { project });
+    const updatedUser = await User.findOneAndUpdate(
+      { username }, 
+      { project }, 
+      { new: true } // Retorna o documento atualizado
+    );
+
+    // Se o usuário não foi encontrado no banco (usuário de teste), apenas atualiza a sessão
+    if (!updatedUser) {
+      console.log(`Usuário ${username} não encontrado no banco, atualizando apenas a sessão`);
+      req.session.user.project = parseInt(project);
+    } else {
+      // Atualiza a sessão com as novas informações do banco
+      req.session.user.project = updatedUser.project;
+    }
 
     // Redireciona para a página inicial ou para o projeto selecionado
     if (project == 1) {

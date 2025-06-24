@@ -10,6 +10,6 @@
 
       form(action="/users/settings" method="POST")
         select.project-select(name="project" required)
-          option(value="" disabled selected) Selecione um projeto
-          option(value="1", selected=(user.project == '1')) Projeto 1
-          option(value="2", selected=(user.project == '2')) Projeto 2
+          option(value="" disabled, selected=(!user.project)) Selecione um projeto
+          option(value="1", selected=(user.project == 1 || user.project == '1')) Projeto 1
+          option(value="2", selected=(user.project == 2 || user.project == '2')) Projeto 2

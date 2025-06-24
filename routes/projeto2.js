@@ -109,7 +109,7 @@ module.exports = function(io) {
   // Middleware para simular usuário se necessário
   router.use((req, res, next) => {
     if (!req.session.user) {
-      req.session.user = { id: 1, username: 'testUser' };
+      req.session.user = { id: 1, username: 'testUser', project: 2 };
     }
     next();
   });

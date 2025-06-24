@@ -6,10 +6,10 @@
 
 .form-label {
   display: block;
-  font-weight: 500;
-  color: #1d1d3e;
+  font-weight: 700;
+  color: white;
   margin-bottom: 0.5rem;
-  font-size: 0.9rem;
+  font-size: 1.2rem;
 }
 
 .form-input,
