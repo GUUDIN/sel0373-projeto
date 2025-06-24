@@ -89,6 +89,7 @@ function getAllProjects() {
   return Object.values(projectConfig);
 }
 
+
 // Função helper para obter projetos por status
 function getProjectsByStatus(status) {
   return Object.values(projectConfig).filter(project => project.status === status);
