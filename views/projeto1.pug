@@ -4,78 +4,69 @@ html(lang="pt-BR")
     title Cadastro de Animal
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet" href="/custom.css")
-    include ./partials/styles.pug
-    link(rel="stylesheet", href="/css/partials/modals.css")
-    link(rel="stylesheet", href="/css/partials/forms.css")
-    link(rel="stylesheet", href="/css/partials/popovers.css")
-    link(rel="stylesheet", href="/css/partials/buttons.css")
-    link(rel="stylesheet", href="/components/user-settings/settings.css")
-    link(rel="stylesheet", href="/css/index.css")
-
+    link(rel="stylesheet" href="/css/partials/modals.css")
+    link(rel="stylesheet" href="/css/partials/forms.css")
+    link(rel="stylesheet" href="/css/partials/popovers.css")
+    link(rel="stylesheet" href="/css/partials/buttons.css")
+    link(rel="stylesheet" href="/components/user-settings/settings.css")
+    link(rel="stylesheet" href="/css/index.css")
     script(src="/components/user-settings/settings.js")
+    script(src="/js/index.js")
   body
-    header.navbar-custom
-      .container-header
-        a.logo-text(href="/")
-          span.logo-title Projetos IOT
-        nav.nav-right
-          if user
-            button.profile-button(type="button")
-              img.profile-photo(
-                src=user.avatarUrl || '/img/default-avatar.png'
-                alt=`${user.username}`
-              )
-              span.username #{user.username}
+    header.navbar
+      a.logo-text(href="/") Projetos IOT
+      nav.nav-right
+        if user
+          button.profile-button(type="button")
+            img.profile-photo(
+              src=user.avatarUrl || '/img/default-avatar.png'
+              alt=`${user.username}`
+            )
+            span.username #{user.username}
+        else
+          a.login-button(href="/users") Login
 
-    .container-main
-      .row
-        // COLUNA ESQUERDA – FORMULÁRIO
-        .column-left
-          .card-form
-            .card-body
-              h4.card-title Cadastro de Animal
+    section.hero
+      .hero-content
+        h1.hero-title Cadastro de Animal
+        form#formCadastro(action="/projeto1" method="POST")
+          .form-group
+            label(for="identifier") Identificador do animal
+            input#identifier(type="text" name="identifier" placeholder="Ex: A123" required)
+          .form-group
+            label(for="allowed") Permitido
+            select#allowed(name="allowed" required)
+              option(value="" disabled selected) Selecione uma opção
+              option(value="sim") Sim
+              option(value="nao") Não
+          button.btn-outline(type="submit") Cadastrar
+          p
+            a(href="/") Voltar à página inicial
+          p
+            a(href="/projeto1/registered" target="_blank") Histórico completo dos animais
 
-              div#mensagemUsuario
-
-              form#formCadastro
-                .form-group
-                  label(for="identifier") Identificador do animal
-                  input#identifier(type="text" name="identifier" placeholder="Ex: A123" required)
-                .form-group
-                  label(for="allowed") Permitido
-                  select#allowed(name="allowed" required)
-                    option(value="" disabled selected) Selecione uma opção
-                    option(value="sim") Sim
-                    option(value="nao") Não
-                button.btn-success(type="submit") Cadastrar
-                p.link-center
-                  a(href="/") Voltar à página inicial
-
-          a.btn-secondary(href="/projeto1/registered" target="_blank") Histórico completo dos animais
-
-        // COLUNA DIREITA – LISTA DE REGISTROS
-        .column-right
-          h4.section-title Animais Registrados
-          #lista-registros
-            if registros.length
-              each registro in registros
-                - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : registro.peso || 'Não recebido'
-                .registro-card
-                  strong Identificador: 
-                  | #{registro.identifier}
-                  br
-                  strong Permitido: 
-                  span(id=`allowed-${registro.identifier}`) #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
-                  br
-                  strong Peso (kg): 
-                  span(id=`peso-${registro.identifier}`) #{valorPeso}
-                  br
-                  small.data-info Data: #{new Date(registro.data).toLocaleString("pt-BR")}
+    section.projects-section
+      h2.section-title Animais Registrados
+      .projects-grid
+        if registros.length
+          each registro in registros
+            .project-card
+              .project-content
+                strong Identificador: 
+                | #{registro.identifier}
+                br
+                strong Permitido: 
+                span #{registro.allowed === 'sim' ? 'Sim' : 'Não'}
+                br
+                strong Peso (kg): 
+                span #{(registro.peso && registro.peso.peso) ? registro.peso.peso : registro.peso || 'Não recebido'}
+                br
+                small.text-muted Data: #{new Date(registro.data).toLocaleString("pt-BR")}
+              .project-footer
                 form(action=`/projeto1/delete/${registro.identifier}` method="POST")
-                  button.btn-danger(type="submit") Excluir
-            else
-              p.text-muted Nenhum animal registrado ainda.
+                  button.btn-outline(type="submit") Excluir
+        else
+          p.text-muted Nenhum animal registrado ainda.
 
     if user
       include ../components/user-settings/settings.pug
