@@ -132,13 +132,15 @@ body {
 .glass-button-primary {
   background: #007bff;
   border: none;
-  padding: 0.5rem 1rem;
-  border-radius: 8px;
+  padding: 0.8rem 2rem;  /* aumentamos largura e altura */
+  border-radius: 10px;
   font-weight: bold;
   color: white;
-  font-size: 0.95rem;
+  font-size: 1.05rem;
   cursor: pointer;
+  align-self: center; /* centraliza dentro do form */
 }
+
 
 /* Lista de animais */
 
@@ -227,12 +229,12 @@ body {
   background: #ff4d4d;
   border: none;
   border-radius: 8px;
-  padding: 0.8rem 1.5rem;
+  padding: 0.5rem 1.2rem; /* reduzimos um pouco a altura */
   color: white;
-  font-weight: bold;
-  font-size: 1.05rem;
+  font-weight: 700;
+  font-size: 1rem;
   cursor: pointer;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
   transition: all 0.2s ease;
 }
 
@@ -240,6 +242,7 @@ body {
   background: #e60000;
   transform: scale(1.05);
 }
+
 
 /* Botão histórico */
 
