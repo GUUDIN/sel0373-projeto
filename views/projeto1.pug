@@ -6,15 +6,11 @@ html(lang="pt-BR")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     link(rel="stylesheet" href="/css/design-system.css")
     link(rel="stylesheet" href="/css/projeto1.css")
-    
     include ./partials/styles.pug
     script(src="/components/user-settings/settings.js")
     
   body
-    // Animated background
     .glass-background
-    
-    // Glass navigation
     header.glass-navbar
       .container
         a.glass-logo(href="/")
@@ -28,7 +24,6 @@ html(lang="pt-BR")
               )
               span.username #{user.username}
 
-    // Main content container
     .projeto1-container
       .container
         .page-header
@@ -40,10 +35,8 @@ html(lang="pt-BR")
         if success
           .glass-alert.alert-success= success
 
-        // Cards grid - layout original adaptado para glassmorphism
-        .cards-grid
-          // Card de Cadastro
-          .card.form-card
+        .cards-grid(style="display: flex; gap: 20px; align-items: flex-start;")
+          .card.form-card(style="flex: 0 0 40%")
             .card-header
               span.card-icon 🐄
               h3.card-title Cadastro de Animal
@@ -64,8 +57,7 @@ html(lang="pt-BR")
                 .form-actions
                   button.glass-button-primary(type="submit") Cadastrar
 
-          // Card de Animais Registrados
-          .card.records-card
+          .card.records-card(style="flex: 0 0 60%")
             .card-header
               span.card-icon 📋
               h3.card-title Animais Registrados
@@ -109,18 +101,15 @@ html(lang="pt-BR")
                     .empty-title Nenhum animal cadastrado
                     .empty-subtitle Use o formulário ao lado para cadastrar o primeiro animal
 
-        // Botão de histórico
         .history-section
           button.glass-button-secondary.history-button(onclick="window.location.href='/projeto1/history'")
             span.icon 📊
             span Histórico completo dos animais
 
-    // Incluir o card de configurações do usuário
     if user
       include ../components/user-settings/settings.pug
 
     script(src="/components/user-settings/settings.js")
-    
     script(src="/socket.io/socket.io.js")
     script.
       const socket = io();
