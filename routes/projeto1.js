@@ -207,6 +207,7 @@ router.get('/history', async (req, res) => {
  }
 });
 
+
 // Exporta o router
 //module.exports = router;
 return router;

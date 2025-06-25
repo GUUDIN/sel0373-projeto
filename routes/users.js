@@ -135,12 +135,14 @@ router.post("/settings", async (req, res) => {
 });
 
 
-router.post("/logout", (req, res) => {
+
+router.get('/logout', (req, res) => {
   req.session.destroy(err => {
     if (err) {
-      console.error("Erro ao encerrar sessão:", err);
+      console.error('Erro ao fazer logout:', err);
+      return res.status(500).send('Erro ao sair');
     }
-    res.redirect("/users");
+    res.redirect('/'); // ou redirecione para a página de login
   });
 });
 
