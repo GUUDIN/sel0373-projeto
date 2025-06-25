@@ -3,19 +3,22 @@
   #settingsCard.card-container
     button#closeSettings(type="button" aria-label="Fechar") ×
     .card-inner
-      - const avatarUrl = (user && user.avatarUrl) ? user.avatarUrl : '/img/default-avatar.png';
-      img.profile-avatar(src=avatarUrl alt="Avatar do usuário")
-      h2.greeting Olá, #{user && user.username ? user.username : 'User'}!
+      img.profile-avatar(src=(user && user.avatarUrl) || "/img/default-avatar.png", alt="Avatar do usuário")
+      if user && user.username
+        h2.greeting Olá, #{user.username}!
+      else
+        h2.greeting Olá, Usuário!
       form(action="/users/settings" method="POST")
         select.project-select(name="project" required)
-          option(value="" disabled selected) Selecione um projeto
-          if projects
-            each project in projects
-              - const isSelected = (user && user.project == project.id) ? 'selected' : false;
-              option(value=project.id selected=isSelected) #{project.name}
+          if user && user.project == 1
+            option(value="1" selected) Projeto 1 - Monitoramento Animal
+            option(value="2") Projeto 2 - Monitoramento Climático
+          else if user && user.project == 2
+            option(value="1") Projeto 1 - Monitoramento Animal
+            option(value="2" selected) Projeto 2 - Monitoramento Climático
           else
-            option(value="1" selected=(user && user.project == '1' ? 'selected' : false)) Cadastro de Animais
-            option(value="2" selected=(user && user.project == '2' ? 'selected' : false)) Monitoramento Ambiental
+            option(value="1") Projeto 1 - Monitoramento Animal
+            option(value="2") Projeto 2 - Monitoramento Climático
         button(type="submit" class="save-btn") Salvar
-      form(action="/users/logout" method="POST")
-        button(type="submit" class="logout-btn") Sair
+      form(action="/users/logout" method="GET")
+        button(type="submit" class="logout-btn") Logout

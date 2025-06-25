@@ -8,13 +8,10 @@ const Projeto1 = require('../models/projeto_1');
 const fileUpload = require("express-fileupload");
 const { getActiveProjects } = require('../config/projects');
 
+
 module.exports = function(io) {
 
-const router = express.Router();
-// Importa a configuração de projetos
-
-// Vetor para armazenar os registros
-const registrosProjeto1 = [];
+  const router = express.Router();
 
 // Objeto para armazenar os pesos recebidos via MQTT
 const pesosPorIdentificador = {};
@@ -38,7 +35,13 @@ console.error(`Erro ao se inscrever no tópico ${mqtt_topic}: ${err}`);
  }
 });
 });
-
+  // Middleware para simular usuário se necessário
+  router.use((req, res, next) => {
+    if (!req.session.user) {
+      req.session.user = { id: 1, username: 'testUser1', project: 1 };
+    }
+    next();
+  });
 
 //Recebimento dos dados via mqtt 
 client.on('message', async(topic, payload) => {
@@ -67,13 +70,6 @@ client.on('message', async(topic, payload) => {
 });
 
  
-// Middleware de teste para simular sessão de usuário caso login dê errado
-router.use((req, res, next) => {
- if (!req.session.user) {
- req.session.user = { id: 1, username: 'vitorinha123_noUser' };
- }
- next();
-});
 
 
 // Rota GET principal do projeto
@@ -91,7 +87,7 @@ router.get('/', async(req, res) => {
   });  
    } catch (err) {
       console.error("Erro ao buscar registros do banco:", err);
-   res.status(500).send("Erro ao carregar registros");
+   //res.status(500).send("Erro ao carregar registros");
  }
  });
 
@@ -195,15 +191,23 @@ router.post('/delete/:identifier', async (req, res) => {
 
 
 
-// Rota GET para ver os registros como JSON
- router.get('/registered', async (req, res) => {
+
+
+// Rota GET para histórico
+router.get('/history', async (req, res) => {
  try {
- const registros = await Projeto1.find(); // Busca todos os registros no banco
- res.json(registros);
+   const registros = await Projeto1.find();
+   res.render('projeto1-history', {
+     registros: registros,
+     user: req.session.user
+   });
  } catch (err) {
- res.status(500).send('Erro ao buscar registros');
+   console.error("Erro ao buscar registros para histórico:", err);
+   res.status(500).send("Erro ao carregar histórico");
  }
 });
 
+// Exporta o router
+//module.exports = router;
 return router;
 }

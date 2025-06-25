@@ -12,51 +12,73 @@
   object-fit: cover;
 }
 
-.greeting {
-  font-size: 1.25rem;
+#settingsCard .greeting {
+  font-size: 1.5rem;
   font-weight: 600;
-  color: #1d1d3e;
+  color: #1d1d3e !important;
   margin-bottom: 1.5rem;
+  text-align: center;
+  display: block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
-.project-select {
-  padding: 0.6rem 1.5rem;
-  font-size: 1rem;
-  border-radius: 999px;
-  border: none;
-  background-color: #48c6ef;
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  cursor: pointer;
-  appearance: none;
-  background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20fill%3D%22white%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M7%2010l5%205%205-5H7z%22/%3E%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22/%3E%3C/svg%3E");
-  background-repeat: no-repeat;
-  background-position: right 1rem center;
-  background-size: 1.25rem;
+#settingsCard .project-select {
+  width: 100% !important;
+  padding: 0.75rem 1rem !important;
+  font-size: 1rem !important;
+  border-radius: 12px !important;
+  border: 2px solid rgba(72, 198, 239, 0.3) !important;
+  background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%) !important;
+  color: white !important;
+  font-weight: 600 !important;
+  box-shadow: 0 4px 15px rgba(72, 198, 239, 0.3) !important;
+  cursor: pointer !important;
+  background-image: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%), url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20fill%3D%22white%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%20width%3D%2224%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Cpath%20d%3D%22M7%2010l5%205%205-5H7z%22/%3E%3Cpath%20d%3D%22M0%200h24v24H0z%22%20fill%3D%22none%22/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat, no-repeat !important;
+  background-position: 0 0, right 0.75rem center !important;
+  background-size: 100% 100%, 1.5rem !important;
+  margin-bottom: 1rem !important;
+}
+
+#settingsCard .project-select:focus {
+  outline: none !important;
+  border-color: #48c6ef !important;
+  box-shadow: 0 0 0 3px rgba(72, 198, 239, 0.2) !important;
+}
+
+#settingsCard .project-select option {
+  background: #ffffff !important;
+  color: #1d1d3e !important;
+  padding: 0.75rem !important;
+  font-weight: 600 !important;
 }
 
 /* Overlay fullscreen */
 #settingsOverlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(8px);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  z-index: 9999;
+  position: fixed !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  background: rgba(0, 0, 0, 0.5) !important;
+  backdrop-filter: blur(8px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 9999 !important;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
 }
 
+
+
+/* DEBUG: Force visibility when active */
 #settingsOverlay.active {
-  opacity: 1;
-  pointer-events: auto;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  display: flex !important; /* Force display flex */
 }
 
 /* Card principal */
@@ -73,8 +95,12 @@
   transition: transform 0.3s ease;
 }
 
+
+
+/* DEBUG: Force card visibility */
 #settingsOverlay.active #settingsCard {
-  transform: scale(1);
+  transform: scale(1) !important;
+  background: #ffffff !important;
 }
 
 /* Botão fechar */
@@ -93,39 +119,44 @@
 
 /* Botões do formulário */
 .save-btn {
-  padding: 0.8rem 2rem;
+  width: 100%;
+  padding: 0.875rem 2rem;
   font-size: 1rem;
-  border-radius: 999px;
+  border-radius: 12px;
   border: none;
-  background-color: #48c6ef;
+  background: linear-gradient(135deg, #48c6ef 0%, #6f86d6 100%);
   color: white;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  font-weight: 600;
+  box-shadow: 0 4px 15px rgba(72, 198, 239, 0.3);
   cursor: pointer;
-  margin: 0.5rem 0;
-  transition: background-color 0.2s ease;
+  margin: 0.75rem 0;
+  transition: all 0.3s ease;
 }
 
 .save-btn:hover {
-  background-color: #3bb5d4;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(72, 198, 239, 0.4);
 }
 
 .logout-btn {
-  padding: 0.8rem 2rem;
+  width: 100%;
+  padding: 0.875rem 2rem;
   font-size: 1rem;
-  border-radius: 999px;
-  border: none;
-  background-color: #ff6b6b;
-  color: white;
-  font-weight: bold;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  border-radius: 12px;
+  border: 2px solid #ff6b6b;
+  background: transparent;
+  color: #ff6b6b;
+  font-weight: 600;
   cursor: pointer;
-  margin: 0.5rem 0;
-  transition: background-color 0.2s ease;
+  margin: 0.75rem 0;
+  transition: all 0.3s ease;
 }
 
 .logout-btn:hover {
-  background-color: #e55555;
+  background: #ff6b6b;
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
 }
 
 /* Espaçamento entre formulários */

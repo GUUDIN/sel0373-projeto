@@ -1,97 +1,179 @@
 doctype html
 html(lang="pt-BR")
   head
-    title Dashboard de Monitoramento
+    title Monitoramento Climático
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css")
+    link(rel="stylesheet" href="/css/design-system.css")
+    link(rel="stylesheet" href="/css/projeto2.css")
+    
+    // Leaflet CSS para mapas
     link(rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css")
-    link(rel="stylesheet" href="css/custom.css")
-    style.
-      .sidebar {
-        background-color: #2f3e4d;
-        color: white;
-        min-height: 100vh;
-        padding: 1rem;
-      }
-      .card-metric {
-        background-color: #f1f1f1;
-        border-radius: 10px;
-        padding: 1rem;
-        text-align: center;
-      }
-      #map { height: 300px; }
-
+    
+    // Chart.js para gráficos
+    script(src="https://cdn.jsdelivr.net/npm/chart.js")
+    
+    include ./partials/styles.pug
+    script(src="/components/user-settings/settings.js")
+    
   body
-    .container-fluid
-      .row
-        // Sidebar de controle
-        .col-md-2.sidebar.d-flex.flex-column.align-items-start
-          h5.text-white.mb-4 Dashboard
+    // Animated background
+    .glass-background
+    
+    // Glass navigation
+    header.glass-navbar
+      .container
+        a.glass-logo(href="/")
+          span Projetos IOT
+        nav.nav-right
           if user
-            p.text-white.mb-1  #{user.username}
-          a.btn.btn-sm.btn-outline-light.mb-2(href="/export") Exportar dados
-          a.btn.btn-sm.btn-outline-light.mb-2(href="/") Voltar ao início
-          a.btn.btn-sm.btn-outline-danger.mt-auto(href="/") Sair
+            button.profile-button(type="button")
+              img.profile-photo(
+                src=user.avatarUrl || '/img/default-avatar.png'
+                alt=`${user.username}`
+              )
+              span.username #{user.username}
 
-        // Conteúdo principal
-        .col-md-10
-          // Barra de tempo
-          .d-flex.justify-content-between.align-items-center.mt-3.mb-4
-            .d-flex.align-items-center.gap-3
-              label.form-label.mb-0(for="inicio") Início:
-              input#inicio.form-control(type="datetime-local")
-              label.form-label.mb-0(for="fim") Fim:
-              input#fim.form-control(type="datetime-local")
-            button.btn.btn-primary(type="button") Atualizar
+    // Main content container
+    .projeto2-container
+      .container
+        .page-header
+          h1.page-title Monitoramento Climático
+          p.page-subtitle Dados ambientais e geolocalização em tempo real
 
-          // Linha com gráfico e mapa
-          .row.mb-4
-            .col-lg-8
-              .card.shadow
-                .card-body
-                  h5.card-title Gráfico Ambiental
-                  .d-flex.mb-2
-                    select#eixoY.form-select.w-auto.me-2
-                      option(value="temperatura") Temperatura
-                      option(value="umidade") Umidade
-                      option(value="vento") Velocidade do Vento
-                    select#eixoX.form-select.w-auto
-                      option(value="tempo") Tempo
-                  canvas#grafico(style="height: 300px;")
+        if error
+          .glass-alert.alert-error= error
+        if success
+          .glass-alert.alert-success= success
 
-            .col-lg-4
-              .card.shadow
-                .card-body
-                  h5.card-title Mapa
-                  #map
-                  // Clima externo abaixo do mapa, sem afetar layout
-                  div#clima-info.mt-3.text-secondary(style="font-size: 0.9rem")
-                    | Clima externo: aguardando dados...
+        // Dashboard grid
+        .dashboard-grid
+          // Mapa e informações climáticas
+          .map-section
+            .glass-card.map-card
+              .card-header
+                h3.card-title 
+                  span.icon 🗺️
+                  span Localização
+              .card-content
+                #map
+                #clima-info.climate-info
+                  span Aguardando dados climáticos...
 
-          // Linha com cards de métricas
-          .row.mb-4
-            .col-md-4
-              if registrostemp
-              .card-metric
-                h5 Temperatura
-                p.mb-0#card-temp 
-                  #{registrostemp.temperatura}| Temperatura Externa: Zero graus ta otimo
-            .col-md-4
-              if registrosumidade
-              .card-metric
-                h5 Umidade
-                p.mb-0#card-umidade 
-                  #{registrosumidade.umidade}| Umidade? Humidade? 
-            .col-md-4
-              if registrosvento
-              .card-metric
-                h5 Velocidade do Vento
-                p.mb-0#card-vento 
-                  #{registrosvento.velocidade}| Vento externo: no aguardo dos vento...
+          // Métricas em tempo real
+          .metrics-section
+            .metrics-grid
+              .glass-card.metric-card
+                .metric-header
+                  span.metric-icon 🌡️
+                  span.metric-label Temperatura
+                .metric-value#card-temp --°C
+                
+              .glass-card.metric-card
+                .metric-header
+                  span.metric-icon 💨
+                  span.metric-label Vento
+                .metric-value#card-vento -- m/s
+                
+              .glass-card.metric-card
+                .metric-header
+                  span.metric-icon 💧
+                  span.metric-label Umidade
+                .metric-value#card-umidade --%
+
+          // Gráfico de dados
+          .chart-section
+            .glass-card.chart-card
+              .card-header
+                h3.card-title
+                  span.icon 📊
+                  span Gráfico Ambiental
+                .chart-controls
+                  select#eixoY.glass-select
+                    option(value="temperatura") Temperatura
+                    option(value="umidade") Umidade
+                    option(value="vento") Velocidade do Vento
+                  select#eixoX.glass-select
+                    option(value="tempo") Tempo
+              .card-content
+                .chart-container
+                  canvas#grafico
+
+          // Dados históricos
+          .data-section
+            .glass-card.data-card
+              .card-header
+                h3.card-title
+                  span.icon 📋
+                  span Dados Recentes
+              .card-content
+                .data-tabs
+                  button.tab-button.active(data-tab="mapa") Localização
+                  button.tab-button(data-tab="temp") Temperatura  
+                  button.tab-button(data-tab="umidade") Umidade
+                  button.tab-button(data-tab="vento") Vento
+                
+                .tab-content#tab-mapa.active
+                  .data-list
+                    if registrosmapa && registrosmapa.length
+                      each registro in registrosmapa.slice(-5)
+                        .data-item
+                          .data-field
+                            strong Lat: 
+                            span #{registro.lat}
+                          .data-field
+                            strong Long: 
+                            span #{registro.long}
+                    else
+                      .empty-state
+                        p Nenhum dado de localização disponível
+                
+                .tab-content#tab-temp
+                  .data-list
+                    if registrostemp && registrostemp.length
+                      each registro in registrostemp.slice(-5)
+                        .data-item
+                          .data-field
+                            strong Temperatura: 
+                            span #{registro.temperatura}°C
+                    else
+                      .empty-state
+                        p Nenhum dado de temperatura disponível
+                
+                .tab-content#tab-umidade
+                  .data-list
+                    if registrosumidade && registrosumidade.length
+                      each registro in registrosumidade.slice(-5)
+                        .data-item
+                          .data-field
+                            strong Umidade: 
+                            span #{registro.umidade}%
+                    else
+                      .empty-state
+                        p Nenhum dado de umidade disponível
+                
+                .tab-content#tab-vento
+                  .data-list
+                    if registrosvento && registrosvento.length
+                      each registro in registrosvento.slice(-5)
+                        .data-item
+                          .data-field
+                            strong Velocidade: 
+                            span #{registro.velocidade} m/s
+                    else
+                      .empty-state
+                        p Nenhum dado de vento disponível
+
+        .actions-section
+          a.glass-button.glass-button-secondary(href="/") 
+            span.icon 🏠
+            span Voltar à página inicial
 
     // Scripts
-    script(src="https://cdn.jsdelivr.net/npm/chart.js")
     script(src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js")
     script(src="/socket.io/socket.io.js")
-    script(src="/projeto2.js")
+    script(src="/js/projeto2.js")
+
+    // Incluir o card de configurações do usuário
+    if user
+      include ../components/user-settings/settings.pug

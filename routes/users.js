@@ -8,10 +8,22 @@ const saltRounds = 10; // Define a quantidade de rounds para gerar o salt
 
 // Importa a configuração de projetos
 const { getProjectById, getProjectRedirectUrl, getActiveProjects } = require('../config/projects');
+// Importa o modelo User
+const User = require("../models/user");
+
+// Middleware to check if user is authenticated
+const isAuthenticated = (req, res, next) => {
+  if (req.session && req.session.user) {
+    return next();
+  }
+  // Redirect to login page if not authenticated
+  res.redirect("/users");
+};
 
 // Variável para armazenar os usuários (in-memory, apenas para teste)
 //let users = [];
-const User = require("../models/user");
+
+
 // Rota GET para exibir a página de registro de novo usuário
 router.get("/register", (req, res) => {
   // Renderiza a view "register" e passa um erro nulo inicialmente, junto com projetos ativos
@@ -59,8 +71,6 @@ router.post("/login", async (req, res) => {
       } else {
         return res.redirect("/projeto2");
       }
-      //const redirectUrl = getProjectRedirectUrl(user.project);
-      //return res.redirect(redirectUrl);
     } else {
       return res.render("login", { error: "Usuário ou senha incorretos!" });
     }
@@ -134,5 +144,40 @@ router.post("/logout", (req, res) => {
   });
 });
 
+// Rota POST para atualizar as configurações do usuário (troca de projeto)
+router.post("/settings", isAuthenticated, async (req, res) => {
+  const { project } = req.body;
+  const { username } = req.session.user;
+
+  try {
+    // Encontra e atualiza o usuário no banco de dados
+    const updatedUser = await User.findOneAndUpdate(
+      { username }, 
+      { project }, 
+      { new: true } // Retorna o documento atualizado
+    );
+
+    // Se o usuário não foi encontrado no banco (usuário de teste), apenas atualiza a sessão
+    if (!updatedUser) {
+      console.log(`Usuário ${username} não encontrado no banco, atualizando apenas a sessão`);
+      req.session.user.project = parseInt(project);
+    } else {
+      // Atualiza a sessão com as novas informações do banco
+      req.session.user.project = updatedUser.project;
+    }
+
+    // Redireciona para a página inicial ou para o projeto selecionado
+    if (project == 1) {
+      res.redirect("/projeto1");
+    } else if (project == 2) {
+      res.redirect("/projeto2");
+    } else {
+      res.redirect("/"); // Fallback para a página inicial
+    }
+  } catch (err) {
+    console.error("Erro ao atualizar as configurações do usuário:", err);
+    res.status(500).send("Erro ao atualizar as configurações.");
+  }
+});
 
 module.exports = router;

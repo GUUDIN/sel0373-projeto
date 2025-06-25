@@ -1,4 +1,3 @@
-
 const mongoose = require("mongoose");
 
 const { Schema } = mongoose;
@@ -18,3 +17,4 @@ const projeto_1Schema = new mongoose.Schema({
 }, { timestamps: true });
 
 module.exports = mongoose.model("Projeto_1", projeto_1Schema);
+

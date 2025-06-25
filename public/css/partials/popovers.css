@@ -1,42 +1,109 @@
-/* User pill-shaped popover */
+/* Popovers CSS - Estilos para popovers e tooltips */
 
-/* Profile popover trigger button (pill shape) */
-.profile-button {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
+.popover {
+  position: absolute;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(72, 198, 239, 0.2);
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+  padding: 1rem;
   font-size: 0.875rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  text-decoration: none;
-  background-color: #ffffff;
-  color: #1d1d3e;
-  padding: 8px 20px;
-  border-radius: 100px;
-  border: 2px solid #1d1d3e;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-  transition: all 0.3s ease;
+  max-width: 250px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  transform: translateY(-10px);
 }
 
-/* Hover effect */
-.profile-button:hover {
-  background-color: #1d1d3e;
-  color: #ffffff;
+.popover.active {
+  opacity: 1;
+  pointer-events: auto;
+  transform: translateY(0);
 }
 
-/* Profile icon inside the button */
-.profile-icon {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  display: inline-block;
+.popover-arrow {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.95);
+  border: 1px solid rgba(72, 198, 239, 0.2);
+  transform: rotate(45deg);
 }
 
-/* Optional profile name inside button */
-.profile-name {
-  font-weight: 500;
-  font-size: 0.875rem;
+.popover.top .popover-arrow {
+  bottom: -6px;
+  left: 50%;
+  margin-left: -5px;
+  border-top: none;
+  border-left: none;
 }
 
-  /* --------------------------------------------------- */
+.popover.bottom .popover-arrow {
+  top: -6px;
+  left: 50%;
+  margin-left: -5px;
+  border-bottom: none;
+  border-right: none;
+}
+
+.popover.left .popover-arrow {
+  right: -6px;
+  top: 50%;
+  margin-top: -5px;
+  border-left: none;
+  border-bottom: none;
+}
+
+.popover.right .popover-arrow {
+  left: -6px;
+  top: 50%;
+  margin-top: -5px;
+  border-right: none;
+  border-top: none;
+}
+
+.tooltip {
+  position: absolute;
+  z-index: 1001;
+  background: rgba(29, 29, 62, 0.9);
+  color: white;
+  padding: 0.5rem 0.75rem;
+  border-radius: 8px;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s ease;
+  transform: translateY(-5px);
+}
+
+.tooltip.active {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.tooltip-arrow {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+
+.tooltip.top .tooltip-arrow {
+  bottom: -4px;
+  left: 50%;
+  margin-left: -4px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-top: 4px solid rgba(29, 29, 62, 0.9);
+}
+
+.tooltip.bottom .tooltip-arrow {
+  top: -4px;
+  left: 50%;
+  margin-left: -4px;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 4px solid rgba(29, 29, 62, 0.9);
+}

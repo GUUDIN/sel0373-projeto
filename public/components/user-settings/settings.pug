@@ -1,22 +1,15 @@
-// Card de configurações do usuário (overlay)
+// Backdrop
+#blurOverlay.blur-overlay
+// Card centralizado com bordas arredondadas
 #settingsOverlay
   #settingsCard.card-container
     button#closeSettings(type="button" aria-label="Fechar") ×
     .card-inner
       img.profile-avatar(src=(user && user.avatarUrl) || "/img/default-avatar.png", alt="Avatar do usuário")
-      h2.greeting Olá, #{user && user.username ? user.username : 'User'}!
+      h2.greeting Olá, #{user.username || 'User'}!
+
       form(action="/users/settings" method="POST")
         select.project-select(name="project" required)
-          option(value="" disabled selected) Selecione um projeto
-          if projects
-            each project in projects
-              option(
-                value=project.id
-                selected=(user && user.project == project.id)
-              ) #{project.name}
-          else
-            option(value="1", selected=(user && user.project == '1')) Cadastro de Animais
-            option(value="2", selected=(user && user.project == '2')) Monitoramento Ambiental
-        button(type="submit" class="save-btn") Salvar
-      form(action="/users/logout" method="POST")
-        button(type="submit" class="logout-btn") Sair
+          option(value="" disabled, selected=(!user.project)) Selecione um projeto
+          option(value="1", selected=(user.project == 1 || user.project == '1')) Projeto 1
+          option(value="2", selected=(user.project == 2 || user.project == '2')) Projeto 2

@@ -1,5 +1,6 @@
 // Carrega variáveis de ambiente do arquivo .env
 require("dotenv").config();
+
 // Importa o módulo Express e cria uma instância da aplicação
 const express = require("express");
 const app = express();
@@ -54,7 +55,11 @@ app.use((req, res, next) => {
 });
 
 // Configura o middleware para servir arquivos estáticos da pasta "public"
-app.use(express.static(path.join(__dirname, "public")));
+app.use(express.static("public"));
+app.use("/css", express.static(path.join(__dirname, "public/css")));
+app.use("/js", express.static(path.join(__dirname, "public/js")));
+app.use("/img", express.static(path.join(__dirname, "public/img")));
+app.use("/components", express.static(path.join(__dirname, "public/components")));
 
 // Configura o diretório de views e define o motor de templates para Pug
 app.set("views", path.join(__dirname, "views"));
@@ -103,7 +108,7 @@ app.use("/send-files", sendFiles);
 const projeto1 = require("./routes/projeto1")(io);
 app.use("/projeto1", projeto1);
 
-
+// Importa e utiliza o roteador do projeto2
 const projeto2 = require("./routes/projeto2")(io);
 app.use("/projeto2", projeto2);
 
