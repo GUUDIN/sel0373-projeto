@@ -12,18 +12,20 @@ html(lang="pt-BR")
   body
     .glass-background
     header.glass-navbar
-      .container
+      .container(style="display: flex; justify-content: space-between; align-items: center;")
         a.glass-logo(href="/")
           span Projetos IOT
+
+        .header-center
+          h2.page-title Monitoramento de Animais
+          p.page-subtitle Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID
+
         nav.nav-right
           if user
             button.profile-button(type="button")
               img.profile-photo(src=user.avatarUrl || '/img/default-avatar.png' alt=user.username)
               span.username #{user.username}
 
-      .page-header(style="text-align: center; margin-top: 0.5rem;")
-        h2.page-title Monitoramento de Animais
-        p.page-subtitle Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID
 
     .projeto1-container 
       .container
