@@ -1,218 +1,76 @@
-doctype html
-html(lang="pt-BR")
-  head
-    title Monitoramento de Animais
-    meta(charset="UTF-8")
-    meta(name="viewport" content="width=device-width, initial-scale=1.0")
-    link(rel="stylesheet" href="/css/design-system.css")
-    link(rel="stylesheet" href="/css/projeto1.css")
-    include ./partials/styles.pug
-    script(src="/components/user-settings/settings.js")
-    
-  body
-    .glass-background
-    header.glass-navbar
-      .container
-        a.glass-logo(href="/")
-          span Projetos IOT
-        nav.nav-right
-          if user
-            button.profile-button(type="button")
-              img.profile-photo(
-                src=user.avatarUrl || '/img/default-avatar.png'
-                alt=`${user.username}`
-              )
-              span.username #{user.username}
+const socket = io();
 
-    .projeto1-container
-      .container
-        .page-header
-          h1.page-title Monitoramento de Animais
-          p.page-subtitle Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID
+socket.on('pesoAtualizado', function(data) {
+  const pesoSpan = document.getElementById(`peso-${data.identifier}`);
+  const dataSpan = document.getElementById(`data-${data.identifier}`);
+  const valorPeso = typeof data.peso === 'object' ? data.peso.peso : data.peso;
+  const dataAtualizacao = typeof data.peso === 'object' 
+    ? data.peso.dataAtualizacao 
+    : new Date().toISOString();
+  if (pesoSpan) pesoSpan.textContent = valorPeso;
+  if (dataSpan) dataSpan.textContent = `Atualizado em: ${new Date(dataAtualizacao).toLocaleString("pt-BR")}`;
+});
 
-        if error
-          .glass-alert.alert-error= error
-        if success
-          .glass-alert.alert-success= success
+socket.on('registroAtualizado', function(registro) {
+  const pesoEl = document.getElementById(`peso-${registro.identifier}`);
+  if (pesoEl) pesoEl.textContent = registro.peso;
+});
 
-        .cards-grid(style="display: flex; gap: 20px; align-items: flex-start;")
-          .card.form-card(style="flex: 0 0 40%")
-            .card-header
-              span.card-icon 🐄
-              h3.card-title Cadastro de Animal
-            
-            .card-content
-              form.glass-form(action="/projeto1/register" method="POST")
-                .form-group
-                  label.form-label(for="identifier") Identificador do animal
-                  input#identifier.glass-input(type="text" name="identifier" placeholder="Ex: A123" required)
-                
-                .form-group
-                  label.form-label(for="allowed") Permitido?
-                  select#allowed.glass-select(name="allowed" required)
-                    option(value="" disabled selected) Selecione uma opção
-                    option(value="sim") Sim
-                    option(value="nao") Não
-                
-                .form-actions
-                  button.glass-button-primary(type="submit") Cadastrar
+socket.on('registroRemovido', function(dado) {
+  const elemento = document.querySelector(`button[data-id="${dado.identifier}"]`);
+  if (elemento) {
+    const container = elemento.closest('.border');
+    if (container) container.remove();
+  }
+});
 
-          .card.records-card(style="flex: 0 0 60%")
-            .card-header
-              span.card-icon 📋
-              h3.card-title Animais Registrados
-            
-            .card-content
-              .animals-list
-                if registros.length
-                  each registro in registros
-                    - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : 'Não recebido'
-                    .animal-item
-                      .animal-main
-                        .animal-id #{registro.identifier}
-                        .animal-status(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
-                          .status-indicator
-                          span.status-text #{registro.allowed === 'sim' ? 'Permitido' : 'Negado'}
-                      
-                      .animal-details
-                        .detail-row
-                          span.detail-label Peso (kg):
-                          span.detail-value(id=`peso-${registro.identifier}`) #{valorPeso}
-                        
-                        .detail-row
-                          span.detail-label Atualizado em:
-                          span.detail-value(id=`data-${registro.identifier}`) #{registro.dataPesoAtualizado ? new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR") : 'Sem registro'}
-                        
-                        if registro.registradoPor
-                          .detail-row
-                            span.detail-label Cadastrado por:
-                            span.detail-value #{registro.registradoPor}
-                        
-                        if registro.data
-                          .detail-row.timestamp
-                            span.detail-value #{new Date(registro.data).toLocaleString("pt-BR")}
-                      
-                      .animal-actions
-                        form(action=`/projeto1/delete/${registro.identifier}` method="POST" style="display: inline;")
-                          button.glass-button-danger.delete-button(type="submit") Excluir
-                else
-                  .empty-state
-                    .empty-icon 🐄
-                    .empty-title Nenhum animal cadastrado
-                    .empty-subtitle Use o formulário ao lado para cadastrar o primeiro animal
+socket.on('novoRegistro', function(registro) {
+  const animalsList = document.querySelector('.animals-list');
 
-        .history-section
-          button.glass-button-secondary.history-button(onclick="window.location.href='/projeto1/history'")
-            span.icon 📊
-            span Histórico completo dos animais
+  const animalItem = document.createElement('div');
+  animalItem.className = 'animal-item';
+  animalItem.style.minHeight = '140px';
+  animalItem.style.display = 'flex';
+  animalItem.style.flexDirection = 'column';
+  animalItem.style.justifyContent = 'space-between';
 
-    if user
-      include ../components/user-settings/settings.pug
+  animalItem.innerHTML = `
+    <div class="animal-main">
+      <div class="animal-id">${registro.identifier}</div>
+      <div class="animal-status ${registro.allowed === 'sim' ? 'status-allowed' : 'status-denied'}">
+        <div class="status-indicator"></div>
+        <span class="status-text">${registro.allowed === 'sim' ? 'Permitido' : 'Negado'}</span>
+      </div>
+    </div>
 
-    script(src="/components/user-settings/settings.js")
-    script(src="/socket.io/socket.io.js")
-    script.
-      const socket = io();
-      socket.on('pesoAtualizado', function(data) {
-        console.log("Recebido via socket:", data);
-        const pesoSpan = document.getElementById(`peso-${data.identifier}`);
-        const dataSpan = document.getElementById(`data-${data.identifier}`);
-        const valorPeso = typeof data.peso === 'object' ? data.peso.peso : data.peso;
-        const dataAtualizacao = typeof data.peso === 'object' 
-          ? data.peso.dataAtualizacao 
-          : new Date().toISOString();
-        if (pesoSpan) {
-          pesoSpan.textContent = valorPeso;
-        }
-        if (dataSpan) {
-          const dataFormatada = new Date(dataAtualizacao).toLocaleString("pt-BR");
-          dataSpan.textContent = `Atualizado em: ${dataFormatada}`;
-        }
-      });
+    <div class="animal-details">
+      <div class="detail-row">
+        <span class="detail-label">Peso (kg):</span>
+        <span class="detail-value" id="peso-${registro.identifier}">${registro.peso || 'Não recebido'}</span>
+      </div>
 
-      socket.on('registroAtualizado', function(registro) {
-        const pesoEl = document.getElementById(`peso-${registro.identifier}`);
-        const allowedEl = document.getElementById(`allowed-${registro.identifier}`);
-        const dataEl = document.getElementById(`data-${registro.identifier}`);
-        if (pesoEl) pesoEl.textContent = registro.peso;
-        if (allowedEl) allowedEl.textContent = registro.allowed === 'sim' ? 'Sim' : 'Não';
-        if (dataEl) dataEl.textContent = `Atualizado em: ${new Date().toLocaleString("pt-BR")}`;
-      });
+      <div class="detail-row">
+        <span class="detail-label">Atualizado em:</span>
+        <span class="detail-value" id="data-${registro.identifier}">
+          ${registro.data ? new Date(registro.data).toLocaleString("pt-BR") : 'Sem registro'}
+        </span>
+      </div>
 
-      socket.on('registroRemovido', function(dado) {
-        const elemento = document.querySelector(`button[data-id="${dado.identifier}"]`);
-        if (elemento) {
-          const container = elemento.closest('.border');
-          if (container) container.remove();
-        }
-      });
+      <div class="detail-row">
+        <span class="detail-label">Cadastrado por:</span>
+        <span class="detail-value">${registro.registradoPor || ''}</span>
+      </div>
+    </div>
 
-      document.addEventListener('click', async (e) => {
-        if (e.target.matches('button[data-id]')) {
-          const identifier = e.target.getAttribute('data-id');
-          if (!confirm(`Deseja excluir ${identifier}?`)) return;
-          try {
-            const res = await fetch(`/projeto1/delete/${identifier}`, { method: 'POST' });
-            if (res.ok) {
-              const container = e.target.closest('.border');
-              if (container) container.remove();
-            } else {
-              const result = await res.json();
-              alert(result?.error || 'Erro ao excluir');
-            }
-          } catch (err) {
-            alert('Erro inesperado ao excluir');
-          }
-        }
-      });
-      socket.on('novoRegistro', function(registro) {
-      console.log("Novo registro recebido via socket:", registro);
-      
-      const animalsList = document.querySelector('.animals-list');
+    <div class="animal-actions">
+      <form action="/projeto1/delete/${registro.identifier}" method="POST" style="display: inline;">
+        <button class="glass-button-danger delete-button" type="submit">Excluir</button>
+      </form>
+    </div>
+  `;
 
-      // Cria o container do novo animal
-      const animalItem = document.createElement('div');
-      animalItem.className = 'animal-item';
-      animalItem.style.minHeight = '140px'; // manter o mesmo tamanho dos outros
+  animalsList.prepend(animalItem);
+});
 
-      animalItem.innerHTML = `
-        <div class="animal-main">
-          <div class="animal-id">${registro.identifier}</div>
-          <div class="animal-status ${registro.allowed === 'sim' ? 'status-allowed' : 'status-denied'}">
-            <div class="status-indicator"></div>
-            <span class="status-text">${registro.allowed === 'sim' ? 'Permitido' : 'Negado'}</span>
-          </div>
-        </div>
-
-        <div class="animal-details">
-          <div class="detail-row">
-            <span class="detail-label">Peso (kg):</span>
-            <span class="detail-value" id="peso-${registro.identifier}">${registro.peso || 'Não recebido'}</span>
-          </div>
-
-          <div class="detail-row">
-            <span class="detail-label">Atualizado em:</span>
-            <span class="detail-value" id="data-${registro.identifier}">
-              ${registro.data ? new Date(registro.data).toLocaleString("pt-BR") : 'Sem registro'}
-            </span>
-          </div>
-
-          <div class="detail-row">
-            <span class="detail-label">Cadastrado por:</span>
-            <span class="detail-value">${registro.registradoPor || ''}</span>
-          </div>
-        </div>
-
-        <div class="animal-actions">
-          <form action="/projeto1/delete/${registro.identifier}" method="POST" style="display: inline;">
-            <button class="glass-button-danger delete-button" type="submit">Excluir</button>
-          </form>
-        </div>
-      `;
-
-      // Insere o novo item no topo da lista
-      animalsList.prepend(animalItem);
-    });
-
-      socket.on('connect', () => console.log('Socket.IO conectado'));
-      socket.on('disconnect', () => console.log('Socket.IO desconectado'));
+socket.on('connect', () => console.log('Socket.IO conectado'));
+socket.on('disconnect', () => console.log('Socket.IO desconectado'));
