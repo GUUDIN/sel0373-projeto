@@ -62,7 +62,7 @@ html(lang="pt-BR")
                 if registros.length
                   each registro in registros
                     - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : 'Não recebido'
-                    .animal-item(style="height: 120px; display: flex; flex-direction: column; justify-content: space-between;")
+                    .animal-item(style="height: 170px; display: flex; flex-direction: column; justify-content: space-between;")
                       .animal-main
                         .animal-id #{registro.identifier}
                         .animal-status(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
