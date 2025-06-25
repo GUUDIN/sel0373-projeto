@@ -19,7 +19,23 @@ socket.on('registroAtualizado', function (registro) {
 
   if (pesoEl) pesoEl.textContent = registro.peso || 'Não recebido';
   if (dataEl) dataEl.textContent = new Date().toLocaleString("pt-BR");
+
+  // Agora atualizando o status visual
+  const animalItem = pesoEl.closest('.animal-item');
+  const statusDiv = animalItem.querySelector('.animal-status');
+  const statusText = statusDiv.querySelector('.status-text');
+
+  if (registro.allowed === 'sim') {
+    statusDiv.classList.remove('status-denied');
+    statusDiv.classList.add('status-allowed');
+    statusText.textContent = 'Permitido';
+  } else {
+    statusDiv.classList.remove('status-allowed');
+    statusDiv.classList.add('status-denied');
+    statusText.textContent = 'Negado';
+  }
 });
+
 
 socket.on('registroRemovido', function (dado) {
   console.log("Registro removido via socket:", dado);
