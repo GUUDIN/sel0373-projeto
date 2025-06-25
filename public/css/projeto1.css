@@ -118,6 +118,13 @@ body {
   font-size: 1rem;
 }
 
+.form-actions {
+  display: flex;
+  justify-content: center;
+  margin-top: 1rem;
+}
+
+
 .glass-input, .glass-select {
   padding: 0.8rem 1rem;
   border-radius: 10px;
@@ -132,13 +139,12 @@ body {
 .glass-button-primary {
   background: #007bff;
   border: none;
-  padding: 0.8rem 2rem;  /* aumentamos largura e altura */
+  padding: 0.8rem 2rem;
   border-radius: 10px;
   font-weight: bold;
   color: white;
   font-size: 1.05rem;
   cursor: pointer;
-  align-self: center; /* centraliza dentro do form */
 }
 
 
@@ -226,11 +232,11 @@ body {
 }
 
 .delete-button {
-  background: #ff4d4d;
+  background: #dc2e2e;
   border: none;
   border-radius: 8px;
   padding: 0.5rem 1.2rem; /* reduzimos um pouco a altura */
-  color: white;
+  color: rgb(252, 252, 252);
   font-weight: 700;
   font-size: 1rem;
   cursor: pointer;
@@ -240,7 +246,7 @@ body {
 
 .delete-button:hover {
   background: #e60000;
-  transform: scale(1.05);
+  transform: scale(1.00);
 }
 
 
