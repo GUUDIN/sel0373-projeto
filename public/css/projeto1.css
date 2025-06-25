@@ -56,24 +56,23 @@ body {
 
 /* Título centralizado */
 
-.page-header {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  margin: 1rem 0;
+.header-center {
+  text-align: center;
+  flex: 1;
 }
 
 .page-title {
-  font-size: 2rem;
+  font-size: 1.8rem;
   margin: 0;
 }
 
 .page-subtitle {
-  font-size: 1rem;
-  margin-top: 0.5rem;
+  font-size: 0.95rem;
+  margin-top: 0.3rem;
   color: rgba(255,255,255,0.8);
 }
+
+
 
 /* Formulário */
 
