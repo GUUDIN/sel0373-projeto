@@ -93,6 +93,8 @@ body {
 
 .form-card {
   flex: 0 0 35%;
+  margin-left: 20px;
+  margin-right: 20px;
 }
 
 .records-card {
