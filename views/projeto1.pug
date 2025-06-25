@@ -165,6 +165,54 @@ html(lang="pt-BR")
           }
         }
       });
+      socket.on('novoRegistro', function(registro) {
+      console.log("Novo registro recebido via socket:", registro);
+      
+      const animalsList = document.querySelector('.animals-list');
+
+      // Cria o container do novo animal
+      const animalItem = document.createElement('div');
+      animalItem.className = 'animal-item';
+      animalItem.style.minHeight = '140px'; // manter o mesmo tamanho dos outros
+
+      animalItem.innerHTML = `
+        <div class="animal-main">
+          <div class="animal-id">${registro.identifier}</div>
+          <div class="animal-status ${registro.allowed === 'sim' ? 'status-allowed' : 'status-denied'}">
+            <div class="status-indicator"></div>
+            <span class="status-text">${registro.allowed === 'sim' ? 'Permitido' : 'Negado'}</span>
+          </div>
+        </div>
+
+        <div class="animal-details">
+          <div class="detail-row">
+            <span class="detail-label">Peso (kg):</span>
+            <span class="detail-value" id="peso-${registro.identifier}">${registro.peso || 'Não recebido'}</span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Atualizado em:</span>
+            <span class="detail-value" id="data-${registro.identifier}">
+              ${registro.data ? new Date(registro.data).toLocaleString("pt-BR") : 'Sem registro'}
+            </span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Cadastrado por:</span>
+            <span class="detail-value">${registro.registradoPor || ''}</span>
+          </div>
+        </div>
+
+        <div class="animal-actions">
+          <form action="/projeto1/delete/${registro.identifier}" method="POST" style="display: inline;">
+            <button class="glass-button-danger delete-button" type="submit">Excluir</button>
+          </form>
+        </div>
+      `;
+
+      // Insere o novo item no topo da lista
+      animalsList.prepend(animalItem);
+    });
 
       socket.on('connect', () => console.log('Socket.IO conectado'));
       socket.on('disconnect', () => console.log('Socket.IO desconectado'));

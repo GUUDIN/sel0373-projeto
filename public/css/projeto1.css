@@ -172,7 +172,12 @@ body {
   margin-bottom: 0.5rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all 0.2s ease;
+  min-height: 140px; /* << Ajuste aqui o valor para o tamanho que achar visualmente melhor */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
+
 
 .animal-item:hover {
   background: rgba(255, 255, 255, 0.15);
