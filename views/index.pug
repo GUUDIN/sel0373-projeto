@@ -31,22 +31,6 @@ html(lang="pt-BR")
         // Título principal do projeto
         h1.hero-title Projetos IOT
         // Descrição do projeto
-        p.hero-description Plataforma unificada para múltiplos projetos IoT, com comunicação bidirecional via MQTT e dashboards de dados
-        if user && userProject
-          // Botão para acessar o projeto do usuário
-          a.get-started-button(href=userProject.route) Acessar #{userProject.name}
-        else if user
-          // Fallback se não tiver projeto definido
-          a.get-started-button(href="/") Acessar Meus Projetos
-        else
-  // Seção principal (Hero)
-  section.hero
-    // Camada de sobreposição para aplicar estilo ao fundo
-    .overlay 
-      .hero-content
-        // Título principal do projeto
-        h1.hero-title Projetos IOT
-        // Descrição do projeto
         p.hero-description Plataforma unificada para múltiplos projetos IoT, com comunicação bidirecional via MQTT e dashboards de dados.
         if user && userProject
           // Botão para acessar o projeto do usuário
