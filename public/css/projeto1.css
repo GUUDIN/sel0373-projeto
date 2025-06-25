@@ -76,7 +76,7 @@ body {
 
 .container {
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 0 ;
   padding: 0 var(--spacing-lg);
 }
 
@@ -155,7 +155,7 @@ body {
   width: 100%;
   padding: 0.6rem 1rem;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   border-radius: var(--radius-medium);
 }
 
@@ -166,7 +166,7 @@ body {
 }
 
 .animal-item {
-  height: 160px; /* altura fixa um pouco maior */
+  height: 170px; /* altura fixa um pouco maior */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -233,13 +233,17 @@ body {
   margin-top: 0.3rem;
 }
 
-
-.animal-id {
-  font-size: 1rem;
+.detail-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.3rem;
+  font-size: 0.85rem;
 }
 
-.detail-row {
-  font-size: 0.8rem;
+.animal-id {
+  font-weight: 600;
+  color: rgb(241, 231, 231);
+  font-size: 1.1rem;
 }
 
 
@@ -268,8 +272,8 @@ body {
 .glass-button-primary,
 .glass-button-secondary,
 .delete-button {
-  padding: 0.5rem 1rem;
-  font-size: 0.9rem;
+  padding: 0.8rem 1rem;
+  font-size: 1.0rem;
 }
 
 .history-section {
