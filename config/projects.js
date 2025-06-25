@@ -27,7 +27,7 @@ const projectConfig = {
     route: '/projeto2',
     icon: '/img/icons/dashboard.svg',
     color: '#2196F3',
-    technologies: ['MQTT', 'Maps', 'Weather API', 'Real-time'],
+    technologies: ['MQTT', 'Maps', 'Weather API'],
     features: [
       'Monitoramento climático',
       'Visualização em mapa',
