@@ -39,7 +39,7 @@ html(lang="pt-BR")
               h3.card-title Cadastro de Animal
             
             .card-content
-              form.glass-form(action="/projeto1/register" method="POST")
+              form#register-form.glass-form(action="/projeto1/register" method="POST")
                 .form-group
                   label.form-label(for="identifier") Identificador do animal
                   input#identifier.glass-input(type="text" name="identifier" placeholder="Ex: A123" required)
@@ -64,7 +64,7 @@ html(lang="pt-BR")
                 if registros.length
                   each registro in registros
                     - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : 'Não recebido'
-                    .animal-item(style="min-height: 140px; display: flex; flex-direction: column; justify-content: space-between;")
+                    .animal-item(style="height: 120px; display: flex; flex-direction: column; justify-content: space-between;")
                       .animal-main
                         .animal-id #{registro.identifier}
                         .animal-status(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
@@ -85,10 +85,6 @@ html(lang="pt-BR")
                           .detail-row
                             span.detail-label Cadastrado por:
                             span.detail-value #{registro.registradoPor}
-                        
-                        if registro.data
-                          .detail-row.timestamp
-                            span.detail-value #{new Date(registro.data).toLocaleString("pt-BR")}
                       
                       .animal-actions
                         form(action='/projeto1/delete/' + registro.identifier method="POST" style="display: inline;")
@@ -109,4 +105,4 @@ html(lang="pt-BR")
 
     script(src="/components/user-settings/settings.js")
     script(src="/socket.io/socket.io.js")
-    script(src="/js/projeto1-socket.js")
+    script(src="/js/projeto1.js")
