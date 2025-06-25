@@ -129,7 +129,11 @@ body {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  max-height: 450px;  /* limite vertical */
+  overflow-y: auto;   /* ativar scroll interno */
+  padding-right: 0.5rem;
 }
+
 
 .animal-item {
   height: 170px;
@@ -189,7 +193,9 @@ body {
 .animal-details {
   font-size: 0.8rem;
   margin-top: 0.5rem;
+  padding: 0 0.5rem;  /* padding lateral */
 }
+
 
 .detail-row {
   display: flex;
