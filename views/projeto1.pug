@@ -23,12 +23,12 @@ html(lang="pt-BR")
               img.profile-photo(src=user.avatarUrl || '/img/default-avatar.png' alt=user.username)
               span.username #{user.username}
 
-    .projeto1-container
-      .container
-        .page-header
-          h1.page-title Monitoramento de Animais
-          p.page-subtitle Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID
-
+      .projeto1-container
+        .container
+          .page-header
+            h1.page-title Monitoramento de Animais
+            p.page-subtitle Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID
+    .container
         if error
           .glass-alert.alert-error= error
         if success
