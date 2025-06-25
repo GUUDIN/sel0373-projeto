@@ -11,6 +11,30 @@ socket.on('pesoAtualizado', function(data) {
   if (dataSpan) dataSpan.textContent = `Atualizado em: ${new Date(dataAtualizacao).toLocaleString("pt-BR")}`;
 });
 
+socket.on('registroAtualizado', function (registro) {
+  console.log("Registro atualizado via socket:", registro);
+
+  const pesoEl = document.getElementById(`peso-${registro.identifier}`);
+  const dataEl = document.getElementById(`data-${registro.identifier}`);
+
+  if (pesoEl) pesoEl.textContent = registro.peso || 'Não recebido';
+  if (dataEl) dataEl.textContent = new Date().toLocaleString("pt-BR");
+});
+
+socket.on('registroRemovido', function (dado) {
+  console.log("Registro removido via socket:", dado);
+
+  const animalItem = document.querySelector(`.animal-item .animal-id`);
+  const allItems = document.querySelectorAll('.animal-item');
+
+  allItems.forEach(item => {
+    const id = item.querySelector('.animal-id').textContent;
+    if (id === dado.identifier) {
+      item.remove();
+    }
+  });
+});
+
 socket.on('novoRegistro', function(registro) {
   console.log("Novo registro recebido via socket:", registro);
 
