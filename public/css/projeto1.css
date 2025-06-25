@@ -166,17 +166,17 @@ body {
 }
 
 .animal-item {
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 12px;
-  padding: 0.75rem;
-  margin-bottom: 0.5rem;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  transition: all 0.2s ease;
-  height: 140px;  /* Aqui colocamos altura fixa */
+  height: 160px; /* altura fixa um pouco maior */
   display: flex;
   flex-direction: column;
   justify-content: space-between;
+  padding: 0.75rem;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
+
 
 
 
@@ -192,11 +192,7 @@ body {
   margin-bottom: 0.3rem;
 }
 
-.animal-id {
-  font-weight: 600;
-  color: rgba(255, 255, 255, 0.95);
-  font-size: 1.1rem;
-}
+
 
 .animal-status {
   display: flex;
@@ -231,16 +227,21 @@ body {
   color: #f87171;
 }
 
+
+
 .animal-details {
   margin-top: 0.3rem;
 }
 
-.detail-row {
-  display: flex;
-  justify-content: space-between;
-  margin-bottom: 0.3rem;
-  font-size: 0.85rem;
+
+.animal-id {
+  font-size: 1rem;
 }
+
+.detail-row {
+  font-size: 0.8rem;
+}
+
 
 .detail-label {
   color: rgba(255, 255, 255, 0.7);
