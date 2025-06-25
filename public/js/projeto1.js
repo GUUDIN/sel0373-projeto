@@ -73,3 +73,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 });
+
+document.getElementById('register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+
+  const identifier = document.getElementById('identifier').value;
+  const allowed = document.getElementById('allowed').value;
+
+  try {
+    const res = await fetch('/projeto1/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ identifier, allowed })
+    });
+
+    if (res.ok) {
+      console.log('Animal cadastrado com sucesso!');
+      document.getElementById('register-form').reset();
+    } else {
+      const data = await res.json();
+      alert(data.error || 'Erro ao cadastrar');
+    }
+  } catch (err) {
+    console.error(err);
+    alert('Erro de comunicação com o servidor.');
+  }
+});
