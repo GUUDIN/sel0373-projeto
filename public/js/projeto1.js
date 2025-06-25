@@ -114,3 +114,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 });
 
+document.addEventListener('click', async (e) => {
+  if (e.target.closest('.delete-button')) {
+    e.preventDefault();
+
+    const button = e.target.closest('.delete-button');
+    const identifier = button.closest('.animal-item').querySelector('.animal-id').textContent;
+
+    if (!confirm(`Deseja excluir ${identifier}?`)) return;
+
+    try {
+      const res = await fetch(`/projeto1/delete/${identifier}`, { method: 'POST' });
+      if (!res.ok) alert('Erro ao excluir');
+      // O socket.io vai emitir e removerá visualmente automaticamente
+    } catch {
+      alert('Erro inesperado');
+    }
+  }
+});

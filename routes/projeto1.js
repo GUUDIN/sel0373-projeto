@@ -117,7 +117,7 @@ router.post('/register', async (req, res) => {
       //if(allowed == 'sim'){
       io.emit('registroAtualizado', {
         identifier,
-        allowed,
+        allowed : existente.allowed,
         peso: existente.peso,
         registradoPor: req.session.user.username,
         data: existente.data
