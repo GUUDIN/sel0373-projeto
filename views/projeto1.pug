@@ -8,26 +8,23 @@ html(lang="pt-BR")
     link(rel="stylesheet" href="/css/projeto1.css")
     include ./partials/styles.pug
     script(src="/components/user-settings/settings.js")
-    
+
   body
     .glass-background
     header.glass-navbar
       .container
-        button.profile-button(onclick="window.location.href='/'")
+        a.glass-logo(href="/")
           span Projetos IOT
-        //a.glass-logo(href="/")
-          
         nav.nav-right
           if user
             button.profile-button(type="button")
               img.profile-photo(src=user.avatarUrl || '/img/default-avatar.png' alt=user.username)
               span.username #{user.username}
 
-        
-        .page-header
-          h2.page-title Monitoramento de Animais
-          p.page-subtitle Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID
-    
+    .page-header(style="text-align: center; margin-top: 1rem;")
+      h2.page-title Monitoramento de Animais
+      p.page-subtitle Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID
+
     .projeto1-container 
       .container
         if error
@@ -36,60 +33,61 @@ html(lang="pt-BR")
           .glass-alert.alert-success= success
 
         .cards-grid(style="display: flex; gap: 20px; align-items: flex-start;")
-          .card.form-card(style="flex: 0 0 20%")
+          .card.form-card(style="flex: 0 0 35%")
             .card-header
               h3.card-title Cadastro de Animal
-            
+
             .card-content
               form#register-form.glass-form(action="/projeto1/register" method="POST")
                 .form-group
                   label.form-label(for="identifier") Identificador do animal
                   input#identifier.glass-input(type="text" name="identifier" placeholder="Ex: A123" required)
-                
+
                 .form-group
                   label.form-label(for="allowed") Permitido?
                   select#allowed.glass-select(name="allowed" required)
                     option(value="" disabled selected) Selecione uma opção
                     option(value="sim") Sim
                     option(value="nao") Não
-                
+
                 .form-actions
                   button.glass-button-primary(type="submit") Cadastrar
 
-          .card.records-card(style="flex: 0 0 60%")
+          .card.records-card(style="flex: 0 0 65%")
             .card-header
               h3.card-title Animais Registrados
-            
+
             .card-content
               .animals-list
                 if registros.length
                   each registro in registros
                     - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : 'Não recebido'
-                    .animal-item(style="height: 170px; display: flex; flex-direction: column; justify-content: space-between;")
-                      .animal-main
-                        .animal-id #{registro.identifier}
-                        .animal-status(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
-                          .status-indicator
-                          span.status-text #{registro.allowed === 'sim' ? 'Permitido' : 'Negado'}
-                      
-                      .animal-details
-                        .detail-row
-                          span.detail-label Peso (kg):
-                          span.detail-value(id='peso-' + registro.identifier)= valorPeso
-                        
-                        .detail-row
-                          span.detail-label Atualizado em:
-                          span.detail-value(id='data-' + registro.identifier)
-                            = registro.dataPesoAtualizado ? new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR") : 'Sem registro'
-                        
-                        if registro.registradoPor
+                    .animal-item(style="height: 170px; display: flex; flex-direction: column; justify-content: space-between; padding: 0.75rem;")
+                      .animal-body
+                        .animal-main
+                          .animal-id #{registro.identifier}
+                          .animal-status(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
+                            .status-indicator
+                            span.status-text #{registro.allowed === 'sim' ? 'Permitido' : 'Negado'}
+
+                        .animal-details
                           .detail-row
-                            span.detail-label Cadastrado por:
-                            span.detail-value #{registro.registradoPor}
-                      
+                            span.detail-label Peso (kg):
+                            span.detail-value(id='peso-' + registro.identifier)= valorPeso
+
+                          .detail-row
+                            span.detail-label Atualizado em:
+                            span.detail-value(id='data-' + registro.identifier)= registro.dataPesoAtualizado ? new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR") : 'Sem registro'
+
+                          if registro.registradoPor
+                            .detail-row
+                              span.detail-label Cadastrado por:
+                              span.detail-value #{registro.registradoPor}
+
                       .animal-actions
                         form(action='/projeto1/delete/' + registro.identifier method="POST" style="display: inline;")
                           button.glass-button-danger.delete-button(type="submit") Excluir
+
                 else
                   .empty-state
                     .empty-icon 🐄
@@ -106,4 +104,4 @@ html(lang="pt-BR")
 
     script(src="/components/user-settings/settings.js")
     script(src="/socket.io/socket.io.js")
-    script(src="/js/projeto1.js")
+    script(src="/js/projeto1-socket.js")
