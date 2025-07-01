@@ -3,7 +3,7 @@
 
 /* Body com fundo animado */
 body {
-  background-image: url('/img/glass-background.svg');
+  background-image: url('/img/glass-background.png');
   background-size: cover;
   background-position: center;
   background-attachment: fixed;
