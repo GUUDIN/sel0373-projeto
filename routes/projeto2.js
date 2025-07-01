@@ -3,10 +3,12 @@ const axios = require("axios");
 const mqtt = require('mqtt');
 const path = require("path");
 const express = require("express");
+const projeto_2 = require("../models/projeto_2");
 
 module.exports = function(io) {
   const router = express.Router();
 
+  const limite = 10; //DB
   // Arrays para armazenar dados dos sensores
   const registrosmapa = [];
   const registrostemp = [];
@@ -114,6 +116,7 @@ module.exports = function(io) {
     next();
   });
 
+  console.log('Array umidade:', registrosumidade);
   // Rota principal do projeto 2
   router.get('/', (req, res) => {
     res.render('projeto2', {
@@ -123,6 +126,10 @@ module.exports = function(io) {
       registrostemp: registrostemp,
       registrosvento: registrosvento,
       registrosumidade: registrosumidade,
+
+      tempAtual: registrostemp.length > 0 ? registrostemp[registrostemp.length - 1].temperatura : null,
+      umidadeAtual: registrosumidade.length > 0 ? registrosumidade[registrosumidade.length - 1].umidade : null,
+      ventoAtual: registrosvento.length > 0 ? registrosvento[registrosvento.length - 1].velocidade : null, 
       user: req.session.user
     });  
   });

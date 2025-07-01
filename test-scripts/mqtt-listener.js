@@ -1,21 +1,13 @@
+// mqtt-listener.js
 const mqtt = require('mqtt');
-
 const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
   username: 'mqtt',
   password: 'mqtt_123_abc'
 });
-
-const topic = 'vaquinha';
-
+const topics = ['mapa', 'temperatura', 'umidade', 'sensor-de-vento'];
 client.on('connect', () => {
-  console.log(`Conectado ao broker MQTT. Escutando o tópico: ${topic}`);
-  client.subscribe(topic, (err) => {
-    if (err) {
-      console.error('Erro ao se inscrever no tópico:', err);
-    }
-  });
+  client.subscribe(topics, () => console.log('Escutando tópicos:', topics));
 });
-
-client.on('message', (topic, message) => {
-  console.log(`Mensagem recebida no tópico ${topic}: ${message.toString()}`);
+client.on('message', (topic, msg) => {
+  console.log(`Recebido em ${topic}: ${msg.toString()}`);
 });

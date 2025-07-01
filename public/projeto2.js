@@ -50,7 +50,7 @@ socket.on('dados-clima', ({ temperatura, vento, umidade, horario }) => {
   // Atualiza cards
   document.getElementById('card-temp').textContent = `${temperatura} °C`;
   document.getElementById('card-vento').textContent = `${vento} m/s`;
-  document.getElementById('card-umidade').textContent = `${umidade ?? '--'} %`;
+  document.getElementById('card-umidade').textContent = `${umidade} %`;
 
   // Armazena no histórico
   historico.push({ temperatura, vento, umidade, horario });

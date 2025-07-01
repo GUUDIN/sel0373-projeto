@@ -1,27 +1,40 @@
 const mqtt = require('mqtt');
 
-// Configuração MQTT
 const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
   username: 'mqtt',
   password: 'mqtt_123_abc'
 });
 
-const topic = 'vaquinha/echo';
-
-// Dados de teste (pode trocar o identifier para simular outros animais)
-const identifier = 'vaquinha1';  // <-- coloque aqui o ID do animal que já está cadastrado
-const peso = Math.floor(Math.random() * 500) / 10 + 30;  // peso aleatório entre 30 e 80 kg (com 1 casa decimal)
+function randomBetween(min, max) {
+  return Math.random() * (max - min) + min;
+}
 
 client.on('connect', () => {
-  console.log('Conectado ao broker MQTT');
+  console.log('Conectado ao broker MQTT! Enviando dados a cada 2 segundos...');
 
-  const payload = {
-    identifier,
-    peso
-  };
+  let count = 0;
+  const maxCount = 100; // Envia 100 vezes e para (ajuste se quiser mais/menos)
 
-  client.publish(topic, JSON.stringify(payload), () => {
-    console.log(`Enviado: ID: ${identifier}, Peso: ${peso}kg`);
-    client.end();
-  });
+  const interval = setInterval(() => {
+    if (count >= maxCount) {
+      clearInterval(interval);
+      client.end();
+      console.log('Envio finalizado.');
+      return;
+    }
+
+    const lat = randomBetween(-23.570, -23.560);
+    const long = randomBetween(-46.630, -46.620);
+    const temperatura = randomBetween(15, 35).toFixed(1);
+    const umidade = randomBetween(30, 90).toFixed(1);
+    const velocidade = randomBetween(0, 25).toFixed(1);
+
+    client.publish('mapa', JSON.stringify({ lat, long }));
+    client.publish('temperatura', JSON.stringify({ temperatura }));
+    client.publish('umidade', JSON.stringify({ umidade }));
+    client.publish('sensor-de-vento', JSON.stringify({ velocidade }));
+
+    console.log(`[${count + 1}] Dados enviados: mapa(${lat},${long}), temperatura(${temperatura}), umidade(${umidade}), vento(${velocidade})`);
+    count++;
+  }, 2000); // 2000 ms = 2 segundos
 });

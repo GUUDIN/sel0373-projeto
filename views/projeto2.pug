@@ -41,17 +41,17 @@ html(lang="pt-BR")
             .metric-header
               span.metric-icon 🌡️
               span.metric-label Temperatura
-            .metric-value#card-temp --°C
+            .metric-value#card-temp #{tempAtual !== null ? tempAtual + '°C' : '--°C'}
           .glass-card.metric-card
             .metric-header
               span.metric-icon 💨
               span.metric-label Vento
-            .metric-value#card-vento -- m/s
+            .metric-value#card-vento #{ventoAtual !== null ? ventoAtual + ' m/s' : '-- m/s'}
           .glass-card.metric-card
             .metric-header
               span.metric-icon 💧
               span.metric-label Umidade
-            .metric-value#card-umidade --%
+            .metric-value#card-umidade #{umidadeAtual !== null ? umidadeAtual + '%' : '--%'}
 
         // Mapa e Gráfico lado a lado
         .map-chart-grid
