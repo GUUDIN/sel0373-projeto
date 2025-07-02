@@ -200,10 +200,11 @@ module.exports = function(io) {
 
 router.get('/', async (req, res) => {
   try {
-    const registrosmapa = await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(5);
-    const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(5);
-    const registrosumidade = await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(5);
-    const registrosvento = await projeto_2.find({ tipo: 'vento' }).sort({ dataRecebida: -1 }).limit(5);
+    const limite = 2; // Limite de registros a serem exibidos
+    const registrosmapa = await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrosumidade = await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrosvento = await projeto_2.find({ tipo: 'vento' }).sort({ dataRecebida: -1 }).limit(limite);
 
     res.render('projeto2', {
       registrosmapa,

@@ -89,7 +89,7 @@ socket.on('nova-coordenada', ({ lat, long }) => {
 
   historicoMapa.push({ lat, long, horario: new Date().toISOString() });
   if (historicoMapa.length > 50) historicoMapa.shift();
-  historico.push({ latitude: lat, longitude: long });
+  historico.push({ latitude: lat, longitude: long , horario: new Date().toISOString() });
   if (historico.length > 50) historico.shift();
 });
 
@@ -105,7 +105,7 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
   //client.publish('temperatura/echo', { temperatura, horario });
   if (historicoTemp.length > 50) historicoTemp.shift();
 
-  historico.push({ temperatura: temperatura, horario });
+  historico.push({ temperatura: temperatura, horario: new Date().toISOString() });
   if (historico.length > 50) historico.shift();
   updateChart();
 });
@@ -120,7 +120,7 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
 
   if (historicoUmidade.length > 50) historicoUmidade.shift();
 
-  historico.push({ umidade: umidade, horario });
+  historico.push({ umidade: umidade, horario: new Date().toISOString() });
   if (historico.length > 50) historico.shift();
   updateChart();
 });
@@ -135,7 +135,7 @@ socket.on('vento/echo', ({ velocidade, horario }) => {
   //client.publish('vento/echo', { velocidade, horario });
   
   if (historicoVento.length > 50) historicoVento.shift();
-  historico.push({ vento: velocidade, horario });
+  historico.push({ vento: velocidade, horario: new Date().toISOString() });
   if (historico.length > 50) historico.shift();
   updateChart();
 });
