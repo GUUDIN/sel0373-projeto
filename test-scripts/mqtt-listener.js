@@ -5,8 +5,10 @@ const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
   password: 'mqtt_123_abc'
 });
 const topics = ['mapa', 'temperatura', 'umidade', 'sensor-de-vento'];
+const topics_front = ['mapa/echo', 'temperatura/echo', 'umidade/echo', 'sensor-de-vento/echo'];
+
 client.on('connect', () => {
-  client.subscribe(topics, () => console.log('Escutando tópicos:', topics));
+  client.subscribe(topics_front, () => console.log('Escutando tópicos:', topics_front));
 });
 client.on('message', (topic, msg) => {
   console.log(`Recebido em ${topic}: ${msg.toString()}`);

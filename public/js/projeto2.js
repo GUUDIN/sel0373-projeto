@@ -75,7 +75,7 @@ const chart = new Chart(ctx, {
 
 // Socket event handlers
 socket.on('nova-coordenada', ({ lat, lon }) => {
-  console.log('Nova coordenada recebida:', { lat, lon });
+  client.publish('Nova coordenada recebida:', { lat, lon });
   map.setView([lat, lon], 14);
   marker.setLatLng([lat, lon])
     .setPopupContent(`Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`)
@@ -95,6 +95,7 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
   if (tempElement) tempElement.textContent = `${temperatura}°C`;
 
   historico.push({ temperatura, horario });
+  client.publish('Nova temperatura recebida:', { temperatura, horario });
   if (historico.length > 50) historico.shift();
   updateChart();
 });
@@ -105,6 +106,8 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
   const umidadeElement = document.getElementById('card-umidade');
   if (umidadeElement) umidadeElement.textContent = `${umidade}%`;
   historico.push({ umidade, horario });
+  client.publish('Nova umidade recebida:', { umidade, horario });
+
   if (historico.length > 50) historico.shift();
   updateChart();
 });
@@ -113,7 +116,11 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
 socket.on('vento/echo', ({ velocidade, horario }) => {
   const ventoElement = document.getElementById('card-vento');
   if (ventoElement) ventoElement.textContent = `${velocidade} m/s`;
-  historico.push({ velocidade, horario });
+  historico.push({ vento: velocidade, horario });
+
+  //historico.push({ velocidade, horario });
+  client.publish('Novos ventos recebidos:', { velocidade, horario });
+
   if (historico.length > 50) historico.shift();
   updateChart();
 });

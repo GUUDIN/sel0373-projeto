@@ -60,7 +60,7 @@ module.exports = function(io) {
             await novoReg.save();
             console.log('Novo registro:', novoReg);
         //registrosmapa.push(mensagem);
-        console.log(`MQTT: Mapa atualizado - ${lat}: ${long}`);
+        console.log(`MQTT: Mapa atualizado - ${latitude}: ${longitude}`);
 
         // Emite coordenadas para o frontend
         io.emit('nova-coordenada', { lat: lat, lon: long });
@@ -138,7 +138,7 @@ module.exports = function(io) {
         const velocidade = mensagem;
         //registrosvento.push(mensagem);
         const novoReg = new projeto_2({
-            tipo: 'velocidade',
+            tipo: 'vento',
             valor: parseFloat(velocidade),
             });
             await novoReg.save();
@@ -147,7 +147,8 @@ module.exports = function(io) {
 
             //let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
             //client.publish('sensor-de-vento/echo', `${velocidade}`);
-            io.emit('vento/echo', { velocidade, horario });
+            io.emit('vento/echo', { velocidade, horario: new Date().toISOString() });
+
 
         console.log(`MQTT: Sensor vento atualizado - ${velocidade}`);
       } catch (e) {
