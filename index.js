@@ -28,7 +28,12 @@ const io = new Server(server); // cria o socket
 // Passa o socket para todas as rotas (como middleware ou em app.locals)
 app.set("io", io);
 
+app.use(sessionMiddleware);
 
+// 👇 Aqui você integra o socket com a sessão Express
+io.use((socket, next) => {
+  sessionMiddleware(socket.request, {}, next);
+});
 // Configura o body-parser para interpretar dados URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));
 

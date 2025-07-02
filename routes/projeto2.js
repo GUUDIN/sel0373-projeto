@@ -209,8 +209,8 @@ router.get('/', async (req, res) => {
     const usuario = req.session.user.username;
 
     const registrosmapa = await projeto_2.find({ tipo: 'mapa', usuario }).sort({ dataRecebida: -1 }).limit(limite);
-    //const registrostemp = await projeto_2.find({ tipo: 'temperatura', usuario }).sort({ dataRecebida: -1 }).limit(limite);
-    const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrostemp = await projeto_2.find({ tipo: 'temperatura', usuario }).sort({ dataRecebida: -1 }).limit(limite);
+    //const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite);
     const registrosumidade = await projeto_2.find({ tipo: 'umidade', usuario }).sort({ dataRecebida: -1 }).limit(limite);
     const registrosvento = await projeto_2.find({ tipo: 'vento', usuario }).sort({ dataRecebida: -1 }).limit(limite);
     res.render('projeto2', {
