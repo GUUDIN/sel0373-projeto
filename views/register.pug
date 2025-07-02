@@ -17,12 +17,12 @@ html
     header.navbar
       .logo
         a.logo-text(href="/") Projetos IOT
-        nav.nav-right
-          if user
-            span.text-white.me-3 Olá, #{user.username}
-            a.logout-button.text-white.ms-2(href="/users/logout") Logout
-          else
-            a.login-button.text-white(href="/users") Login
+      nav.nav-right
+        if user
+          span.text-white.me-3 Olá, #{user.username}
+          a.logout-button.text-white.ms-2(href="/users/logout") Logout
+        else
+          a.login-button(href="/users") Login
 
 
     // Container para o formulário de registro

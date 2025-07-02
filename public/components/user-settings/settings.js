@@ -19,15 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function updateProjectSelectBasedOnURL() {
     const projectSelect = document.querySelector('.project-select');
-    if (!projectSelect) {
-      console.log('❌ Project select não encontrado');
-      return;
-    }
+    if (!projectSelect) return;
 
     // Detectar projeto atual pela URL
     const currentPath = window.location.pathname;
-    console.log('🔍 URL atual:', currentPath);
-    
     let currentProject = null;
     
     if (currentPath.includes('/projeto1')) {
@@ -36,29 +31,19 @@ document.addEventListener("DOMContentLoaded", () => {
       currentProject = 2;
     }
 
-    console.log('🎯 Projeto detectado:', currentProject);
-
     if (currentProject) {
-      // MÉTODO 1: Usar selectedIndex
+      // Usar selectedIndex
       const targetOption = projectSelect.querySelector(`option[value="${currentProject}"]`);
       if (targetOption) {
         const targetIndex = Array.from(projectSelect.options).indexOf(targetOption);
         projectSelect.selectedIndex = targetIndex;
-        console.log('✅ selectedIndex definido para:', targetIndex);
       }
 
-      // MÉTODO 2: Usar .value (backup)
+      // Usar .value (backup)
       projectSelect.value = currentProject.toString();
-      console.log('✅ value definido para:', projectSelect.value);
-
-      // MÉTODO 3: Forçar evento change
+      
+      // Forçar evento change
       projectSelect.dispatchEvent(new Event('change'));
-
-      // Verificar resultado final
-      console.log('🔍 Valor final do select:', projectSelect.value);
-      console.log('🔍 Índice selecionado:', projectSelect.selectedIndex);
-    } else {
-      console.log('⚠️ Nenhum projeto detectado na URL');
     }
   }
 
@@ -69,12 +54,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // Interceptar o submit do formulário para debugging
+  // Interceptar o submit do formulário
   if (settingsForm) {
     settingsForm.addEventListener('submit', function(e) {
-      const formData = new FormData(this);
-      const selectedProject = formData.get('project');
-      console.log('📤 Enviando projeto:', selectedProject);
+      // Form submete normalmente para o servidor
     });
   }
 
