@@ -196,23 +196,20 @@ module.exports = function(io) {
   });
  */
 
-  router.get('/', async (req, res) => {
-  try {
-    const limite = 10;
+  //const Projeto_2 = require('../models/projeto_2');
 
-    const registrosmapa = await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite);
-    const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite);
-    const registrosumidade = await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite);
-    const registrosvento = await projeto_2.find({ tipo: 'velocidade' }).sort({ dataRecebida: -1 }).limit(limite);
+router.get('/', async (req, res) => {
+  try {
+    const registrosmapa = await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(5);
+    const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(5);
+    const registrosumidade = await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(5);
+    const registrosvento = await projeto_2.find({ tipo: 'vento' }).sort({ dataRecebida: -1 }).limit(5);
 
     res.render('projeto2', {
-      success: req.query.success,
-      error: req.query.error,
-
       registrosmapa,
       registrostemp,
-      registrosvento,
       registrosumidade,
+      registrosvento,
 
       tempValue: registrostemp.length ? registrostemp[0].valor : null,
       umidadeValue: registrosumidade.length ? registrosumidade[0].valor : null,
@@ -220,22 +217,19 @@ module.exports = function(io) {
 
       user: req.session.user
     });
-
-  } catch (err) {
-    console.error('Erro ao buscar dados do Projeto 2:', err);
+  } catch (error) {
+    console.error('Erro ao carregar dados do projeto 2:', error);
     res.render('projeto2', {
-      error: 'Erro ao carregar dados do banco de dados.',
+      error: 'Erro ao carregar os dados recentes.',
       registrosmapa: [],
       registrostemp: [],
-      registrosvento: [],
       registrosumidade: [],
-      tempValue: null,
-      umidadeValue: null,
-      ventoValue: null,
+      registrosvento: [],
       user: req.session.user
     });
   }
 });
+
 
 
   return router;
