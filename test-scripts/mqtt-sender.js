@@ -27,15 +27,15 @@ client.on('connect', () => {
     const long = randomBetween(-46.630, -46.620);
     const temperatura = randomBetween(15, 35).toFixed(1);
     const umidade = randomBetween(30, 90).toFixed(1);
-    const velocidade = randomBetween(0, 25).toFixed(1);
+    const vento = randomBetween(0, 25).toFixed(1);
 
     client.publish('mapa', `${lat},${long}`);
 
     client.publish('temperatura', temperatura);
     client.publish('umidade',  umidade );
-    client.publish('sensor-de-vento', velocidade);
+    client.publish('sensor-de-vento', vento);
 
-    console.log(`[${count + 1}] Dados enviados: mapa(${lat},${long}), temperatura(${temperatura}), umidade(${umidade}), vento(${velocidade})`);
+    console.log(`[${count + 1}] Dados enviados: mapa(${lat},${long}), temperatura(${temperatura}), umidade(${umidade}), vento(${vento})`);
     count++;
   }, 200); // 2000 ms = 2 segundos
 });

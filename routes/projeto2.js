@@ -156,7 +156,7 @@ module.exports = function(io) {
             io.emit('vento/echo', { vento, horario: new Date().toISOString() });
 
 
-        console.log(`MQTT: Sensor vento atualizado - ${velocidade}`);
+        console.log(`MQTT: Sensor vento atualizado - ${vento}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
       }
