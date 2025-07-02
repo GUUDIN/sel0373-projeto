@@ -16,6 +16,11 @@ let marker = L.marker([-23.5505, -46.6333]).addTo(map)
 //const historicoLoc = [];
 //const historicoUm = [];
 const historico = [];
+const historicoTemp = [];
+const historicoUmidade = [];
+const historicoVento = [];
+const historicoMapa = [];
+
 
 // Initialize chart
 const ctx = document.getElementById('grafico')?.getContext('2d');
@@ -82,8 +87,8 @@ socket.on('nova-coordenada', ({ lat, long }) => {
     .setPopupContent(`Lat: ${lat.toFixed(7)}, Lon: ${long.toFixed(7)}`)
     .openPopup();
 
-  historico.push({ lat, long, horario: new Date().toISOString() });
-  if (historico.length > 50) historico.shift();
+  historicoMapa.push({ lat, long, horario: new Date().toISOString() });
+  if (historicoMapa.length > 50) historicoMapa.shift();
 });
 const clima_echo = [
     'temperatura/echo',
@@ -98,9 +103,9 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
   const tempElement = document.getElementById('card-temp');
   if (tempElement) tempElement.textContent = `${temperatura}°C`;
 
-  historico.push({ temperatura, horario });
+  historicoTemp.push({ temperatura, horario });
   //client.publish('temperatura/echo', { temperatura, horario });
-  if (historico.length > 50) historico.shift();
+  if (historicoTemp.length > 50) historicoTemp.shift();
   updateChart();
 });
 
@@ -109,10 +114,10 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
 socket.on('umidade/echo', ({ umidade, horario }) => {
   const umidadeElement = document.getElementById('card-umidade');
   if (umidadeElement) umidadeElement.textContent = `${umidade}%`;
-  historico.push({ umidade, horario });
+  historicoUmidade.push({ umidade, horario });
   //client.publish('umidade/echo', { umidade, horario });
 
-  if (historico.length > 50) historico.shift();
+  if (historicoUmidade.length > 50) historicoUmidade.shift();
   updateChart();
 });
 
@@ -120,12 +125,12 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
 socket.on('vento/echo', ({ velocidade, horario }) => {
   const ventoElement = document.getElementById('card-vento');
   if (ventoElement) ventoElement.textContent = `${velocidade} m/s`;
-  historico.push({ vento: velocidade, horario });
+  historicoVento.push({ vento: velocidade, horario });
 
   //historico.push({ velocidade, horario });
   //client.publish('vento/echo', { velocidade, horario });
 
-  if (historico.length > 50) historico.shift();
+  if (historicoVento.length > 50) historicoVento.shift();
   updateChart();
 });
 
@@ -173,33 +178,40 @@ socket.on('mqttToggleResponse', function(data) {
   }
 });
 
-// Chart update function
 function updateChart() {
   const eixoY = document.getElementById('eixoY')?.value || 'temperatura';
   const eixoX = document.getElementById('eixoX')?.value || 'tempo';
 
-  chart.data.labels = historico.map(d => new Date(d.horario).toLocaleTimeString('pt-BR'));
-  chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
-  chart.data.datasets[0].data = historico.map(d => d[eixoY]);
-  
-  // Update chart colors based on data type
-  switch(eixoY) {
+  let dados = [];
+
+  // Seleciona o histórico correto com base no eixo Y
+  switch (eixoY) {
     case 'temperatura':
+      dados = historicoTemp;
       chart.data.datasets[0].borderColor = '#FF6B35';
       chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 53, 0.1)';
       break;
     case 'umidade':
+      dados = historicoUmidade;
       chart.data.datasets[0].borderColor = '#007AFF';
       chart.data.datasets[0].backgroundColor = 'rgba(0, 122, 255, 0.1)';
       break;
     case 'vento':
+      dados = historicoVento;
       chart.data.datasets[0].borderColor = '#34C759';
       chart.data.datasets[0].backgroundColor = 'rgba(52, 199, 89, 0.1)';
       break;
+    default:
+      return; // caso inválido
   }
-  
+
+  chart.data.labels = dados.map(d => new Date(d.horario).toLocaleTimeString('pt-BR'));
+  chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
+  chart.data.datasets[0].data = dados.map(d => parseFloat(d.valor));
+
   chart.update();
 }
+
 
 // Tab functionality
 document.addEventListener('DOMContentLoaded', function() {
