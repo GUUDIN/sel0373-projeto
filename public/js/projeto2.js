@@ -109,10 +109,10 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
 });
 
 // 💨 Vento recebido
-socket.on('sensor-de-vento/echo', ({ vento, horario }) => {
+socket.on('vento/echo', ({ vento, horario }) => {
   const ventoElement = document.getElementById('card-vento');
-  if (ventoElement) ventoElement.textContent = `${vento} m/s`;
-  historico.push({ vento, horario });
+  if (ventoElement) ventoElement.textContent = `${velocidade} m/s`;
+  historico.push({ vento: velocidade, horario });
   if (historico.length > 50) historico.shift();
   updateChart();
 });

@@ -97,7 +97,10 @@ module.exports = function(io) {
             await novoReg.save();
             console.log('Novo registro:', novoReg);
         //registrostemp.push(mensagem);
-        let registrostemp = await projeto_2.find({tipo:'temperatura'}).sort({dataRecebida:-1}).limit(limite);
+        registrostemp.length = 0;
+        registrostemp.push(...await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite));
+
+        //let registrostemp = await projeto_2.find({tipo:'temperatura'}).sort({dataRecebida:-1}).limit(limite);
         io.emit('temperatura/echo', { temperatura: temperatura, horario: new Date().toISOString() });
         //client.publish('temperatura/echo', `${temperatura}`);
         console.log(`MQTT: Temp atualizado - ${temperatura}`);
@@ -117,7 +120,10 @@ module.exports = function(io) {
             });
             await novoReg.save();
             console.log('Novo registro:', novoReg);
-        let registrosumidade = await projeto_2.find({tipo:'umidade'}).sort({dataRecebida:-1}).limit(limite);
+        registrosumidade.length = 0;
+        registrosumidade.push(...await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite));
+
+        //let registrosumidade = await projeto_2.find({tipo:'umidade'}).sort({dataRecebida:-1}).limit(limite);
         //client.publish('umidade/echo', umidade);
         io.emit('umidade/echo', { umidade: umidade, horario: new Date().toISOString() });
         //console.log(`MQTT: Umidade atualizado - ${umidade}`);
@@ -136,9 +142,13 @@ module.exports = function(io) {
             valor: parseFloat(velocidade),
             });
             await novoReg.save();
-            let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
+            registrosvento.length = 0;
+            registrosvento.push(...await projeto_2.find({ tipo: 'velocidade' }).sort({ dataRecebida: -1 }).limit(limite));
+
+            //let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
             //client.publish('sensor-de-vento/echo', `${velocidade}`);
-            io.emit('sensor-de-vento/echo', { velocidade: velocidade, horario: new Date().toISOString() })
+            io.emit('vento/echo', { velocidade, horario });
+
         console.log(`MQTT: Sensor vento atualizado - ${velocidade}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
