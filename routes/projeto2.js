@@ -165,7 +165,7 @@ module.exports = function(io) {
     }
     next();
   });
-
+/*
   // Rota principal do projeto 2
   router.get('/', (req, res) => {
 
@@ -177,12 +177,60 @@ module.exports = function(io) {
       registrosvento: registrosvento,
       registrosumidade: registrosumidade,
 
-      tempValue: registrostemp.length ? registrostemp[registrostemp.length - 1].temperatura : null,
-      umidadeValue: registrosumidade.length ? registrosumidade[registrosumidade.length - 1].umidade : null,
-      ventoValue: registrosvento.length ? registrosvento[registrosvento.length - 1].velocidade : null,
+      //tempValue: registrostemp.length ? registrostemp[registrostemp.length - 1].temperatura : null,
+      //umidadeValue: registrosumidade.length ? registrosumidade[registrosumidade.length - 1].umidade : null,
+      //ventoValue: registrosvento.length ? registrosvento[registrosvento.length - 1].velocidade : null,
+      
+      tempValue: registrostemp.length ? registrostemp[0].valor : null,
+      umidadeValue: registrosumidade.length ? registrosumidade[0].valor : null,
+      ventoValue: registrosvento.length ? registrosvento[0].valor : null,
+
       user: req.session.user
     });  
   });
+ */
+
+  router.get('/', async (req, res) => {
+  try {
+    const limite = 10;
+
+    const registrosmapa = await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrosumidade = await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrosvento = await projeto_2.find({ tipo: 'velocidade' }).sort({ dataRecebida: -1 }).limit(limite);
+
+    res.render('projeto2', {
+      success: req.query.success,
+      error: req.query.error,
+
+      registrosmapa,
+      registrostemp,
+      registrosvento,
+      registrosumidade,
+
+      tempValue: registrostemp.length ? registrostemp[0].valor : null,
+      umidadeValue: registrosumidade.length ? registrosumidade[0].valor : null,
+      ventoValue: registrosvento.length ? registrosvento[0].valor : null,
+
+      user: req.session.user
+    });
+
+  } catch (err) {
+    console.error('Erro ao buscar dados do Projeto 2:', err);
+    res.render('projeto2', {
+      error: 'Erro ao carregar dados do banco de dados.',
+      registrosmapa: [],
+      registrostemp: [],
+      registrosvento: [],
+      registrosumidade: [],
+      tempValue: null,
+      umidadeValue: null,
+      ventoValue: null,
+      user: req.session.user
+    });
+  }
+});
+
 
   return router;
 };
