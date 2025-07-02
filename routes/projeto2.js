@@ -70,6 +70,8 @@ module.exports = function(io) {
         const { data } = await axios.get(url);
 
         const clima = {
+          latitude: lat,
+          longitude: long,
           //temperatura: data.current_weather.temperature,
           //vento: data.current_weather.windspeed,
           codigoTempo: data.current_weather.weathercode,
