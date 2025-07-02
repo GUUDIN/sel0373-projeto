@@ -128,7 +128,7 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
 // 💨 Vento recebido
 socket.on('vento/echo', ({ vento, horario }) => {
   const ventoElement = document.getElementById('card-vento');
-  if (ventoElement) ventoElement.textContent = `${velocidade} m/s`;
+  if (ventoElement) ventoElement.textContent = `${vento} m/s`;
   historicoVento.push({ vento: vento, horario });
 
   //historico.push({ velocidade, horario });
