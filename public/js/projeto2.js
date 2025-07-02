@@ -84,12 +84,12 @@ socket.on('nova-coordenada', ({ lat, long }) => {
   //client.publish('Nova coordenada recebida:', { lat, lon });
   map.setView([lat, long], 14);
   marker.setLatLng([lat, long])
-    .setPopupContent(`Lat: ${lat.toFixed(7)}, Lon: ${long.toFixed(7)}`)
+    .setPopupContent(`Lat: ${lat.toFixed(4)}, Lon: ${long.toFixed(4)}`)
     .openPopup();
 
   historicoMapa.push({ lat, long, horario: new Date().toISOString() });
   if (historicoMapa.length > 50) historicoMapa.shift();
-  historico.push({ lat, long, horario });
+  historico.push({ latitude: lat, longitude: long });
   if (historico.length > 50) historico.shift();
 });
 
@@ -258,7 +258,7 @@ const recentes = {
 // Função para limitar a 5
 function adicionarRegistro(tipo, registro) {
   recentes[tipo].push(registro);
-  if (recentes[tipo].length > 5) {
+  if (recentes[tipo].length > 2) {
     recentes[tipo].shift(); // Remove o mais antigo
   }
   renderRecentes(tipo);
