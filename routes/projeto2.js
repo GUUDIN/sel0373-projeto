@@ -98,8 +98,8 @@ module.exports = function(io) {
             console.log('Novo registro:', novoReg);
         //registrostemp.push(mensagem);
         let registrostemp = await projeto_2.find({tipo:'temperatura'}).sort({dataRecebida:-1}).limit(limite);
-        io.emit('temperatura/echo', { temperatura, horario: new Date().toISOString() });
-        client.publish('temperatura/echo', `${temperatura}`);
+        io.emit('temperatura/echo', { temperatura: temperatura, horario: new Date().toISOString() });
+        //client.publish('temperatura/echo', `${temperatura}`);
         console.log(`MQTT: Temp atualizado - ${temperatura}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
@@ -118,8 +118,8 @@ module.exports = function(io) {
             await novoReg.save();
             console.log('Novo registro:', novoReg);
         let registrosumidade = await projeto_2.find({tipo:'umidade'}).sort({dataRecebida:-1}).limit(limite);
-        client.publish('umidade/echo', umidade);
-        io.emit('umidade/echo', {umidade, horario: new Date().toISOString() });
+        //client.publish('umidade/echo', umidade);
+        io.emit('umidade/echo', { umidade: umidade, horario: new Date().toISOString() });
         //console.log(`MQTT: Umidade atualizado - ${umidade}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
@@ -137,7 +137,7 @@ module.exports = function(io) {
             });
             await novoReg.save();
             let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
-            client.publish('sensor-de-vento/echo', `${velocidade}`);
+            //client.publish('sensor-de-vento/echo', `${velocidade}`);
             io.emit('sensor-de-vento/echo', { velocidade: velocidade, horario: new Date().toISOString() })
         console.log(`MQTT: Sensor vento atualizado - ${velocidade}`);
       } catch (e) {
@@ -164,6 +164,7 @@ module.exports = function(io) {
       registrostemp: registrostemp,
       registrosvento: registrosvento,
       registrosumidade: registrosumidade,
+
       tempValue: registrostemp.length ? registrostemp[registrostemp.length - 1].temperatura : null,
       umidadeValue: registrosumidade.length ? registrosumidade[registrosumidade.length - 1].umidade : null,
       ventoValue: registrosvento.length ? registrosvento[registrosvento.length - 1].velocidade : null,
