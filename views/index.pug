@@ -55,7 +55,7 @@ html(lang="pt-BR")
         h2.section-title Projetos Disponíveis
         .projects-grid
           each project in projects
-            .project-card
+            .project-card(class=(user && (user.project == project.id || user.project === parseInt(project.id))) ? 'current-user-project' : '')
               .project-header
                 .project-icon
                   // Ícone do projeto (fallback se não tiver)
@@ -75,8 +75,8 @@ html(lang="pt-BR")
                       span.feature-icon ✓
                       span.feature-text #{feature}
               .project-footer
-                if user && user.project === project.id
-                  span.current-project Projeto Atual
+                if user && (user.project == project.id || user.project === parseInt(project.id))
+                  a.current-project(href=project.route) Projeto Atual
                 else if user
                   form.switch-project-form(action="/users/settings" method="post")
                     input(type="hidden" name="project" value=project.id)
