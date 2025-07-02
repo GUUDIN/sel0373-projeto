@@ -248,6 +248,27 @@ router.get('/', async (req, res) => {
   }
 });
 
+router.get('/api/grafico', async (req, res) => {
+  try {
+    const tipo = req.query.tipo || 'temperatura'; // 'umidade', 'vento'
+    const limite = parseInt(req.query.limite) || 50;
+
+    const usuario = req.session.user?.username;
+    const query = { tipo };
+    if (usuario) query.usuario = usuario;
+
+    const dados = await projeto_2.find(query)
+      .sort({ dataRecebida: -1 })
+      .limit(limite)
+      .select('valor dataRecebida -_id');
+
+    // Inverte para ordem cronológica
+    res.json(dados.reverse());
+  } catch (err) {
+    console.error("Erro ao obter dados do gráfico:", err);
+    res.status(500).json({ error: 'Erro ao obter dados do gráfico' });
+  }
+});
 
 
   return router;

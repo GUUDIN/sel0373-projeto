@@ -143,7 +143,7 @@ socket.on('vento/echo', ({ vento, horario }) => {
 // ================================================== //
 // MQTT TOGGLE SWITCH CONTROL
 // ================================================== //
-
+/*
 document.addEventListener('DOMContentLoaded', function() {
   const toggleSwitch = document.getElementById('mqttToggle');
   const toggleStatus = document.getElementById('toggleStatus');
@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 });
-
+*/
 // Listen for MQTT toggle responses
 socket.on('mqttToggleResponse', function(data) {
   console.log('MQTT Toggle Response:', data);
@@ -185,33 +185,41 @@ socket.on('mqttToggleResponse', function(data) {
 });
 
 // Chart update function
-function updateChart() {
+async function updateChart() {
   const eixoY = document.getElementById('eixoY')?.value || 'temperatura';
-  const eixoX = document.getElementById('eixoX')?.value || 'tempo';
+  const limite = 50; // ou usar um input personalizado no futuro
 
-  chart.data.labels = historico.map(d => new Date(d.horario).toLocaleTimeString('pt-BR'));
-  chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
-  chart.data.datasets[0].data = historico.map(d => d[eixoY]);
-  
-  // Update chart colors based on data type
-  switch(eixoY) {
-    case 'temperatura':
-      chart.data.datasets[0].borderColor = '#FF6B35';
-      chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 53, 0.1)';
-      break;
-    case 'umidade':
-      chart.data.datasets[0].borderColor = '#007AFF';
-      chart.data.datasets[0].backgroundColor = 'rgba(0, 122, 255, 0.1)';
-      break;
-    case 'vento':
-      chart.data.datasets[0].borderColor = '#34C759';
-      chart.data.datasets[0].backgroundColor = 'rgba(52, 199, 89, 0.1)';
-      break;
+  try {
+    const res = await fetch(`/projeto2/api/grafico?tipo=${eixoY}&limite=${limite}`);
+    const dados = await res.json();
+
+    chart.data.labels = dados.map(d => new Date(d.dataRecebida).toLocaleTimeString('pt-BR'));
+    chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
+    chart.data.datasets[0].data = dados.map(d => parseFloat(d.valor));
+
+    // Cores
+    switch (eixoY) {
+      case 'temperatura':
+        chart.data.datasets[0].borderColor = '#FF6B35';
+        chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 53, 0.1)';
+        break;
+      case 'umidade':
+        chart.data.datasets[0].borderColor = '#007AFF';
+        chart.data.datasets[0].backgroundColor = 'rgba(0, 122, 255, 0.1)';
+        break;
+      case 'vento':
+        chart.data.datasets[0].borderColor = '#34C759';
+        chart.data.datasets[0].backgroundColor = 'rgba(52, 199, 89, 0.1)';
+        break;
+    }
+
+    chart.update();
+  } catch (error) {
+    console.error('Erro ao atualizar gráfico:', error);
   }
-  
-  chart.update();
 }
 
+/*
 // Tab functionality
 document.addEventListener('DOMContentLoaded', function() {
   const tabButtons = document.querySelectorAll('.tab-button');
@@ -245,6 +253,58 @@ document.addEventListener('DOMContentLoaded', function() {
   if (eixoXSelect) {
     eixoXSelect.addEventListener('change', updateChart);
   }
+});
+*/
+
+document.addEventListener('DOMContentLoaded', function() {
+  // 1. Tabs
+  const tabButtons = document.querySelectorAll('.tab-button');
+  const tabContents = document.querySelectorAll('.tab-content');
+
+  tabButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const targetTab = button.getAttribute('data-tab');
+
+      tabButtons.forEach(btn => btn.classList.remove('active'));
+      tabContents.forEach(content => content.classList.remove('active'));
+
+      button.classList.add('active');
+      const targetContent = document.getElementById(`tab-${targetTab}`);
+      if (targetContent) {
+        targetContent.classList.add('active');
+      }
+    });
+  });
+
+  // 2. Chart controls
+  const eixoYSelect = document.getElementById('eixoY');
+  const eixoXSelect = document.getElementById('eixoX');
+
+  if (eixoYSelect) eixoYSelect.addEventListener('change', updateChart);
+  if (eixoXSelect) eixoXSelect.addEventListener('change', updateChart);
+
+  // 3. MQTT Toggle
+  const toggleSwitch = document.getElementById('mqttToggle');
+  const toggleStatus = document.getElementById('toggleStatus');
+
+  if (toggleSwitch && toggleStatus) {
+    toggleSwitch.addEventListener('change', function () {
+      const isChecked = this.checked;
+
+      toggleStatus.textContent = isChecked ? 'Ativado' : 'Desativado';
+      toggleStatus.className = isChecked ? 'toggle-status on' : 'toggle-status off';
+
+      socket.emit('mqttToggle', {
+        state: isChecked,
+        timestamp: new Date().toISOString()
+      });
+
+      console.log(`Toggle MQTT: ${isChecked ? 'ON' : 'OFF'}`);
+    });
+  }
+
+  // 4. CHAMADA QUE IMPORTA: atualiza o gráfico com os dados salvos na DB
+  updateChart();
 });
 
 
