@@ -101,7 +101,7 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
   const tempElement = document.getElementById('card-temp');
   if (tempElement) tempElement.textContent = `${temperatura}°C`;
 
-  historicoTemp.push({ temperatura, horario });
+  historicoTemp.push({ temperatura: temperatura, horario });
   //client.publish('temperatura/echo', { temperatura, horario });
   if (historicoTemp.length > 50) historicoTemp.shift();
 
