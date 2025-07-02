@@ -64,7 +64,7 @@ module.exports = function(io) {
         // Emite coordenadas para o frontend
         io.emit('nova-coordenada', { lat: lat, long: long });
         registrosmapa.push({latitude: lat, longitude: long});
-        const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite));
+        //const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite));
 
         registrosmapa.push(...await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite));
         // Faz requisição à API de clima
