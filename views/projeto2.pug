@@ -52,6 +52,18 @@ html(lang="pt-BR")
               span.metric-icon 💧
               span.metric-label Umidade
             .metric-value#card-umidade #{umidadeValue !== null ? umidadeValue + '%' : '--%'}
+          .glass-card.metric-card
+            .metric-header
+              span.metric-icon ☔️
+              span.metric-label Irrigação
+            .metric-toggle-container
+              .toggle-container
+                span.toggle-label OFF
+                label.toggle-switch
+                  input(type="checkbox" id="mqttToggle")
+                  span.slider
+                span.toggle-label ON
+              .toggle-status#toggleStatus.off Desativado
 
         // Mapa e Gráfico lado a lado
         .map-chart-grid

@@ -84,8 +84,6 @@ const clima_echo = [
     'sensor-de-vento/echo'
   ];
 
-// ...existing code...
-
 // 🌡️ Temperatura recebida
 socket.on('temperatura/echo', ({ temperatura, horario }) => {
   document.getElementById("temperatura").innerText = temperatura;
@@ -117,7 +115,49 @@ socket.on('vento/echo', ({ vento, horario }) => {
   updateChart();
 });
 
-// ...existing code...
+// ================================================== //
+// MQTT TOGGLE SWITCH CONTROL
+// ================================================== //
+
+document.addEventListener('DOMContentLoaded', function() {
+  const toggleSwitch = document.getElementById('mqttToggle');
+  const toggleStatus = document.getElementById('toggleStatus');
+
+  if (toggleSwitch && toggleStatus) {
+    toggleSwitch.addEventListener('change', function() {
+      const isChecked = this.checked;
+      
+      // Update status display
+      if (isChecked) {
+        toggleStatus.textContent = 'Ativado';
+        toggleStatus.className = 'toggle-status on';
+      } else {
+        toggleStatus.textContent = 'Desativado';
+        toggleStatus.className = 'toggle-status off';
+      }
+
+      // Send MQTT message via Socket.IO
+      socket.emit('mqttToggle', {
+        state: isChecked,
+        timestamp: new Date().toISOString()
+      });
+
+      console.log(`Toggle MQTT: ${isChecked ? 'ON' : 'OFF'}`);
+    });
+  }
+});
+
+// Listen for MQTT toggle responses
+socket.on('mqttToggleResponse', function(data) {
+  console.log('MQTT Toggle Response:', data);
+  
+  // You can add visual feedback here if needed
+  if (data.success) {
+    console.log('MQTT message sent successfully');
+  } else {
+    console.error('Failed to send MQTT message:', data.error);
+  }
+});
 
 // Chart update function
 function updateChart() {

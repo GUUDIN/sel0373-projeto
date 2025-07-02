@@ -109,7 +109,7 @@ body {
 
 .metrics-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: var(--spacing-lg);
   margin-bottom: var(--spacing-xl);
 }
@@ -138,6 +138,96 @@ body {
 .metric-value {
   font-size: 2.3rem;
   font-weight: 700;
+}
+
+/* Metric Toggle Container */
+.metric-toggle-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.toggle-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--spacing-md);
+}
+
+.toggle-label {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+}
+
+/* iPhone-style Toggle Switch */
+.toggle-switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+}
+
+.toggle-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: #f4f4f5;
+  transition: 0.4s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: calc(var(--size-of-icon, 1.4em));
+  width: calc(var(--size-of-icon, 1.4em));
+  border-radius: 20px;
+  left: calc(var(--slider-offset, 0.3em));
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(40deg, #ff0080, #ff8c00 70%);
+  transition: 0.4s;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+input:checked + .slider {
+  background: linear-gradient(135deg, #4eb11c 0%, #5CB82A 100%);
+}
+
+input:checked + .slider::before {
+  left: calc(100% - (var(--size-of-icon, 1.4em) + var(--slider-offset, 0.3em)));
+  background: white;
+}
+
+.toggle-status {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-medium);
+  transition: all 0.3s ease;
+}
+
+.toggle-status.on {
+  color: white;
+  background: #66CC33;
+  border: 1px solid rgba(102, 204, 51, 0.3);
+}
+
+.toggle-status.off {
+  color: var(--text-secondary);
+  background: var(--glass-secondary);
+  border: 1px solid var(--glass-border);
 }
 
 .map-chart-grid {
@@ -271,6 +361,12 @@ body {
     grid-template-columns: 1fr;
   }
 
+  .metrics-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
   .metrics-grid {
     grid-template-columns: 1fr;
   }
