@@ -72,7 +72,10 @@
   transition: opacity 0.3s ease;
 }
 
-
+#settingsOverlay.active {
+  opacity: 1;
+  pointer-events: auto;
+}
 
 /* DEBUG: Force visibility when active */
 #settingsOverlay.active {
@@ -95,7 +98,9 @@
   transition: transform 0.3s ease;
 }
 
-
+#settingsOverlay.active #settingsCard {
+  transform: scale(1);
+}
 
 /* DEBUG: Force card visibility */
 #settingsOverlay.active #settingsCard {

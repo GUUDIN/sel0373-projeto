@@ -62,7 +62,12 @@ router.post("/login", async (req, res) => {
     const match = await bcrypt.compare(password, user.password);
 
     if (match) {
-      req.session.user = { username: user.username };
+      // Salvar TODOS os dados relevantes na sessão
+      req.session.user = { 
+          username: user.username,
+          project: user.project,
+          avatarUrl: user.avatarUrl
+      };
       req.session.project = user.project; // Armazena o projeto na sessão
       console.log("Usuário autenticado:", req.session.user);
       console.log("Projeto do usuário:", req.session.project);
