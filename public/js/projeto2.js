@@ -78,30 +78,46 @@ socket.on('nova-coordenada', ({ lat, lon }) => {
     .setPopupContent(`Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`)
     .openPopup();
 });
+const clima_echo = [
+    'temperatura/echo',
+    'umidade/echo',
+    'sensor-de-vento/echo'
+  ];
 
-socket.on('dados-clima', ({ temperatura, vento, umidade, horario }) => {
-  console.log('Dados climáticos recebidos:', { temperatura, vento, umidade, horario });
-  
-  const tempo = new Date(horario).toLocaleTimeString('pt-BR');
+// ...existing code...
 
-  // Update metric cards
+// 🌡️ Temperatura recebida
+socket.on('temperatura/echo', ({ temperatura, horario }) => {
+  document.getElementById("temperatura").innerText = temperatura;
+
   const tempElement = document.getElementById('card-temp');
-  const ventoElement = document.getElementById('card-vento');
-  const umidadeElement = document.getElementById('card-umidade');
-  const climaElement = document.getElementById('clima-info');
-
   if (tempElement) tempElement.textContent = `${temperatura}°C`;
-  if (ventoElement) ventoElement.textContent = `${vento} m/s`;
-  if (umidadeElement) umidadeElement.textContent = `${umidade || '--'}%`;
-  if (climaElement) climaElement.textContent = `Clima: ${temperatura}°C, Vento: ${vento} m/s, Umidade: ${umidade || '--'}%`;
 
-  // Store in history
-  historico.push({ temperatura, vento, umidade, horario });
+  historico.push({ temperatura, horario });
   if (historico.length > 50) historico.shift();
-
-  // Update chart
   updateChart();
 });
+
+
+// 💧 Umidade recebida
+socket.on('umidade/echo', ({ umidade, horario }) => {
+  const umidadeElement = document.getElementById('card-umidade');
+  if (umidadeElement) umidadeElement.textContent = `${umidade}%`;
+  historico.push({ umidade, horario });
+  if (historico.length > 50) historico.shift();
+  updateChart();
+});
+
+// 💨 Vento recebido
+socket.on('vento/echo', ({ vento, horario }) => {
+  const ventoElement = document.getElementById('card-vento');
+  if (ventoElement) ventoElement.textContent = `${velocidade} m/s`;
+  historico.push({ vento: velocidade, horario });
+  if (historico.length > 50) historico.shift();
+  updateChart();
+});
+
+// ...existing code...
 
 // Chart update function
 function updateChart() {
@@ -166,18 +182,4 @@ document.addEventListener('DOMContentLoaded', function() {
   }
 });
 
-// Simulate some initial data for demonstration
-setTimeout(() => {
-  // Simulate initial location
-  socket.emit('test-location', { lat: -23.5505, lon: -46.6333 });
-  
-  // Simulate some climate data
-  const simulatedData = {
-    temperatura: 25 + Math.random() * 10,
-    vento: 5 + Math.random() * 15,
-    umidade: 50 + Math.random() * 40,
-    horario: new Date().toISOString()
-  };
-  
-  console.log('Simulando dados iniciais:', simulatedData);
-}, 2000);
+

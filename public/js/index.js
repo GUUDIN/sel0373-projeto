@@ -31,6 +31,7 @@ document.addEventListener('DOMContentLoaded', function() {
     threshold: 0.1
   });
   
+  
   if (projectsSection) {
     observer.observe(projectsSection);
   }

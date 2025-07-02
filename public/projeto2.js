@@ -43,25 +43,35 @@ socket.on('nova-coordenada', ({ lat, lon }) => {
     .openPopup();
 });
 
-// 🌡️ Dados climáticos recebidos
-socket.on('dados-clima', ({ temperatura, vento, umidade, horario }) => {
-  const tempo = new Date(horario).toLocaleTimeString('pt-BR');
-
-  // Atualiza cards
+// 🌡️ Temperatura recebida
+socket.on('temperatura', ({ temperatura, horario }) => {
   document.getElementById('card-temp').textContent = `${temperatura} °C`;
-  document.getElementById('card-vento').textContent = `${vento} m/s`;
-  document.getElementById('card-umidade').textContent = `${umidade} %`;
-
-  // Armazena no histórico
-  historico.push({ temperatura, vento, umidade, horario });
+  historico.push({ temperatura, horario });
   if (historico.length > 50) historico.shift();
+  atualizarGrafico('temperatura');
+});
 
-  // Atualiza gráfico
-  const eixoY = document.getElementById('eixoY')?.value || 'temperatura';
-  const eixoX = document.getElementById('eixoX')?.value || 'tempo';
+// 💧 Umidade recebida
+socket.on('umidade', ({ umidade, horario }) => {
+  document.getElementById('card-umidade').textContent = `${umidade} %`;
+  historico.push({ umidade, horario });
+  if (historico.length > 50) historico.shift();
+  atualizarGrafico('umidade');
+});
 
+// 💨 Vento recebido
+socket.on('vento', ({ vento, horario }) => {
+  document.getElementById('card-vento').textContent = `${vento} m/s`;
+  historico.push({ vento, horario });
+  if (historico.length > 50) historico.shift();
+  atualizarGrafico('vento');
+});
+
+// Função para atualizar o gráfico conforme o tipo de dado
+function atualizarGrafico(tipo) {
+  const eixoY = tipo;
   chart.data.labels = historico.map(d => new Date(d.horario).toLocaleTimeString());
   chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
   chart.data.datasets[0].data = historico.map(d => d[eixoY]);
   chart.update();
-});
+}
