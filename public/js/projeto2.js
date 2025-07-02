@@ -12,6 +12,9 @@ let marker = L.marker([-23.5505, -46.6333]).addTo(map)
   .openPopup();
 
 // Data storage
+const historicoTemp = [];
+const historicoLoc = [];
+const historicoUm = [];
 const historico = [];
 
 // Initialize chart
@@ -86,7 +89,7 @@ const clima_echo = [
 
 // 🌡️ Temperatura recebida
 socket.on('temperatura/echo', ({ temperatura, horario }) => {
-  document.getElementById("temperatura").innerText = temperatura;
+  //document.getElementById("temperatura").innerText = temperatura;
 
   const tempElement = document.getElementById('card-temp');
   if (tempElement) tempElement.textContent = `${temperatura}°C`;
@@ -107,10 +110,10 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
 });
 
 // 💨 Vento recebido
-socket.on('vento/echo', ({ vento, horario }) => {
+socket.on('vento/echo', ({ velocidade, horario }) => {
   const ventoElement = document.getElementById('card-vento');
   if (ventoElement) ventoElement.textContent = `${velocidade} m/s`;
-  historico.push({ vento: velocidade, horario });
+  historico.push({ velocidade, horario });
   if (historico.length > 50) historico.shift();
   updateChart();
 });

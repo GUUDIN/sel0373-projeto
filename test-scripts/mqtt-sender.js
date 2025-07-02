@@ -29,7 +29,8 @@ client.on('connect', () => {
     const umidade = randomBetween(30, 90).toFixed(1);
     const velocidade = randomBetween(0, 25).toFixed(1);
 
-    client.publish('mapa', JSON.stringify({ lat, long }));
+    client.publish('mapa', `${lat},${long}`);
+
     client.publish('temperatura', temperatura);
     client.publish('umidade',  umidade );
     client.publish('sensor-de-vento', velocidade);

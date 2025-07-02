@@ -112,10 +112,10 @@ html(lang="pt-BR")
                     .data-item
                       .data-field
                         strong Lat: 
-                        span #{registro.lat}
+                        span #{registro.latitude}
                       .data-field
                         strong Long: 
-                        span #{registro.long}
+                        span #{registro.longitude}
                 else
                   .empty-state
                     p Nenhum dado de localização disponível
@@ -127,7 +127,7 @@ html(lang="pt-BR")
                     .data-item
                       .data-field
                         strong Temperatura: 
-                        span #{registro.temperatura}°C
+                        span #{registro.valor}°C
                 else
                   .empty-state
                     p Nenhum dado de temperatura disponível
@@ -139,7 +139,7 @@ html(lang="pt-BR")
                     .data-item
                       .data-field
                         strong Umidade: 
-                        span #{registro.umidade}%
+                        span #{registro.valor}%
                 else
                   .empty-state
                     p Nenhum dado de umidade disponível
@@ -151,7 +151,7 @@ html(lang="pt-BR")
                     .data-item
                       .data-field
                         strong Velocidade: 
-                        span #{registro.velocidade} m/s
+                        span #{registro.valor} m/s
                 else
                   .empty-state
                     p Nenhum dado de vento disponível
