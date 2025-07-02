@@ -112,13 +112,12 @@ module.exports = function(io, connectedUsers){
     }
   });
 
-  // MQTT TOGGLE
-  socket.on('mqttToggle', (data) => {
-    const comando = data.state ? 'ligar' : 'desligar';
+socket.on('mqttToggle', (data) => {
+    const comando = data.comando || (data.state ? 'ligar' : 'desligar');
 
     if (client && client.connected) {
-      client.publish('atuador/irrigacao', comando);
-      console.log(`[${username}] Publicado no tópico atuador/irrigacao: ${comando}`);
+      client.publish('teste', comando);
+      console.log(`[${username}] MQTT publicado em 'teste': ${comando}`);
     }
 
     socket.emit('mqttToggleResponse', {

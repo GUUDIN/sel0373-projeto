@@ -289,37 +289,27 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // 3. MQTT Toggle
   const toggleSwitch = document.getElementById('mqttToggle');
-  const toggleStatus = document.getElementById('toggleStatus');
+const toggleStatus = document.getElementById('toggleStatus');
 
-  if (toggleSwitch && toggleStatus) {
-    toggleSwitch.addEventListener('change', function () {
-      const isChecked = this.checked;
+if (toggleSwitch && toggleStatus) {
+  toggleSwitch.addEventListener('change', function () {
+    const isChecked = this.checked;
+    const comando = isChecked ? 'ligar' : 'desligar';
 
-      toggleStatus.textContent = isChecked ? 'Ativado' : 'Desativado';
-      toggleStatus.className = isChecked ? 'toggle-status on' : 'toggle-status off';
+    toggleStatus.textContent = isChecked ? 'Ativado' : 'Desativado';
+    toggleStatus.className = isChecked ? 'toggle-status on' : 'toggle-status off';
 
-      socket.emit('mqttToggle', {
-        state: isChecked,
-        timestamp: new Date().toISOString()
-      });
-/*
-      io.on('connection', (socket) => {
-  // ...outros handlers...
-
-  socket.on('teste', ({ state }) => {
-    const comando = state ? 'liga' : 'desliga';
-    client.publish('teste', comando, (err) => {
-      if (err) {
-        socket.emit('mqttToggleResponse', { success: false, error: err.message });
-      } else {
-        socket.emit('mqttToggleResponse', { success: true });
-      }
+    // 👉 Envia o comando via socket
+    socket.emit('mqttToggle', {
+      state: isChecked,
+      comando: comando,
+      timestamp: new Date().toISOString()
     });
+
+    console.log(`Toggle MQTT: ${comando}`);
   });
-});*/
-      console.log(`Toggle MQTT: ${isChecked ? 'ON' : 'OFF'}`);
-    });
-  }
+}
+
 
   // 4. CHAMADA QUE IMPORTA: atualiza o gráfico com os dados salvos na DB
   updateChart();
