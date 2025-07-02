@@ -114,7 +114,7 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
   // Adiciona ao sistema de registros recentes
   adicionarRegistro('temperatura', { valor: temperatura, horario });
   
-  updateChart();
+  // Remove chamada direta - usar debounce global
 });
 
 
@@ -133,7 +133,7 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
   // Adiciona ao sistema de registros recentes
   adicionarRegistro('umidade', { valor: umidade, horario });
   
-  updateChart();
+  // Remove chamada direta - usar debounce global
 });
 
 // 💨 Vento recebido
@@ -152,7 +152,7 @@ socket.on('vento/echo', ({ vento, horario }) => {
   // Adiciona ao sistema de registros recentes
   adicionarRegistro('vento', { valor: vento, horario });
   
-  updateChart();
+  // Remove chamada direta - usar sistema de auto-atualização
 });
 
 // ================================================== //
@@ -220,38 +220,94 @@ socket.on('mqttToggleResponse', function(data) {
   }
 });
 
-// Chart update function
-async function updateChart() {
-  const eixoY = document.getElementById('eixoY')?.value || 'temperatura';
-  const limite = document.getElementById('limiteAmostras')?.value || 50;
+// Chart update function - OTIMIZADA
+let updateChartTimer = null;
+let isUpdatingChart = false;
 
-  try {
-    const res = await fetch(`/projeto2/api/grafico?tipo=${eixoY}&limite=${limite}`);
-    const dados = await res.json();
+// Toggle variables - Global scope
+let toggleProcessing = false;
+let debounceTimer = null;
 
-    chart.data.labels = dados.map(d => new Date(d.dataRecebida).toLocaleTimeString('pt-BR'));
-    chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
-    chart.data.datasets[0].data = dados.map(d => parseFloat(d.valor));
+// Atualização automática do gráfico a cada 2 segundos
+let autoUpdateTimer = null;
 
-    switch (eixoY) {
-      case 'temperatura':
-        chart.data.datasets[0].borderColor = '#FF6B35';
-        chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 53, 0.1)';
-        break;
-      case 'umidade':
-        chart.data.datasets[0].borderColor = '#007AFF';
-        chart.data.datasets[0].backgroundColor = 'rgba(0, 122, 255, 0.1)';
-        break;
-      case 'vento':
-        chart.data.datasets[0].borderColor = '#34C759';
-        chart.data.datasets[0].backgroundColor = 'rgba(52, 199, 89, 0.1)';
-        break;
+function startAutoUpdate() {
+  if (autoUpdateTimer) clearInterval(autoUpdateTimer);
+  
+  autoUpdateTimer = setInterval(() => {
+    if (!isUpdatingChart) {
+      updateChart();
     }
+  }, 2000); // Atualiza a cada 2 segundos
+}
 
-    chart.update();
-  } catch (error) {
-    console.error('Erro ao atualizar gráfico:', error);
+function stopAutoUpdate() {
+  if (autoUpdateTimer) {
+    clearInterval(autoUpdateTimer);
+    autoUpdateTimer = null;
   }
+}
+
+async function updateChart() {
+  // Debounce para evitar múltiplas chamadas seguidas
+  clearTimeout(updateChartTimer);
+  
+  updateChartTimer = setTimeout(async () => {
+    // Previne múltiplas execuções simultâneas
+    if (isUpdatingChart) return;
+    
+    isUpdatingChart = true;
+    
+    const eixoY = document.getElementById('eixoY')?.value || 'temperatura';
+    const limite = document.getElementById('limiteAmostras')?.value || 50;
+
+    try {
+      // Adiciona timeout à requisição para evitar travamento
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
+
+      const res = await fetch(`/projeto2/api/grafico?tipo=${eixoY}&limite=${limite}`, {
+        signal: controller.signal
+      });
+      
+      clearTimeout(timeoutId);
+      
+      if (!res.ok) {
+        throw new Error(`HTTP ${res.status}: ${res.statusText}`);
+      }
+      
+      const dados = await res.json();
+
+      chart.data.labels = dados.map(d => new Date(d.dataRecebida).toLocaleTimeString('pt-BR'));
+      chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
+      chart.data.datasets[0].data = dados.map(d => parseFloat(d.valor));
+
+      switch (eixoY) {
+        case 'temperatura':
+          chart.data.datasets[0].borderColor = '#FF6B35';
+          chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 53, 0.1)';
+          break;
+        case 'umidade':
+          chart.data.datasets[0].borderColor = '#007AFF';
+          chart.data.datasets[0].backgroundColor = 'rgba(0, 122, 255, 0.1)';
+          break;
+        case 'vento':
+          chart.data.datasets[0].borderColor = '#34C759';
+          chart.data.datasets[0].backgroundColor = 'rgba(52, 199, 89, 0.1)';
+          break;
+      }
+
+      chart.update();
+    } catch (error) {
+      if (error.name === 'AbortError') {
+        console.warn('Requisição do gráfico cancelada por timeout');
+      } else {
+        console.error('Erro ao atualizar gráfico:', error);
+      }
+    } finally {
+      isUpdatingChart = false;
+    }
+  }, 500); // Debounce de 500ms
 }
 
 
@@ -326,9 +382,6 @@ document.addEventListener('DOMContentLoaded', function() {
   // 3. MQTT Toggle - MELHORADO
   const toggleSwitch = document.getElementById('mqttToggle');
   const toggleStatus = document.getElementById('toggleStatus');
-  
-  let toggleProcessing = false;
-  let debounceTimer = null;
 
   if (toggleSwitch && toggleStatus) {
     toggleSwitch.addEventListener('change', function () {
@@ -377,6 +430,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
   // 4. CHAMADA QUE IMPORTA: atualiza o gráfico com os dados salvos na DB
   updateChart();
+  
+  // 5. Inicia sistema de auto-atualização do gráfico
+  startAutoUpdate();
 });
 
 
