@@ -113,33 +113,6 @@ router.post("/register", async (req, res) => {
   }
 });
 
-// Rota POST para atualizar as configurações do usuário
-router.post("/settings", async (req, res) => {
-  const { project } = req.body;
-
-  if (!req.session.user) return res.redirect("/users");
-
-  const projectData = getProjectById(project);
-  if (!projectData) return res.redirect("/");
-
-  try {
-    await User.updateOne(
-      { username: req.session.user.username },
-      { $set: { project } }
-    );
-
-    // Atualiza também a sessão para refletir a mudança
-    req.session.project = project;
-
-    const redirectUrl = getProjectRedirectUrl(project);
-    return res.redirect(redirectUrl);
-  } catch (err) {
-    console.error("Erro ao atualizar projeto:", err);
-    return res.redirect("/");
-  }
-});
-
-
 
 router.get('/logout', (req, res) => {
   req.session.destroy(err => {
@@ -160,26 +133,29 @@ router.post("/settings", isAuthenticated, async (req, res) => {
     // Encontra e atualiza o usuário no banco de dados
     const updatedUser = await User.findOneAndUpdate(
       { username }, 
-      { project }, 
-      { new: true } // Retorna o documento atualizado
+      { project: parseInt(project) }, // ← Garantir que salva como number
+      { new: true }
     );
 
-    // Se o usuário não foi encontrado no banco (usuário de teste), apenas atualiza a sessão
+    // Padronizar como number em ambos os casos
+    const projectNumber = parseInt(project);
+
     if (!updatedUser) {
       console.log(`Usuário ${username} não encontrado no banco, atualizando apenas a sessão`);
-      req.session.user.project = parseInt(project);
+      req.session.user.project = projectNumber;
     } else {
-      // Atualiza a sessão com as novas informações do banco
-      req.session.user.project = updatedUser.project;
+      req.session.user.project = projectNumber; // ← Padronizar
     }
 
+    console.log(`Projeto atualizado para: ${req.session.user.project} (tipo: ${typeof req.session.user.project})`);
+
     // Redireciona para a página inicial ou para o projeto selecionado
-    if (project == 1) {
+    if (projectNumber === 1) {
       res.redirect("/projeto1");
-    } else if (project == 2) {
+    } else if (projectNumber === 2) {
       res.redirect("/projeto2");
     } else {
-      res.redirect("/"); // Fallback para a página inicial
+      res.redirect("/");
     }
   } catch (err) {
     console.error("Erro ao atualizar as configurações do usuário:", err);
