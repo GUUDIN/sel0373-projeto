@@ -54,7 +54,7 @@ module.exports = function(io) {
               tipo: 'mapa',
               latitude: lat,
               longitude: long,
-              usuario: socket.request.session.user.username,
+              user: socket.request.session.user.username,
             });
             await novoReg.save();
             io.emit('dados-recentes/mapa', novoReg);
@@ -95,7 +95,7 @@ module.exports = function(io) {
         const novoReg = new projeto_2({
               tipo: 'temperatura',
               valor: parseFloat(temperatura),
-              usuario: socket.request.session.user.username,
+              user: socket.request.session.user.username,
             });
             await novoReg.save();
             console.log('Novo registro:', novoReg);
@@ -122,7 +122,7 @@ module.exports = function(io) {
             const novoReg = new projeto_2({
               tipo: 'umidade',
               valor: parseFloat(umidade),
-              usuario: socket.request.session.user.username,
+              user: socket.request.session.user.username,
             });
             await novoReg.save();
             io.emit('dados-recentes/umidade', novoReg);
@@ -147,7 +147,7 @@ module.exports = function(io) {
         const novoReg = new projeto_2({
             tipo: 'vento',
             valor: parseFloat(vento),
-            usuario: socket.request.session.user.username,
+            user: socket.request.session.user.username,
             });
             await novoReg.save();
             io.emit('dados-recentes/vento', novoReg);
@@ -204,11 +204,12 @@ module.exports = function(io) {
 router.get('/', async (req, res) => {
   try {
     const limite = 2; // Limite de registros a serem exibidos
-    const registrosmapa = await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite);
-    const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite);
-    const registrosumidade = await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite);
-    const registrosvento = await projeto_2.find({ tipo: 'vento' }).sort({ dataRecebida: -1 }).limit(limite);
+    const user = req.session.user.username;
 
+    const registrosmapa = await projeto_2.find({ tipo: 'mapa', user }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrostemp = await projeto_2.find({ tipo: 'temperatura', user }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrosumidade = await projeto_2.find({ tipo: 'umidade', user }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrosvento = await projeto_2.find({ tipo: 'vento', user }).sort({ dataRecebida: -1 }).limit(limite);
     res.render('projeto2', {
       registrosmapa,
       registrostemp,
