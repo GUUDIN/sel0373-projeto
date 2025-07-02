@@ -132,7 +132,7 @@ const projeto1 = require("./routes/projeto1")(io);
 app.use("/projeto1", projeto1);
 
 // Importa e utiliza o roteador do projeto2
-const projeto2 = require("./routes/projeto2")(io, connectedUsers);
+const projeto2 = require("./routes/projeto2")(io);
 app.use("/projeto2", projeto2);
 
 // Inicia o servidor
