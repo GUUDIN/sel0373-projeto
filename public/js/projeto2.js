@@ -88,7 +88,7 @@ const clima_echo = [
 
 // 🌡️ Temperatura recebida
 socket.on('temperatura/echo', async({ temperatura, horario }) => {
-  const tempElement = document.getElementById('card-temp');
+  const tempElement = document.getElementById('card-temp').innerText = data.temperatura;
   if (tempElement) tempElement.textContent = `${temperatura}°C`;
   historico.push({ temperatura, horario });
   if (historico.length > 50) historico.shift();
