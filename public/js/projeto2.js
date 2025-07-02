@@ -95,8 +95,8 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
   if (tempElement) tempElement.textContent = `${temperatura}°C`;
 
   historico.push({ temperatura, horario });
-  client.publish('Nova temperatura recebida:', { temperatura, horario });
-  if (historico.length > 50) historico.shift();
+  client.publish('temperatura/echo', { temperatura, horario });
+  if (historico.length > 30) historico.shift();
   updateChart();
 });
 
@@ -106,9 +106,9 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
   const umidadeElement = document.getElementById('card-umidade');
   if (umidadeElement) umidadeElement.textContent = `${umidade}%`;
   historico.push({ umidade, horario });
-  client.publish('Nova umidade recebida:', { umidade, horario });
+  client.publish('umidade/echo', { umidade, horario });
 
-  if (historico.length > 50) historico.shift();
+  if (historico.length > 30) historico.shift();
   updateChart();
 });
 
@@ -119,9 +119,9 @@ socket.on('vento/echo', ({ velocidade, horario }) => {
   historico.push({ vento: velocidade, horario });
 
   //historico.push({ velocidade, horario });
-  client.publish('Novos ventos recebidos:', { velocidade, horario });
+  client.publish('vento/echo', { velocidade, horario });
 
-  if (historico.length > 50) historico.shift();
+  if (historico.length > 30) historico.shift();
   updateChart();
 });
 
