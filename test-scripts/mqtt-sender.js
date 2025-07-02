@@ -36,5 +36,5 @@ client.on('connect', () => {
 
     console.log(`[${count + 1}] Dados enviados: mapa(${lat},${long}), temperatura(${temperatura}), umidade(${umidade}), vento(${velocidade})`);
     count++;
-  }, 2000); // 2000 ms = 2 segundos
+  }, 20); // 2000 ms = 2 segundos
 });

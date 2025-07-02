@@ -3,12 +3,15 @@ const axios = require("axios");
 const mqtt = require('mqtt');
 const path = require("path");
 const express = require("express");
-const projeto_2 = require("../models/projeto_2");
+const projeto_2 = require("../models/projeto_2"); // ALTERAÇÃO
+
 
 module.exports = function(io) {
+
+  const limite = 10;
+
   const router = express.Router();
 
-  const limite = 10; //DB
   // Arrays para armazenar dados dos sensores
   const registrosmapa = [];
   const registrostemp = [];
@@ -45,10 +48,18 @@ module.exports = function(io) {
   client.on('message', async (topic, payload) => {
     if (topic === 'mapa') {
       try {
-        const mensagem = JSON.parse(payload.toString());
-        const { lat, long } = mensagem;
-
-        registrosmapa.push(mensagem);
+        const mensagem = payload.toString();
+        mensagem.split(",");
+        const lat = mensagem[0];
+        const long = mensagem[1];
+        const novoReg = new projeto_2({
+              tipo: 'mapa',
+              latitude: parseFloat(lat),
+              longitude: parseFloat(long),
+            });
+            await novoReg.save();
+            console.log('Novo registro:', novoReg);
+        //registrosmapa.push(mensagem);
         console.log(`MQTT: Mapa atualizado - ${lat}: ${long}`);
 
         // Emite coordenadas para o frontend
@@ -68,7 +79,8 @@ module.exports = function(io) {
         // Envia dados meteorológicos para o frontend
         io.emit('dados-clima', clima);
         console.log("Emitido dados-clima:", clima);
-
+        let registrosmapa = await projeto_2.find({tipo:'mapa'}).sort({dataRecebida:-1}).limit(limite);
+        
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
       }
@@ -76,9 +88,17 @@ module.exports = function(io) {
     
     if (topic === 'temperatura') {
       try {
-        const mensagem = JSON.parse(payload.toString());
-        const { temperatura } = mensagem;
-        registrostemp.push(mensagem);
+        const mensagem = payload.toString();
+        const temperatura = mensagem;
+        const novoReg = new projeto_2({
+              tipo: 'temperatura',
+              valor: parseFloat(temperatura),
+            });
+            await novoReg.save();
+            console.log('Novo registro:', novoReg);
+        //registrostemp.push(mensagem);
+        let registrostemp = await projeto_2.find({tipo:'temperatura'}).sort({dataRecebida:-1}).limit(limite);
+       
         console.log(`MQTT: Temp atualizado - ${temperatura}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
@@ -87,10 +107,18 @@ module.exports = function(io) {
     
     if (topic === 'umidade') {
       try {
-        const mensagem = JSON.parse(payload.toString());
-        const { umidade } = mensagem;
-        registrosumidade.push(mensagem);
-        console.log(`MQTT: Umidade atualizado - ${umidade}`);
+        const mensagem = payload.toString();
+        const umidade = mensagem;
+        //registrosumidade.push(mensagem);
+            const novoReg = new projeto_2({
+              tipo: 'umidade',
+              valor: parseFloat(umidade),
+            });
+            await novoReg.save();
+            console.log('Novo registro:', novoReg);
+        let registrosumidade = await projeto_2.find({tipo:'umidade'}).sort({dataRecebida:-1}).limit(limite);
+
+        //console.log(`MQTT: Umidade atualizado - ${umidade}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
       }
@@ -98,9 +126,16 @@ module.exports = function(io) {
     
     if (topic === 'sensor-de-vento') {
       try {
-        const mensagem = JSON.parse(payload.toString());
-        const { velocidade } = mensagem;
-        registrosvento.push(mensagem);
+        const mensagem = payload.toString();
+        const velocidade = mensagem;
+        //registrosvento.push(mensagem);
+        const novoReg = new projeto_2({
+            tipo: 'velocidade',
+            valor: parseFloat(velocidade),
+            });
+            await novoReg.save();
+            let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
+
         console.log(`MQTT: Sensor vento atualizado - ${velocidade}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
@@ -116,9 +151,9 @@ module.exports = function(io) {
     next();
   });
 
-  console.log('Array umidade:', registrosumidade);
   // Rota principal do projeto 2
   router.get('/', (req, res) => {
+
     res.render('projeto2', {
       success: req.query.success,
       error: req.query.error,
@@ -126,10 +161,9 @@ module.exports = function(io) {
       registrostemp: registrostemp,
       registrosvento: registrosvento,
       registrosumidade: registrosumidade,
-
-      tempAtual: registrostemp.length > 0 ? registrostemp[registrostemp.length - 1].temperatura : null,
-      umidadeAtual: registrosumidade.length > 0 ? registrosumidade[registrosumidade.length - 1].umidade : null,
-      ventoAtual: registrosvento.length > 0 ? registrosvento[registrosvento.length - 1].velocidade : null, 
+      tempValue: registrostemp.length ? registrostemp[registrostemp.length - 1].temperatura : null,
+      umidadeValue: registrosumidade.length ? registrosumidade[registrosumidade.length - 1].umidade : null,
+      ventoValue: registrosvento.length ? registrosvento[registrosvento.length - 1].velocidade : null,
       user: req.session.user
     });  
   });
