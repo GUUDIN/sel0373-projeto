@@ -63,8 +63,10 @@ module.exports = function(io) {
 
         // Emite coordenadas para o frontend
         io.emit('nova-coordenada', { lat: lat, long: long });
-        //registrosmapa.length = 0;
-        registrosmapa.push(...await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite));
+        registrosmapa.push({latitude: lat, longitude: long});
+        const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite));
+
+        //registrosmapa.push(...await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite));
         // Faz requisição à API de clima
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current_weather=true`;
         const { data } = await axios.get(url);
@@ -207,7 +209,8 @@ router.get('/', async (req, res) => {
     const usuario = req.session.user.username;
 
     const registrosmapa = await projeto_2.find({ tipo: 'mapa', usuario }).sort({ dataRecebida: -1 }).limit(limite);
-    const registrostemp = await projeto_2.find({ tipo: 'temperatura', usuario }).sort({ dataRecebida: -1 }).limit(limite);
+    //const registrostemp = await projeto_2.find({ tipo: 'temperatura', usuario }).sort({ dataRecebida: -1 }).limit(limite);
+    const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite);
     const registrosumidade = await projeto_2.find({ tipo: 'umidade', usuario }).sort({ dataRecebida: -1 }).limit(limite);
     const registrosvento = await projeto_2.find({ tipo: 'vento', usuario }).sort({ dataRecebida: -1 }).limit(limite);
     res.render('projeto2', {
