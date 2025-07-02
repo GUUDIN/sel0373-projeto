@@ -63,7 +63,7 @@ module.exports = function(io) {
         console.log(`MQTT: Mapa atualizado - ${lat}: ${long}`);
 
         // Emite coordenadas para o frontend
-        io.emit('nova-coordenada', { lat, lon: long });
+        io.emit('nova-coordenada', { lat: lat, lon: long });
 
         // Faz requisição à API de clima
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current_weather=true`;

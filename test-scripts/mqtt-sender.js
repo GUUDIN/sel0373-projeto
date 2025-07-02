@@ -30,9 +30,9 @@ client.on('connect', () => {
     const velocidade = randomBetween(0, 25).toFixed(1);
 
     client.publish('mapa', JSON.stringify({ lat, long }));
-    client.publish('temperatura', JSON.stringify({ temperatura }));
-    client.publish('umidade', JSON.stringify({ umidade }));
-    client.publish('sensor-de-vento', JSON.stringify({ velocidade }));
+    client.publish('temperatura', temperatura);
+    client.publish('umidade',  umidade );
+    client.publish('sensor-de-vento', velocidade);
 
     console.log(`[${count + 1}] Dados enviados: mapa(${lat},${long}), temperatura(${temperatura}), umidade(${umidade}), vento(${velocidade})`);
     count++;
