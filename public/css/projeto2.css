@@ -83,15 +83,17 @@ body {
 }
 
 .page-title {
-  font-size: 2.5rem;
+  font-size: clamp(1.5rem, 5vw, 2.5rem);
   font-weight: 700;
   margin: 0;
+  text-wrap: balance;
 }
 
 .page-subtitle {
-  font-size: 1.1rem;
+  font-size: clamp(0.8rem, 2.5vw, 1.1rem);
   margin: 0;
   color: var(--text-secondary);
+  text-wrap: balance;
 }
 
 .projeto2-container {

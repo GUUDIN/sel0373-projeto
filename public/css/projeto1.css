@@ -62,14 +62,16 @@ body {
 }
 
 .page-title {
-  font-size: 1.8rem;
+  font-size: clamp(1.2rem, 4vw, 1.8rem);
   margin: 0;
+  text-wrap: balance;
 }
 
 .page-subtitle {
-  font-size: 0.95rem;
+  font-size: clamp(0.75rem, 2vw, 0.95rem);
   margin-top: 0.3rem;
   color: rgba(255,255,255,0.8);
+  text-wrap: balance;
 }
 
 
