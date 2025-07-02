@@ -48,14 +48,16 @@ module.exports = function(io) {
   client.on('message', async (topic, payload) => {
     if (topic === 'mapa') {
       try {
+        //const mensagem = payload.toString();
+        //mensagem.split(",");
+        //const lat = mensagem[0];
+        //const long = mensagem[1];
         const mensagem = payload.toString();
-        mensagem.split(",");
-        const lat = mensagem[0];
-        const long = mensagem[1];
+        const [lat, long] = mensagem.split(',').map(parseFloat);
         const novoReg = new projeto_2({
               tipo: 'mapa',
-              latitude: parseFloat(lat),
-              longitude: parseFloat(long),
+              latitude: lat,
+              longitude: long,
             });
             await novoReg.save();
             console.log('Novo registro:', novoReg);
@@ -64,7 +66,8 @@ module.exports = function(io) {
 
         // Emite coordenadas para o frontend
         io.emit('nova-coordenada', { lat: lat, lon: long });
-
+        registrosmapa.length = 0;
+        registrosmapa.push(...await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite));
         // Faz requisição à API de clima
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current_weather=true`;
         const { data } = await axios.get(url);
@@ -79,8 +82,8 @@ module.exports = function(io) {
         };
 
         // Envia dados meteorológicos para o frontend
-        io.emit('dados-clima', clima);
-        console.log("Emitido dados-clima:", clima);
+        //io.emit('dados-clima', clima);
+        //console.log("Emitido dados-clima:", clima);
         let registrosmapa = await projeto_2.find({tipo:'mapa'}).sort({dataRecebida:-1}).limit(limite);
         
       } catch (e) {
