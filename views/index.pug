@@ -52,7 +52,7 @@ html(lang="pt-BR")
   if projects && projects.length > 0
     section.projects-section
       .container
-        h2.section-title Projetos Disponíveis
+        h2.section-title Projetos
         .projects-grid
           each project in projects
             .project-card(class=(user && (user.project == project.id || user.project === parseInt(project.id))) ? 'current-user-project' : '')
