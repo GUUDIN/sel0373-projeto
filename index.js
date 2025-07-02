@@ -48,12 +48,12 @@ io.on('connection', (socket) => {
 
   if (username) {
     connectedUsers.set(socket.id, username);
-    console.log(`✅ ${username} conectado com ID ${socket.id}`);
+    //console.log(`✅ ${username} conectado com ID ${socket.id}`);
   }
 
   socket.on('disconnect', () => {
     connectedUsers.delete(socket.id);
-    console.log(`⛔ ${username} desconectado`);
+    //console.log(`⛔ ${username} desconectado`);
   });
 });
 

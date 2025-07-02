@@ -302,7 +302,7 @@ document.addEventListener('DOMContentLoaded', function() {
         state: isChecked,
         timestamp: new Date().toISOString()
       });
-
+/*
       io.on('connection', (socket) => {
   // ...outros handlers...
 
@@ -316,7 +316,7 @@ document.addEventListener('DOMContentLoaded', function() {
       }
     });
   });
-});
+});*/
       console.log(`Toggle MQTT: ${isChecked ? 'ON' : 'OFF'}`);
     });
   }

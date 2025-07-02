@@ -19,10 +19,7 @@ module.exports = function(io, connectedUsers){
   const registrosvento = [];
   const registrosumidade = [];
  
-  io.on('connection', (socket) => {
-  const usuario = socket.request.session.user?.username || 'desconhecido';
-  console.log('Usuário conectado via socket:', usuario);
-});
+
   // Conexão MQTT
   const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
     username: 'mqtt',
@@ -50,134 +47,88 @@ module.exports = function(io, connectedUsers){
   });
 
   // Recebimento dos dados via MQTT 
+  io.on('connection', (socket) => {
+  const username = socket?.request?.session?.user?.username || 'desconhecido';
+
+  console.log(`[Socket conectado] Usuário: ${username}`);
+
   client.on('message', async (topic, payload) => {
-    function getAnyUser() {
-      const values = Array.from(connectedUsers.values());
-      return values.length ? values[0] : 'anonimo';
-    }
+    const mensagem = payload.toString();
 
-    if (topic === 'sensores/mapa') {
-      try {
-        const mensagem = payload.toString();
+    try {
+      if (topic === 'sensores/mapa') {
         const [lat, long] = mensagem.split(',').map(parseFloat);
+
         const novoReg = new projeto_2({
-              tipo: 'mapa',
-              latitude: lat,
-              longitude: long,
-              usuario: getAnyUser(),
-            });
-            await novoReg.save();
-            io.emit('dados-recentes/mapa', novoReg);
-            console.log('Novo registro:', novoReg);
-
-
-        // Emite coordenadas para o frontend
-        io.emit('nova-coordenada', { lat: lat, long: long });
-        registrosmapa.push({latitude: lat, longitude: long});
-        //const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite));
-
-        registrosmapa.push(...await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite));
-        // Faz requisição à API de clima
-        const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current_weather=true`;
-        const { data } = await axios.get(url);
-
-        const clima = {
+          tipo: 'mapa',
           latitude: lat,
           longitude: long,
-          //temperatura: data.current_weather.temperature,
-          //vento: data.current_weather.windspeed,
-          codigoTempo: data.current_weather.weathercode,
-          horario: data.current_weather.time
-        };
+          usuario: username,
+        });
 
-        // Envia dados meteorológicos para o frontend
-        //io.emit('dados-clima', clima);
-        //console.log("Emitido dados-clima:", clima);
-        //let registrosmapa = await projeto_2.find({tipo:'mapa'}).sort({dataRecebida:-1}).limit(limite);
-        
-      } catch (e) {
-        console.error("Erro ao processar mensagem MQTT:", e.message);
-      }
-    }
-    
-    if (topic === 'sensores/temperatura') {
-      try {
-        const mensagem = payload.toString();
-        const temperatura = mensagem;
+        await novoReg.save();
+        io.emit('dados-recentes/mapa', novoReg);
+        io.emit('nova-coordenada', { lat, long });
+
+      } else if (topic === 'sensores/temperatura') {
+        const temperatura = parseFloat(mensagem);
         const novoReg = new projeto_2({
-              tipo: 'temperatura',
-              valor: parseFloat(temperatura),
-              usuario: getAnyUser(),
-            });
-            await novoReg.save();
-            console.log('Novo registro:', novoReg);
-            io.emit('dados-recentes/temperatura', novoReg);
+          tipo: 'temperatura',
+          valor: temperatura,
+          usuario: username,
+        });
 
-        //registrostemp.push(mensagem);
-        //registrostemp.length = 0;
-        registrostemp.push(...await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite));
+        await novoReg.save();
+        io.emit('dados-recentes/temperatura', novoReg);
+        io.emit('temperatura/echo', { temperatura, horario: new Date().toISOString() });
 
-        //let registrostemp = await projeto_2.find({tipo:'temperatura'}).sort({dataRecebida:-1}).limit(limite);
-        io.emit('temperatura/echo', { temperatura: temperatura, horario: new Date().toISOString() });
-        //client.publish('temperatura/echo', `${temperatura}`);
-        console.log(`MQTT: Temp atualizado - ${temperatura}`);
-      } catch (e) {
-        console.error("Erro ao processar mensagem MQTT:", e.message);
-      }
-    }
-    
-    if (topic === 'sensores/umidade') {
-      try {
-        const mensagem = payload.toString();
-        const umidade = mensagem;
-        //registrosumidade.push(mensagem);
-            const novoReg = new projeto_2({
-              tipo: 'umidade',
-              valor: parseFloat(umidade),
-              usuario: getAnyUser(),
-            });
-            await novoReg.save();
-            io.emit('dados-recentes/umidade', novoReg);
-            console.log('Novo registro:', novoReg);
-
-        registrosumidade.push(...await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite));
-        await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite);
-
-
-        io.emit('umidade/echo', { umidade: umidade, horario: new Date().toISOString() });
-        //console.log(`MQTT: Umidade atualizado - ${umidade}`);
-      } catch (e) {
-        console.error("Erro ao processar mensagem MQTT:", e.message);
-      }
-    }
-    
-    if (topic === 'sensores/vento') {
-      try {
-        const mensagem = payload.toString();
-        const vento = mensagem;
-        //registrosvento.push(mensagem);
+      } else if (topic === 'sensores/umidade') {
+        const umidade = parseFloat(mensagem);
         const novoReg = new projeto_2({
-            tipo: 'vento',
-            valor: parseFloat(vento),
-            usuario: getAnyUser(),
-            });
-            await novoReg.save();
-            io.emit('dados-recentes/vento', novoReg);
+          tipo: 'umidade',
+          valor: umidade,
+          usuario: username,
+        });
 
-            //registrosvento.length = 0;
-            registrosvento.push(...await projeto_2.find({ tipo: 'vento' }).sort({ dataRecebida: -1 }).limit(limite));
+        await novoReg.save();
+        io.emit('dados-recentes/umidade', novoReg);
+        io.emit('umidade/echo', { umidade, horario: new Date().toISOString() });
 
-            //let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
-            //client.publish('vento/echo', `${velocidade}`);
-            io.emit('vento/echo', { vento: vento, horario: new Date().toISOString() });
+      } else if (topic === 'sensores/vento') {
+        const vento = parseFloat(mensagem);
+        const novoReg = new projeto_2({
+          tipo: 'vento',
+          valor: vento,
+          usuario: username,
+        });
 
-
-        console.log(`MQTT: Sensor vento atualizado - ${vento}`);
-      } catch (e) {
-        console.error("Erro ao processar mensagem MQTT:", e.message);
+        await novoReg.save();
+        io.emit('dados-recentes/vento', novoReg);
+        io.emit('vento/echo', { vento, horario: new Date().toISOString() });
       }
+
+    } catch (error) {
+      console.error(`[Erro MQTT] ${topic}: ${error.message}`);
     }
   });
+
+  // MQTT TOGGLE
+  socket.on('mqttToggle', (data) => {
+    const comando = data.state ? 'ligar' : 'desligar';
+
+    if (client && client.connected) {
+      client.publish('atuador/irrigacao', comando);
+      console.log(`[${username}] Publicado no tópico atuador/irrigacao: ${comando}`);
+    }
+
+    socket.emit('mqttToggleResponse', {
+      success: true,
+      comando,
+      timestamp: new Date().toISOString()
+    });
+  });
+});
+
 
   // Middleware para simular usuário se necessário
   router.use((req, res, next) => {
@@ -269,7 +220,6 @@ router.get('/api/grafico', async (req, res) => {
     res.status(500).json({ error: 'Erro ao obter dados do gráfico' });
   }
 });
-
 
   return router;
 };
