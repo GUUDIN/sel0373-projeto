@@ -16,7 +16,7 @@ const projeto_2Schema = new Schema({
   valor: { type: String },                // agora é opcional
   latitude: { type: String },             // opcional (para 'mapa')
   longitude: { type: String },
-  user: { type: String, required: true },            // opcional (para 'mapa')
+  usuario: { type: String, required: true },            // opcional (para 'mapa')
   dataRecebida: { type: Date, default: Date.now }
 
 });
