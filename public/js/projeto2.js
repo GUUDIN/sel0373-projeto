@@ -187,7 +187,7 @@ socket.on('mqttToggleResponse', function(data) {
 // Chart update function
 async function updateChart() {
   const eixoY = document.getElementById('eixoY')?.value || 'temperatura';
-  const limite = 50; // ou usar um input personalizado no futuro
+  const limite = document.getElementById('limiteAmostras')?.value || 50;
 
   try {
     const res = await fetch(`/projeto2/api/grafico?tipo=${eixoY}&limite=${limite}`);
@@ -197,7 +197,6 @@ async function updateChart() {
     chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
     chart.data.datasets[0].data = dados.map(d => parseFloat(d.valor));
 
-    // Cores
     switch (eixoY) {
       case 'temperatura':
         chart.data.datasets[0].borderColor = '#FF6B35';
@@ -218,6 +217,7 @@ async function updateChart() {
     console.error('Erro ao atualizar gráfico:', error);
   }
 }
+
 
 /*
 // Tab functionality
@@ -279,6 +279,10 @@ document.addEventListener('DOMContentLoaded', function() {
   // 2. Chart controls
   const eixoYSelect = document.getElementById('eixoY');
   const eixoXSelect = document.getElementById('eixoX');
+
+  const limiteSelect = document.getElementById('limiteAmostras');
+  if (limiteSelect) limiteSelect.addEventListener('change', updateChart);
+
 
   if (eixoYSelect) eixoYSelect.addEventListener('change', updateChart);
   if (eixoXSelect) eixoXSelect.addEventListener('change', updateChart);

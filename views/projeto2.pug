@@ -87,8 +87,11 @@ html(lang="pt-BR")
                   option(value="temperatura") Temperatura
                   option(value="umidade") Umidade
                   option(value="vento") Velocidade do Vento
-                select#eixoX.glass-select
-                  option(value="tempo") Tempo
+                select#limiteAmostras.glass-select
+                  option(value="10") Últimas 10
+                  option(value="25") Últimas 25
+                  option(value="50" selected) Últimas 50
+                  option(value="100") Últimas 100
             .card-content.chart-content-full
               canvas#grafico
 
