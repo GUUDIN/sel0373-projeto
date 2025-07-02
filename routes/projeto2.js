@@ -46,7 +46,7 @@ module.exports = function(io) {
 
   // Recebimento dos dados via MQTT 
   client.on('message', async (topic, payload) => {
-    if (topic === 'mapa') {
+    if (topic === 'sensores/mapa') {
       try {
         const mensagem = payload.toString();
         const [lat, long] = mensagem.split(',').map(parseFloat);
@@ -88,7 +88,7 @@ module.exports = function(io) {
       }
     }
     
-    if (topic === 'temperatura') {
+    if (topic === 'sensores/temperatura') {
       try {
         const mensagem = payload.toString();
         const temperatura = mensagem;
@@ -114,7 +114,7 @@ module.exports = function(io) {
       }
     }
     
-    if (topic === 'umidade') {
+    if (topic === 'sensores/umidade') {
       try {
         const mensagem = payload.toString();
         const umidade = mensagem;
@@ -139,7 +139,7 @@ module.exports = function(io) {
       }
     }
     
-    if (topic === 'vento') {
+    if (topic === 'sensores/vento') {
       try {
         const mensagem = payload.toString();
         const vento = mensagem;

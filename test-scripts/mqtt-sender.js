@@ -29,11 +29,11 @@ client.on('connect', () => {
     const umidade = randomBetween(30, 90).toFixed(1);
     const vento = randomBetween(0, 25).toFixed(1);
 
-    client.publish('mapa', `${lat},${long}`);
+    client.publish('sensores/mapa', `${lat},${long}`);
 
-    client.publish('temperatura', temperatura);
-    client.publish('umidade',  umidade );
-    client.publish('sensor-de-vento', vento);
+    client.publish('sensores/temperatura', temperatura);
+    client.publish('sensores/umidade',  umidade );
+    client.publish('sensores/vento', vento);
 
     console.log(`[${count + 1}] Dados enviados: mapa(${lat},${long}), temperatura(${temperatura}), umidade(${umidade}), vento(${vento})`);
     count++;
