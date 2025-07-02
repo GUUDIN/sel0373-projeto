@@ -310,7 +310,7 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
   adicionarRegistro('umidade', { valor: umidade, horario });
 });
 
-socket.on('sensor-de-vento/echo', ({ vento, horario }) => {
+socket.on('vento/echo', ({ vento, horario }) => {
   adicionarRegistro('vento', { valor: vento, horario });
 });
 

@@ -25,10 +25,10 @@ module.exports = function(io) {
   });
 
   const mqtt_topics = [
-    'mapa',
-    'temperatura',
-    'umidade',
-    'sensor-de-vento'
+    'sensores/mapa',
+    'sensores/temperatura',
+    'sensores/umidade',
+    'sensores/vento'
   ];
   
   // Quando conectar ao broker MQTT
@@ -54,6 +54,7 @@ module.exports = function(io) {
               tipo: 'mapa',
               latitude: lat,
               longitude: long,
+              usuario: socket.request.session.user.username,
             });
             await novoReg.save();
             io.emit('dados-recentes/mapa', novoReg);
@@ -94,6 +95,7 @@ module.exports = function(io) {
         const novoReg = new projeto_2({
               tipo: 'temperatura',
               valor: parseFloat(temperatura),
+              usuario: socket.request.session.user.username,
             });
             await novoReg.save();
             console.log('Novo registro:', novoReg);
@@ -120,6 +122,7 @@ module.exports = function(io) {
             const novoReg = new projeto_2({
               tipo: 'umidade',
               valor: parseFloat(umidade),
+              usuario: socket.request.session.user.username,
             });
             await novoReg.save();
             io.emit('dados-recentes/umidade', novoReg);
@@ -136,7 +139,7 @@ module.exports = function(io) {
       }
     }
     
-    if (topic === 'sensor-de-vento') {
+    if (topic === 'vento') {
       try {
         const mensagem = payload.toString();
         const vento = mensagem;
@@ -144,6 +147,7 @@ module.exports = function(io) {
         const novoReg = new projeto_2({
             tipo: 'vento',
             valor: parseFloat(vento),
+            usuario: socket.request.session.user.username,
             });
             await novoReg.save();
             io.emit('dados-recentes/vento', novoReg);
@@ -152,7 +156,7 @@ module.exports = function(io) {
             registrosvento.push(...await projeto_2.find({ tipo: 'vento' }).sort({ dataRecebida: -1 }).limit(limite));
 
             //let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
-            //client.publish('sensor-de-vento/echo', `${velocidade}`);
+            //client.publish('vento/echo', `${velocidade}`);
             io.emit('vento/echo', { vento: vento, horario: new Date().toISOString() });
 
 
