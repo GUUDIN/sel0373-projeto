@@ -27,13 +27,27 @@ const io = new Server(server); // cria o socket
 
 // Passa o socket para todas as rotas (como middleware ou em app.locals)
 app.set("io", io);
+const connectedUsers = new Map(); // socket.id => username
 
-app.use(sessionMiddleware);
-
-// 👇 Aqui você integra o socket com a sessão Express
 io.use((socket, next) => {
   sessionMiddleware(socket.request, {}, next);
 });
+
+io.on('connection', (socket) => {
+  const username = socket.request.session?.user?.username;
+
+  if (username) {
+    connectedUsers.set(socket.id, username);
+    console.log(`✅ ${username} conectado com ID ${socket.id}`);
+  }
+
+  socket.on('disconnect', () => {
+    connectedUsers.delete(socket.id);
+    console.log(`⛔ ${username} desconectado`);
+  });
+});
+
+
 // Configura o body-parser para interpretar dados URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
@@ -45,6 +59,10 @@ const sessionOptions = {
   cookie: { maxAge: 1000 * 60 * 60 } 
 };
 
+const sessionMiddleware = session(sessionOptions);
+
+// Usa o middleware de sessão no app
+app.use(sessionMiddleware);
 app.use(session(sessionOptions));
 
 // Torna `user` disponível em res.locals para os templates
@@ -114,7 +132,7 @@ const projeto1 = require("./routes/projeto1")(io);
 app.use("/projeto1", projeto1);
 
 // Importa e utiliza o roteador do projeto2
-const projeto2 = require("./routes/projeto2")(io);
+const projeto2 = require("./routes/projeto2")(io, connectedUsers);
 app.use("/projeto2", projeto2);
 
 // Inicia o servidor

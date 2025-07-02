@@ -4,9 +4,10 @@ const mqtt = require('mqtt');
 const path = require("path");
 const express = require("express");
 const projeto_2 = require("../models/projeto_2"); // ALTERAÇÃO
+//const projeto2 = require("./routes/projeto2")(io, connectedUsers);
 
 
-module.exports = function(io) {
+module.exports = function(io, connectedUsers){
 
   const limite = 10;
 
@@ -18,6 +19,10 @@ module.exports = function(io) {
   const registrosvento = [];
   const registrosumidade = [];
  
+  io.on('connection', (socket) => {
+  const usuario = socket.request.session.user?.username || 'desconhecido';
+  console.log('Usuário conectado via socket:', usuario);
+});
   // Conexão MQTT
   const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
     username: 'mqtt',
@@ -46,6 +51,11 @@ module.exports = function(io) {
 
   // Recebimento dos dados via MQTT 
   client.on('message', async (topic, payload) => {
+    function getAnyUser() {
+      const values = Array.from(connectedUsers.values());
+      return values.length ? values[0] : 'anonimo';
+    }
+
     if (topic === 'sensores/mapa') {
       try {
         const mensagem = payload.toString();
@@ -54,7 +64,7 @@ module.exports = function(io) {
               tipo: 'mapa',
               latitude: lat,
               longitude: long,
-              usuario: socket.request.session.user.username,
+              usuario: getAnyUser(),
             });
             await novoReg.save();
             io.emit('dados-recentes/mapa', novoReg);
@@ -97,7 +107,7 @@ module.exports = function(io) {
         const novoReg = new projeto_2({
               tipo: 'temperatura',
               valor: parseFloat(temperatura),
-              usuario: socket.request.session.user.username,
+              usuario: getAnyUser(),
             });
             await novoReg.save();
             console.log('Novo registro:', novoReg);
@@ -124,7 +134,7 @@ module.exports = function(io) {
             const novoReg = new projeto_2({
               tipo: 'umidade',
               valor: parseFloat(umidade),
-              usuario: socket.request.session.user.username,
+              usuario: getAnyUser(),
             });
             await novoReg.save();
             io.emit('dados-recentes/umidade', novoReg);
@@ -149,7 +159,7 @@ module.exports = function(io) {
         const novoReg = new projeto_2({
             tipo: 'vento',
             valor: parseFloat(vento),
-            usuario: socket.request.session.user.username,
+            usuario: getAnyUser(),
             });
             await novoReg.save();
             io.emit('dados-recentes/vento', novoReg);
