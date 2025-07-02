@@ -248,9 +248,19 @@ function renderRecentes(tipo) {
   const container = document.querySelector(`#tab-${tipo} .data-list`);
   if (!container) return;
 
-  container.innerHTML = '';
+  container.innerHTML = ''; // Limpa antes de preencher
 
-  recentes[tipo].slice(-5).reverse().forEach((registro) => {
+  const dados = recentes[tipo].slice(-5).reverse();
+
+  if (dados.length === 0) {
+    const p = document.createElement('p');
+    p.classList.add('empty-state');
+    p.textContent = `Nenhum dado de ${tipo} disponível`;
+    container.appendChild(p);
+    return;
+  }
+
+  dados.forEach((registro) => {
     const div = document.createElement('div');
     div.classList.add('data-item');
 
@@ -260,14 +270,16 @@ function renderRecentes(tipo) {
         <div class="data-field"><strong>Long:</strong> <span>${registro.longitude}</span></div>
       `;
     } else {
+      const unidade = tipo === 'umidade' ? '%' : tipo === 'vento' ? ' m/s' : '°C';
       div.innerHTML = `
-        <div class="data-field"><strong>${tipo.charAt(0).toUpperCase() + tipo.slice(1)}:</strong> <span>${registro.valor}${tipo === 'umidade' ? '%' : tipo === 'vento' ? ' m/s' : '°C'}</span></div>
+        <div class="data-field"><strong>${tipo.charAt(0).toUpperCase() + tipo.slice(1)}:</strong> <span>${registro.valor}${unidade}</span></div>
       `;
     }
 
     container.appendChild(div);
   });
 }
+
 
 // Sockets
 socket.on('dados-recentes/temperatura', (registro) => {
