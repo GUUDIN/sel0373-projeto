@@ -91,6 +91,9 @@ socket.on('nova-coordenada', ({ lat, long }) => {
   if (historicoMapa.length > 50) historicoMapa.shift();
   historico.push({ latitude: lat, longitude: long , horario: new Date().toISOString() });
   if (historico.length > 50) historico.shift();
+  
+  // Adiciona ao sistema de registros recentes
+  adicionarRegistro('mapa', { latitude: lat, longitude: long });
 });
 
 
@@ -107,6 +110,10 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
 
   historico.push({ temperatura: temperatura, horario: new Date().toISOString() });
   if (historico.length > 50) historico.shift();
+  
+  // Adiciona ao sistema de registros recentes
+  adicionarRegistro('temperatura', { valor: temperatura, horario });
+  
   updateChart();
 });
 
@@ -122,6 +129,10 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
 
   historico.push({ umidade: umidade, horario: new Date().toISOString() });
   if (historico.length > 50) historico.shift();
+  
+  // Adiciona ao sistema de registros recentes
+  adicionarRegistro('umidade', { valor: umidade, horario });
+  
   updateChart();
 });
 
@@ -137,6 +148,10 @@ socket.on('vento/echo', ({ vento, horario }) => {
   if (historicoVento.length > 50) historicoVento.shift();
   historico.push({ vento: vento, horario: new Date().toISOString() });
   if (historico.length > 50) historico.shift();
+  
+  // Adiciona ao sistema de registros recentes
+  adicionarRegistro('vento', { valor: vento, horario });
+  
   updateChart();
 });
 
@@ -176,11 +191,32 @@ document.addEventListener('DOMContentLoaded', function() {
 socket.on('mqttToggleResponse', function(data) {
   console.log('MQTT Toggle Response:', data);
   
-  // You can add visual feedback here if needed
-  if (data.success) {
-    console.log('MQTT message sent successfully');
-  } else {
-    console.error('Failed to send MQTT message:', data.error);
+  const toggleSwitch = document.getElementById('mqttToggle');
+  const toggleStatus = document.getElementById('toggleStatus');
+  
+  if (toggleSwitch && toggleStatus) {
+    toggleProcessing = false;
+    toggleSwitch.disabled = false;
+    
+    if (data.success) {
+      console.log('MQTT message sent successfully');
+      const isOn = data.comando === 'liga';
+      toggleStatus.textContent = isOn ? 'Ativado' : 'Desativado';
+      toggleStatus.className = isOn ? 'toggle-status on' : 'toggle-status off';
+    } else {
+      console.error('Failed to send MQTT message:', data.error);
+      // Reverte o estado do toggle em caso de erro
+      toggleSwitch.checked = !toggleSwitch.checked;
+      toggleStatus.textContent = 'Erro na comunicação';
+      toggleStatus.className = 'toggle-status error';
+      
+      // Remove o erro após 2 segundos
+      setTimeout(() => {
+        const isOn = toggleSwitch.checked;
+        toggleStatus.textContent = isOn ? 'Ativado' : 'Desativado';
+        toggleStatus.className = isOn ? 'toggle-status on' : 'toggle-status off';
+      }, 2000);
+    }
   }
 });
 
@@ -287,28 +323,56 @@ document.addEventListener('DOMContentLoaded', function() {
   if (eixoYSelect) eixoYSelect.addEventListener('change', updateChart);
   if (eixoXSelect) eixoXSelect.addEventListener('change', updateChart);
 
-  // 3. MQTT Toggle
+  // 3. MQTT Toggle - MELHORADO
   const toggleSwitch = document.getElementById('mqttToggle');
-const toggleStatus = document.getElementById('toggleStatus');
+  const toggleStatus = document.getElementById('toggleStatus');
+  
+  let toggleProcessing = false;
+  let debounceTimer = null;
 
-if (toggleSwitch && toggleStatus) {
-  toggleSwitch.addEventListener('change', function () {
-    const isChecked = this.checked;
-    const comando = isChecked ? 'liga' : 'desliga';
+  if (toggleSwitch && toggleStatus) {
+    toggleSwitch.addEventListener('change', function () {
+      // Previne múltiplos cliques rápidos
+      if (toggleProcessing) {
+        this.checked = !this.checked; // Reverte o estado
+        return;
+      }
 
-    toggleStatus.textContent = isChecked ? 'Ativado' : 'Desativado';
-    toggleStatus.className = isChecked ? 'toggle-status on' : 'toggle-status off';
+      // Debounce para evitar múltiplas requisições
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(() => {
+        const isChecked = this.checked;
+        const comando = isChecked ? 'liga' : 'desliga';
 
-    // 👉 Envia o comando via socket
-    socket.emit('mqttToggle', {
-      state: isChecked,
-      comando: comando,
-      timestamp: new Date().toISOString()
+        toggleProcessing = true;
+        
+        // Feedback visual imediato
+        toggleStatus.textContent = 'Processando...';
+        toggleStatus.className = 'toggle-status processing';
+        toggleSwitch.disabled = true;
+
+        // Envia o comando via socket
+        socket.emit('mqttToggle', {
+          state: isChecked,
+          comando: comando,
+          timestamp: new Date().toISOString(),
+          userId: socket.id // Adiciona ID do socket para identificação
+        });
+
+        console.log(`Toggle MQTT: ${comando}`);
+
+        // Timeout de segurança (remove o loading após 3 segundos)
+        setTimeout(() => {
+          if (toggleProcessing) {
+            toggleProcessing = false;
+            toggleSwitch.disabled = false;
+            toggleStatus.textContent = isChecked ? 'Ativado' : 'Desativado';
+            toggleStatus.className = isChecked ? 'toggle-status on' : 'toggle-status off';
+          }
+        }, 3000);
+      }, 150); // Debounce de 150ms
     });
-
-    console.log(`Toggle MQTT: ${comando}`);
-  });
-}
+  }
 
 
   // 4. CHAMADA QUE IMPORTA: atualiza o gráfico com os dados salvos na DB
@@ -367,22 +431,4 @@ function renderRecentes(tipo) {
     container.appendChild(div);
   });
 }
-
-
-
-socket.on('temperatura/echo', ({ temperatura, horario }) => {
-  adicionarRegistro('temperatura', { valor: temperatura, horario });
-});
-
-socket.on('umidade/echo', ({ umidade, horario }) => {
-  adicionarRegistro('umidade', { valor: umidade, horario });
-});
-
-socket.on('vento/echo', ({ vento, horario }) => {
-  adicionarRegistro('vento', { valor: vento, horario });
-});
-
-socket.on('nova-coordenada', ({ lat, long }) => {
-  adicionarRegistro('mapa', { latitude: lat, longitude: long });
-});
 
