@@ -48,10 +48,6 @@ module.exports = function(io) {
   client.on('message', async (topic, payload) => {
     if (topic === 'mapa') {
       try {
-        //const mensagem = payload.toString();
-        //mensagem.split(",");
-        //const lat = mensagem[0];
-        //const long = mensagem[1];
         const mensagem = payload.toString();
         const [lat, long] = mensagem.split(',').map(parseFloat);
         const novoReg = new projeto_2({
