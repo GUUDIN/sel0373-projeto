@@ -11,7 +11,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-
+  function closeSettingsCard() {
+    if (settingsOverlay) {
+      settingsOverlay.classList.remove("active");
+      document.body.style.overflow = "";
+    }
+  }
 
   if (profileButton) {
     profileButton.addEventListener("click", (e) => {
@@ -21,7 +26,13 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  
+  if (closeButton) {
+    closeButton.addEventListener("click", (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      closeSettingsCard();
+    });
+  }
 
   // Close when clicking outside the card
   if (settingsOverlay) {

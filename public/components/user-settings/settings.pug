@@ -1,24 +1,15 @@
-// Card de configurações do usuário (overlay)
+// Backdrop
+#blurOverlay.blur-overlay
+// Card centralizado com bordas arredondadas
 #settingsOverlay
   #settingsCard.card-container
     button#closeSettings(type="button" aria-label="Fechar") ×
     .card-inner
       img.profile-avatar(src=(user && user.avatarUrl) || "/img/default-avatar.png", alt="Avatar do usuário")
-      if user && user.username
-        h2.greeting Olá, #{user.username}!
-      else
-        h2.greeting Olá, Usuário!
+      h2.greeting Olá, #{user.username || 'User'}!
+
       form(action="/users/settings" method="POST")
         select.project-select(name="project" required)
-          if user && user.project == 1
-            option(value="1" selected) Projeto 1 - Monitoramento Animal
-            option(value="2") Projeto 2 - Monitoramento Climático
-          else if user && user.project == 2
-            option(value="1") Projeto 1 - Monitoramento Animal
-            option(value="2" selected) Projeto 2 - Monitoramento Climático
-          else
-            option(value="1") Projeto 1 - Monitoramento Animal
-            option(value="2") Projeto 2 - Monitoramento Climático
-        button(type="submit" class="save-btn") Salvar
-      form(action="/users/logout" method="GET")
-        button(type="submit" class="logout-btn") Logout
+          option(value="" disabled, selected=(!user.project)) Selecione um projeto
+          option(value="1", selected=(user.project == 1 || user.project == '1')) Projeto 1
+          option(value="2", selected=(user.project == 2 || user.project == '2')) Projeto 2
