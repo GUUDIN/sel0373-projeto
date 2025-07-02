@@ -288,7 +288,7 @@ document.addEventListener('DOMContentLoaded', function() {
   if (eixoXSelect) eixoXSelect.addEventListener('change', updateChart);
 
   // 3. MQTT Toggle
-  const toggleSwitch = document.getElementById('teste');
+  const toggleSwitch = document.getElementById('mqttToggle');
   const toggleStatus = document.getElementById('toggleStatus');
 
   if (toggleSwitch && toggleStatus) {
@@ -296,11 +296,27 @@ document.addEventListener('DOMContentLoaded', function() {
       const isChecked = this.checked;
 
       toggleStatus.textContent = isChecked ? 'Ativado' : 'Desativado';
-      toggleStatus.className = isChecked ? 'liga' : 'desliga';
+      toggleStatus.className = isChecked ? 'toggle-status on' : 'toggle-status off';
 
-      socket.emit('teste', isChecked);
-      
+      socket.emit('mqttToggle', {
+        state: isChecked,
+        timestamp: new Date().toISOString()
+      });
 
+      io.on('connection', (socket) => {
+  // ...outros handlers...
+
+  socket.on('teste', ({ state }) => {
+    const comando = state ? 'liga' : 'desliga';
+    client.publish('teste', comando, (err) => {
+      if (err) {
+        socket.emit('mqttToggleResponse', { success: false, error: err.message });
+      } else {
+        socket.emit('mqttToggleResponse', { success: true });
+      }
+    });
+  });
+});
       console.log(`Toggle MQTT: ${isChecked ? 'ON' : 'OFF'}`);
     });
   }
