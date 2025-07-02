@@ -109,7 +109,7 @@ html(lang="pt-BR")
             .tab-content#tab-mapa.active
               .data-list
                 if registrosmapa && registrosmapa.length
-                  each registro in registrosmapa.slice(0, 5)
+                  each registro in registrosmapa//.slice(0, 5)
                     .data-item
                       .data-field
                         strong Lat: 
@@ -124,7 +124,7 @@ html(lang="pt-BR")
             .tab-content#tab-temp
               .data-list
                 if registrostemp && registrostemp.length
-                  each registro in registrostemp.slice(0, 5)
+                  each registro in registrostemp
                     .data-item
                       .data-field
                         strong Temperatura: 
@@ -136,7 +136,7 @@ html(lang="pt-BR")
             .tab-content#tab-umidade
               .data-list
                 if registrosumidade && registrosumidade.length
-                  each registro in registrosumidade.slice(0, 5)
+                  each registro in registrosumidade//.slice(0, 5)
                     .data-item
                       .data-field
                         strong Umidade: 
@@ -148,7 +148,7 @@ html(lang="pt-BR")
             .tab-content#tab-vento
               .data-list
                 if registrosvento && registrosvento.length
-                  each registro in registrosvento.slice(0, 5)
+                  each registro in registrosvento//.slice(0, 5)
                     .data-item
                       .data-field
                         strong Velocidade: 

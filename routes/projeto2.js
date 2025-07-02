@@ -56,6 +56,7 @@ module.exports = function(io) {
               longitude: long,
             });
             await novoReg.save();
+            io.emit('dados-recentes/mapa', novoReg);
             console.log('Novo registro:', novoReg);
         //registrosmapa.push(mensagem);
         //console.log(`MQTT: Mapa atualizado - ${latitude}: ${longitude}`);
@@ -97,6 +98,8 @@ module.exports = function(io) {
             });
             await novoReg.save();
             console.log('Novo registro:', novoReg);
+            io.emit('dados-recentes/temperatura', novoReg);
+
         //registrostemp.push(mensagem);
         //registrostemp.length = 0;
         registrostemp.push(...await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite));
@@ -120,6 +123,7 @@ module.exports = function(io) {
               valor: parseFloat(umidade),
             });
             await novoReg.save();
+            io.emit('dados-recentes/umidade', novoReg);
             console.log('Novo registro:', novoReg);
         //registrosumidade.length = 0;
         registrosumidade.push(...await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite));
@@ -143,6 +147,8 @@ module.exports = function(io) {
             valor: parseFloat(velocidade),
             });
             await novoReg.save();
+            io.emit('dados-recentes/vento', novoReg);
+
             //registrosvento.length = 0;
             registrosvento.push(...await projeto_2.find({ tipo: 'velocidade' }).sort({ dataRecebida: -1 }).limit(limite));
 

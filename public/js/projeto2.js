@@ -237,3 +237,55 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 
+const recentes = {
+  temperatura: [],
+  umidade: [],
+  vento: [],
+  mapa: []
+};
+
+function renderRecentes(tipo) {
+  const container = document.querySelector(`#tab-${tipo} .data-list`);
+  if (!container) return;
+
+  container.innerHTML = '';
+
+  recentes[tipo].slice(-5).reverse().forEach((registro) => {
+    const div = document.createElement('div');
+    div.classList.add('data-item');
+
+    if (tipo === 'mapa') {
+      div.innerHTML = `
+        <div class="data-field"><strong>Lat:</strong> <span>${registro.latitude}</span></div>
+        <div class="data-field"><strong>Long:</strong> <span>${registro.longitude}</span></div>
+      `;
+    } else {
+      div.innerHTML = `
+        <div class="data-field"><strong>${tipo.charAt(0).toUpperCase() + tipo.slice(1)}:</strong> <span>${registro.valor}${tipo === 'umidade' ? '%' : tipo === 'vento' ? ' m/s' : '°C'}</span></div>
+      `;
+    }
+
+    container.appendChild(div);
+  });
+}
+
+// Sockets
+socket.on('dados-recentes/temperatura', (registro) => {
+  recentes.temperatura.push(registro);
+  renderRecentes('temperatura');
+});
+
+socket.on('dados-recentes/umidade', (registro) => {
+  recentes.umidade.push(registro);
+  renderRecentes('umidade');
+});
+
+socket.on('dados-recentes/vento', (registro) => {
+  recentes.vento.push(registro);
+  renderRecentes('vento');
+});
+
+socket.on('dados-recentes/mapa', (registro) => {
+  recentes.mapa.push(registro);
+  renderRecentes('mapa');
+});
