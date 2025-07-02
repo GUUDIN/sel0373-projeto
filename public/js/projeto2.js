@@ -12,9 +12,9 @@ let marker = L.marker([-23.5505, -46.6333]).addTo(map)
   .openPopup();
 
 // Data storage
-const historicoTemp = [];
-const historicoLoc = [];
-const historicoUm = [];
+//const historicoTemp = [];
+//const historicoLoc = [];
+//const historicoUm = [];
 const historico = [];
 
 // Initialize chart
@@ -75,12 +75,15 @@ const chart = new Chart(ctx, {
 });
 
 // Socket event handlers
-socket.on('nova-coordenada', ({ lat, lon }) => {
-  client.publish('Nova coordenada recebida:', { lat, lon });
-  map.setView([lat, lon], 14);
-  marker.setLatLng([lat, lon])
-    .setPopupContent(`Lat: ${lat.toFixed(7)}, Lon: ${lon.toFixed(7)}`)
+socket.on('nova-coordenada', ({ lat, long }) => {
+  //client.publish('Nova coordenada recebida:', { lat, lon });
+  map.setView([lat, long], 14);
+  marker.setLatLng([lat, long])
+    .setPopupContent(`Lat: ${lat.toFixed(7)}, Lon: ${long.toFixed(7)}`)
     .openPopup();
+
+  historico.push({ lat, long, horario: new Date().toISOString() });
+  if (historico.length > 30) historico.shift();
 });
 const clima_echo = [
     'temperatura/echo',
