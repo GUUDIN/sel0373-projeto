@@ -62,7 +62,7 @@ module.exports = function(io) {
 
         // Emite coordenadas para o frontend
         io.emit('nova-coordenada', { lat: lat, long: long });
-        registrosmapa.length = 0;
+        //registrosmapa.length = 0;
         registrosmapa.push(...await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite));
         // Faz requisição à API de clima
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current_weather=true`;
@@ -98,7 +98,7 @@ module.exports = function(io) {
             await novoReg.save();
             console.log('Novo registro:', novoReg);
         //registrostemp.push(mensagem);
-        registrostemp.length = 0;
+        //registrostemp.length = 0;
         registrostemp.push(...await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite));
 
         //let registrostemp = await projeto_2.find({tipo:'temperatura'}).sort({dataRecebida:-1}).limit(limite);
@@ -121,7 +121,7 @@ module.exports = function(io) {
             });
             await novoReg.save();
             console.log('Novo registro:', novoReg);
-        registrosumidade.length = 0;
+        //registrosumidade.length = 0;
         registrosumidade.push(...await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite));
 
         //let registrosumidade = await projeto_2.find({tipo:'umidade'}).sort({dataRecebida:-1}).limit(limite);
@@ -143,7 +143,7 @@ module.exports = function(io) {
             valor: parseFloat(velocidade),
             });
             await novoReg.save();
-            registrosvento.length = 0;
+            //registrosvento.length = 0;
             registrosvento.push(...await projeto_2.find({ tipo: 'velocidade' }).sort({ dataRecebida: -1 }).limit(limite));
 
             //let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
