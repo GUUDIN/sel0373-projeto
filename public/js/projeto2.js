@@ -129,13 +129,13 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
 socket.on('vento/echo', ({ velocidade, horario }) => {
   const ventoElement = document.getElementById('card-vento');
   if (ventoElement) ventoElement.textContent = `${velocidade} m/s`;
-  historicoVento.push({ vento: velocidade, horario });
+  historicoVento.push({ vento: vento, horario });
 
   //historico.push({ velocidade, horario });
   //client.publish('vento/echo', { velocidade, horario });
   
   if (historicoVento.length > 50) historicoVento.shift();
-  historico.push({ vento: velocidade, horario: new Date().toISOString() });
+  historico.push({ vento: vento, horario: new Date().toISOString() });
   if (historico.length > 50) historico.shift();
   updateChart();
 });
@@ -310,8 +310,8 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
   adicionarRegistro('umidade', { valor: umidade, horario });
 });
 
-socket.on('sensor-de-vento/echo', ({ velocidade, horario }) => {
-  adicionarRegistro('vento', { valor: velocidade, horario });
+socket.on('sensor-de-vento/echo', ({ vento, horario }) => {
+  adicionarRegistro('vento', { valor: vento, horario });
 });
 
 socket.on('nova-coordenada', ({ lat, long }) => {
