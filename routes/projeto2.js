@@ -70,8 +70,8 @@ module.exports = function(io) {
         const { data } = await axios.get(url);
 
         const clima = {
-          temperatura: data.current_weather.temperature,
-          vento: data.current_weather.windspeed,
+          //temperatura: data.current_weather.temperature,
+          //vento: data.current_weather.windspeed,
           codigoTempo: data.current_weather.weathercode,
           horario: data.current_weather.time
         };
@@ -98,7 +98,8 @@ module.exports = function(io) {
             console.log('Novo registro:', novoReg);
         //registrostemp.push(mensagem);
         let registrostemp = await projeto_2.find({tipo:'temperatura'}).sort({dataRecebida:-1}).limit(limite);
-       
+        io.emit('temperatura/echo', { temperatura: temperatura, horario: new Date().toISOString() });
+        client.publish('temperatura/echo', `${temperatura}`);
         console.log(`MQTT: Temp atualizado - ${temperatura}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
@@ -117,7 +118,8 @@ module.exports = function(io) {
             await novoReg.save();
             console.log('Novo registro:', novoReg);
         let registrosumidade = await projeto_2.find({tipo:'umidade'}).sort({dataRecebida:-1}).limit(limite);
-
+        client.publish('umidade/echo', umidade);
+        io.emit('umidade/echo', { umidade: umidade, horario: new Date().toISOString() });
         //console.log(`MQTT: Umidade atualizado - ${umidade}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
@@ -135,7 +137,8 @@ module.exports = function(io) {
             });
             await novoReg.save();
             let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
-
+            client.publish('sensor-de-vento/echo', `${velocidade}`);
+            io.emit('sensor-de-vento/echo', { velocidade: umidade, horario: new Date().toISOString() })
         console.log(`MQTT: Sensor vento atualizado - ${velocidade}`);
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);

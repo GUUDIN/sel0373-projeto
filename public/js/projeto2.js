@@ -71,7 +71,7 @@ const chart = new Chart(ctx, {
 });
 
 // Socket event handlers
-socket.on('nova-coordenada', ({ lat, lon }) => {
+socket.on('nova-coordenada', async({ lat, lon }) => {
   console.log('Nova coordenada recebida:', { lat, lon });
   map.setView([lat, lon], 14);
   marker.setLatLng([lat, lon])
@@ -87,7 +87,7 @@ const clima_echo = [
 // ...existing code...
 
 // 🌡️ Temperatura recebida
-socket.on('temperatura/echo', ({ temperatura, horario }) => {
+socket.on('temperatura/echo', async({ temperatura, horario }) => {
   const tempElement = document.getElementById('card-temp');
   if (tempElement) tempElement.textContent = `${temperatura}°C`;
   historico.push({ temperatura, horario });
@@ -96,7 +96,7 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
 });
 
 // 💧 Umidade recebida
-socket.on('umidade/echo', ({ umidade, horario }) => {
+socket.on('umidade/echo', async({ umidade, horario }) => {
   const umidadeElement = document.getElementById('card-umidade');
   if (umidadeElement) umidadeElement.textContent = `${umidade}%`;
   historico.push({ umidade, horario });
@@ -105,7 +105,7 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
 });
 
 // 💨 Vento recebido
-socket.on('sensor-de-vento/echo', ({ vento, horario }) => {
+socket.on('sensor-de-vento/echo', async({ vento, horario }) => {
   const ventoElement = document.getElementById('card-vento');
   if (ventoElement) ventoElement.textContent = `${vento} m/s`;
   historico.push({ vento, horario });
