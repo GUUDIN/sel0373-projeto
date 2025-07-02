@@ -153,7 +153,7 @@ module.exports = function(io) {
 
             //let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
             //client.publish('sensor-de-vento/echo', `${velocidade}`);
-            io.emit('vento/echo', { vento, horario: new Date().toISOString() });
+            io.emit('vento/echo', { vento: vento, horario: new Date().toISOString() });
 
 
         console.log(`MQTT: Sensor vento atualizado - ${vento}`);
