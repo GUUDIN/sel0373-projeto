@@ -60,7 +60,7 @@ module.exports = function(io) {
             await novoReg.save();
             console.log('Novo registro:', novoReg);
         //registrosmapa.push(mensagem);
-        console.log(`MQTT: Mapa atualizado - ${latitude}: ${longitude}`);
+        //console.log(`MQTT: Mapa atualizado - ${latitude}: ${longitude}`);
 
         // Emite coordenadas para o frontend
         io.emit('nova-coordenada', { lat: lat, lon: long });

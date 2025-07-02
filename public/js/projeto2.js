@@ -29,7 +29,8 @@ const chart = new Chart(ctx, {
       borderColor: '#007AFF',
       backgroundColor: 'rgba(0, 122, 255, 0.1)',
       fill: true,
-      tension: 0.4
+      tension: 0.4,
+      spanGaps: true // Liga os pontos mesmo com alguns dados faltando
     }]
   },
   options: {
@@ -78,7 +79,7 @@ socket.on('nova-coordenada', ({ lat, lon }) => {
   client.publish('Nova coordenada recebida:', { lat, lon });
   map.setView([lat, lon], 14);
   marker.setLatLng([lat, lon])
-    .setPopupContent(`Lat: ${lat.toFixed(4)}, Lon: ${lon.toFixed(4)}`)
+    .setPopupContent(`Lat: ${lat.toFixed(7)}, Lon: ${lon.toFixed(7)}`)
     .openPopup();
 });
 const clima_echo = [
