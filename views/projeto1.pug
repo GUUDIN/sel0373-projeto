@@ -10,99 +10,104 @@ html(lang="pt-BR")
     script(src="/components/user-settings/settings.js")
 
   body
-    .glass-background
-    header.glass-navbar
-      .container
-        a.glass-logo(href="/")
-          span Projetos IOT
-        .header-center
-          h2.page-title Monitoramento de Animais
-          p.page-subtitle Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID
-        nav.nav-right
-          if user
-            button.profile-button(type="button")
-              img.profile-photo(src=user.avatarUrl || '/img/default-avatar.png' alt=user.username)
-              span.username #{user.username}
+    include ./partials/navbar.pug
 
-  
+    .container
+      .page-header
+        h1.page-title Monitoramento de Animais
+        p.page-subtitle Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID
 
-    .projeto1-container 
-      .container
-        if error
-          .glass-alert.alert-error= error
-        if success
-          .glass-alert.alert-success= success
+      if error
+        .alert.alert-error= error
+      if success
+        .alert.alert-success= success
 
-        .cards-grid(style="display: flex; gap: 30px; align-items: flex-start;")
-          .card.form-card(style="flex: 0 0 35%")
-            .card-header
-              h3.card-title Cadastro de Animal
+      .main-grid
+        //- Card de Cadastro
+        .card.form-card
+          h3.card-title Cadastrar Animal
+          form#register-form(action="/projeto1/register" method="POST")
+            .form-group
+              label(for="identifier") Identificador do animal
+              input.input#identifier(type="text" name="identifier" placeholder="Ex: A123" required)
+            .form-group
+              label(for="nome") Nome do animal
+              input.input#nome(type="text" name="nome" placeholder="Ex: Rex")
+            .form-group
+              label(for="especie") Espécie
+              input.input#especie(type="text" name="especie" placeholder="Ex: Cachorro")
+            .form-group
+              label(for="idade") Idade
+              input.input#idade(type="number" name="idade" placeholder="Ex: 5")
+            .form-group
+              label(for="allowed") Permitir Acesso?
+              select.select#allowed(name="allowed" required)
+                option(value="" disabled selected) Selecione uma opção
+                option(value="sim") Sim
+                option(value="nao") Não
+            button.button(type="submit") Cadastrar
 
-            .card-content
-              form#register-form.glass-form(action="/projeto1/register" method="POST")
-                .form-group
-                  label.form-label(for="identifier") Identificador do animal
-                  input#identifier.glass-input(type="text" name="identifier" placeholder="Ex: A123" required)
+        //- Card da Lista de Animais
+        .card.animals-list-card
+          h3.card-title Animais Registrados
+          if registros && registros.length > 0
+            .animals-list
+              each registro in registros
+                - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : 'Não recebido'
+                .animal-item
+                  .animal-header
+                    .animal-id= registro.identifier
+                    .animal-status(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
+                      .status-indicator
+                      span.status-text= registro.allowed === 'sim' ? 'Permitido' : 'Negado'
+                  .animal-details
+                    div
+                      | Nome: 
+                      span= registro.nome || 'N/A'
+                    div
+                      | Espécie: 
+                      span= registro.especie || 'N/A'
+                    div
+                      | Idade: 
+                      span= registro.idade || 'N/A'
+                    div
+                      | Peso (kg): 
+                      span(id=`peso-${registro.identifier}`)= valorPeso
+                    div
+                      | Cadastrado por: 
+                      span= registro.registradoPor || 'N/A'
+                    div
+                      | Atualizado em: 
+                      span(id=`data-${registro.identifier}`)= registro.dataPesoAtualizado ? new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR") : 'Sem registro'
+                  .animal-footer
+                    form(action='/projeto1/delete/' + registro.identifier method="POST")
+                      button.delete-button(type="submit") Excluir
+          else
+            .empty-state
+              p Nenhum animal registrado ainda.
 
-                .form-group
-                  label.form-label(for="allowed") Permitido?
-                  select#allowed.glass-select(name="allowed" required)
-                    option(value="" disabled selected) Selecione uma opção
-                    option(value="sim") Sim
-                    option(value="nao") Não
-
-                .form-actions
-                  button.glass-button-primary(type="submit") Cadastrar
-
-          .card.records-card(style="flex: 0 0 60%")
-            .card-header
-              h3.card-title Animais Registrados
-
-            .card-content
-              .animals-list
-                if registros.length
-                  each registro in registros
-                    - const valorPeso = (registro.peso && registro.peso.peso) ? registro.peso.peso : 'Não recebido'
-                    .animal-item(style="height: 170px; display: flex; flex-direction: column; justify-content: space-between; padding: 0.75rem;")
-                      .animal-body
-                        .animal-main
-                          .animal-id #{registro.identifier}
-                          .animal-status(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
-                            .status-indicator
-                            span.status-text #{registro.allowed === 'sim' ? 'Permitido' : 'Negado'}
-
-                        .animal-details
-                          .detail-row
-                            span.detail-label Peso (kg):
-                            span.detail-value(id='peso-' + registro.identifier)= valorPeso
-
-                          .detail-row
-                            span.detail-label Atualizado em:
-                            span.detail-value(id='data-' + registro.identifier)= registro.dataPesoAtualizado ? new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR") : 'Sem registro'
-
-                          if registro.registradoPor
-                            .detail-row
-                              span.detail-label Cadastrado por:
-                              span.detail-value #{registro.registradoPor}
-
-                      .animal-actions
-                        form(action='/projeto1/delete/' + registro.identifier method="POST" style="display: inline;")
-                          button.glass-button-danger.delete-button(type="submit") Excluir
-
-                else
-                  .empty-state
-                    .empty-icon 🐄
-                    .empty-title Nenhum animal cadastrado
-                    .empty-subtitle Use o formulário ao lado para cadastrar o primeiro animal
-
-        .history-section
-          button.glass-button-secondary.history-button(onclick="window.location.href='/projeto1/history'")
-            span.icon 📊
-            span Histórico completo dos animais
+      .history-section
+        a.history-button(href="/projeto1/history") Ver Histórico Completo
 
     if user
       include ../components/user-settings/settings.pug
 
     script(src="/components/user-settings/settings.js")
     script(src="/socket.io/socket.io.js")
-    script(src="/js/projeto1.js")
+    script.
+      const socket = io();
+      socket.on('pesoAtualizado', function(data) {
+        console.log("Recebido via socket:", data);
+        const pesoSpan = document.getElementById(`peso-${data.identifier}`);
+        const dataSpan = document.getElementById(`data-${data.identifier}`);
+        
+        if (pesoSpan) {
+          pesoSpan.textContent = data.peso;
+        }
+        if (dataSpan) {
+          const dataFormatada = new Date().toLocaleString("pt-BR");
+          dataSpan.textContent = dataFormatada;
+        }
+      });
+      socket.on('connect', () => console.log('Socket.IO conectado'));
+      socket.on('disconnect', () => console.log('Socket.IO desconectado'));

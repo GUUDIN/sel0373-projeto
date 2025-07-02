@@ -1,89 +1,46 @@
 doctype html
 html(lang="pt-BR")
   head
-    title Histórico de Animais - Monitoramento
+    title Histórico de Animais
     meta(charset="UTF-8")
     meta(name="viewport" content="width=device-width, initial-scale=1.0")
     link(rel="stylesheet" href="/css/design-system.css")
     link(rel="stylesheet" href="/css/projeto1.css")
-    
-    include ./partials/styles.pug
+    link(rel="stylesheet", href="/css/index.css")
+    link(rel="stylesheet", href="/css/projeto1-history.css")
     
   body
-    // Animated background
-    .glass-background
-    
-    // Glass navigation
-    header.glass-navbar
-      .container
-        a.glass-logo(href="/")
-          span Projetos IOT
-        nav.nav-right
-          if user
-            button.profile-button(type="button")
-              img.profile-photo(
-                src=user.avatarUrl || '/img/default-avatar.png'
-                alt=`${user.username}`
-              )
-              span.username #{user.username}
+    include ./partials/navbar.pug
 
-    // Main content container
-    .projeto1-container
-      .container
-        .page-header
-          h1.page-title Histórico Completo de Animais
-          p.page-subtitle Registro completo de todos os animais cadastrados no sistema
-          
-          .nav-actions
-            a.glass-button-secondary(href="/projeto1")
-              span ← Voltar ao Projeto 1
+    .container
+      .page-header
+        h1.page-title Histórico de Animais
+        a.back-button(href="/projeto1")
+          span ←
+          | Voltar
 
-        // History content
-        .history-content
-          .glass-card.history-card
-            .card-header
-              h3.card-title 
-                span.icon 📊
-                span Histórico Completo (#{registros.length} registros)
-            
-            .card-content
-              if registros.length
-                .history-table
-                  .table-header
-                    .col ID
-                    .col Status
-                    .col Peso
-                    .col Atualizado
-                    .col Cadastrado por
-                    .col Data
-                  
-                  .table-body
-                    each registro in registros
-                      .table-row
-                        .col #{registro.identifier}
-                        .col
-                          .status-badge(class=registro.allowed === 'sim' ? 'status-allowed' : 'status-denied')
-                            #{registro.allowed === 'sim' ? 'Permitido' : 'Negado'}
-                        .col #{registro.peso || 'N/A'}
-                        .col
-                          if registro.dataPesoAtualizado && registro.dataPesoAtualizado !== 'Não atualizado'
-                            small #{new Date(registro.dataPesoAtualizado).toLocaleString("pt-BR")}
-                          else
-                            small.text-muted Não atualizado
-                        .col #{registro.registradoPor || 'N/A'}
-                        .col
-                          if registro.data
-                            small #{new Date(registro.data).toLocaleString("pt-BR")}
-                          else
-                            small.text-muted N/A
-              else
-                .empty-state
-                  .empty-icon 📈
-                  .empty-title Nenhum registro encontrado
-                  .empty-subtitle O histórico aparecerá aqui conforme animais forem cadastrados
-
-    // Incluir o card de configurações do usuário
-    if user
-      include ../components/user-settings/settings.pug
-
-    script(src="/components/user-settings/settings.js")
+      if registros && registros.length > 0
+        .history-table-wrapper
+          table.history-table
+            thead
+              tr
+                th ID
+                th Status
+                th Peso (kg)
+                th Cadastrado por
+                th Data de Cadastro
+                th Última Atualização
+            tbody
+              each registro in registros
+                tr
+                  td= registro.identifier
+                  td
+                    span(class=`status status-${registro.allowed === 'sim' ? 'allowed' : 'denied'}`)= registro.allowed === 'sim' ? 'Permitido' : 'Negado'
+                  td= registro.peso || 'N/A'
+                  td= registro.registradoPor
+                  td= new Date(registro.createdAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+                  td= new Date(registro.updatedAt).toLocaleString('pt-BR', { dateStyle: 'short', timeStyle: 'short' })
+      else
+        .empty-state
+          p Nenhum animal registrado ainda.
+          a.back-button(href="/projeto1") Voltar para o cadastro

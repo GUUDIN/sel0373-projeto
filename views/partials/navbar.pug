@@ -1,0 +1,13 @@
+header.navbar
+  a.logo-text(href="/") Projetos IOT
+  if pageTitle
+    .page-header-context
+      h1.page-title-nav= pageTitle
+      if pageSubtitle
+        p.page-subtitle-nav= pageSubtitle
+  if user
+    button.profile-button(type="button")
+      img.profile-photo(src=user.avatarUrl || '/img/default-avatar.png' alt=user.username)
+      span.username= user.username
+  else
+    a.login-button(href="/login") Login

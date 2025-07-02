@@ -1,180 +1,170 @@
-/* Ajuste geral de layout */
+/* Import do Design System */
+@import url('./design-system.css');
+
+/* ================================================== */
+/* BASE E LAYOUT */
+/* ================================================== */
 
 body {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  margin: 0;
-  font-family: sans-serif;
-  color: white;
+  background-image: url('/img/glass-background.png');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: var(--text-primary);
+  font-family: var(--font-sans);
 }
 
-/* Navbar Glass */
-
-.glass-navbar {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  padding: 1rem 2rem;
-}
-
-.glass-navbar .container {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.container {
   max-width: 1400px;
   margin: 0 auto;
-  width: 100%;
+  padding: var(--spacing-2xl) var(--spacing-lg);
 }
 
-.glass-logo {
-  font-weight: bold;
-  font-size: 1.5rem;
-  color: white;
-  text-decoration: none;
-}
+/* ================================================== */
+/* CABEÇALHO DA PÁGINA */
+/* ================================================== */
 
-.nav-right {
-  display: flex;
-  align-items: center;
-}
-
-.profile-button {
-  background: rgba(255, 255, 255, 0.2);
-  border: none;
-  border-radius: 20px;
-  padding: 0.4rem 0.8rem;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: white;
-  cursor: pointer;
-}
-
-.profile-photo {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
-}
-
-/* Título centralizado */
-
-.header-center {
+.page-header {
   text-align: center;
-  flex: 1;
+  margin-bottom: var(--spacing-2xl);
 }
 
 .page-title {
-  font-size: clamp(1.2rem, 4vw, 1.8rem);
-  margin: 0;
+  font-size: clamp(2rem, 5vw, 2.5rem);
+  font-weight: 700;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, #ffffff 0%, rgba(255, 255, 255, 0.8) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
   text-wrap: balance;
+  line-height: 1.2;
 }
 
 .page-subtitle {
-  font-size: clamp(0.75rem, 2vw, 0.95rem);
-  margin-top: 0.3rem;
-  color: rgba(255,255,255,0.8);
+  font-size: clamp(1rem, 2.5vw, 1.15rem);
+  color: var(--text-secondary);
+  margin-top: var(--spacing-sm);
   text-wrap: balance;
+  font-weight: 400;
 }
 
+/* ================================================== */
+/* GRID PRINCIPAL (FORMULÁRIO E LISTA) */
+/* ================================================== */
 
-
-/* Formulário */
-
-.cards-grid {
-  display: flex;
-  gap: 20px;
-  margin-top: 2rem;
+.main-grid {
+  display: grid;
+  grid-template-columns: 40% 1fr;
+  gap: var(--spacing-xl);
+  align-items: flex-start;
 }
+
+/* ================================================== */
+/* CARD UNIFICADO */
+/* ================================================== */
 
 .card {
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(10px);
-  border-radius: 12px;
-  padding: 1rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-}
-
-.form-card {
-  flex: 0 0 35%;
-  margin-left: 20px;
-  margin-right: 20px;
-}
-
-.records-card {
-  flex: 0 0 60%;
+  background: var(--glass-primary);
+  backdrop-filter: var(--blur-medium);
+  -webkit-backdrop-filter: var(--blur-medium);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-large);
+  padding: var(--spacing-xl);
+  box-shadow: 0 8px 32px var(--glass-shadow);
 }
 
 .card-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-primary);
   text-align: center;
-  font-size: 1.3rem;
-  font-weight: bold;
-  margin-bottom: 1rem;
+  margin-bottom: var(--spacing-lg);
 }
 
-.glass-form {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+/* ================================================== */
+/* FORMULÁRIO DE CADASTRO */
+/* ================================================== */
+
+.form-card .form-group {
+  margin-bottom: var(--spacing-lg);
 }
 
-.form-group label {
-  text-align: center;
-  font-weight: bold;
-  font-size: 1rem;
+.form-card label {
+  display: block;
+  font-weight: 500;
+  color: var(--text-secondary);
+  margin-bottom: var(--spacing-sm);
 }
 
-.form-actions {
-  display: flex;
-  justify-content: center;
-  margin-top: 1rem;
-}
-
-
-.glass-input, .glass-select {
-  padding: 0.8rem 1rem;
-  border-radius: 10px;
-  border: none;
-  background: rgba(255, 255, 255, 0.2);
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  text-align: center;
+.form-card .input, 
+.form-card .select {
   width: 100%;
+  padding: var(--spacing-md);
+  background: var(--glass-input);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
 }
 
-.glass-button-primary {
-  background: #007bff;
-  border: none;
-  padding: 0.8rem 2rem;
-  border-radius: 10px;
-  font-weight: bold;
+.form-card .input::placeholder {
+  color: var(--text-placeholder);
+}
+
+.form-card .input:focus,
+.form-card .select:focus {
+  outline: none;
+  border-color: var(--accent-blue-light);
+  box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.3);
+}
+
+.form-card .button {
+  width: 100%;
+  padding: var(--spacing-md);
+  background: var(--accent-green);
   color: white;
-  font-size: 1.05rem;
+  border: none;
+  border-radius: var(--radius-medium);
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: all 0.3s ease;
 }
 
+.form-card .button:hover {
+  background: var(--accent-green-hover);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(52, 199, 89, 0.4);
+}
 
-/* Lista de animais */
+/* ================================================== */
+/* LISTA DE ANIMAIS */
+/* ================================================== */
 
-.animals-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-  max-height: 450px;  /* limite vertical */
-  overflow-y: auto;   /* ativar scroll interno */
-  padding-right: 0.5rem;
+.animals-list-card {
+  max-height: 600px; /* Ajuste a altura conforme necessário */
+  overflow-y: auto;
 }
 
 .animal-item {
-  height: 170px;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 0.75rem;
-  border-radius: 12px;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.2);
+  gap: var(--spacing-md);
+  padding: var(--spacing-md);
+  background: var(--glass-secondary);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  margin-bottom: var(--spacing-md);
 }
 
-.animal-main {
+.animal-item:last-child {
+  margin-bottom: 0;
+}
+
+.animal-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -182,93 +172,83 @@ body {
 
 .animal-id {
   font-size: 1.1rem;
-  font-weight: bold;
-}
-
-.animal-status {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.status-indicator {
-  width: 8px;
-  height: 8px;
-  border-radius: 80%;
-}
-
-.status-allowed .status-indicator {
-  background: #4ade80;
-}
-
-.status-denied .status-indicator {
-  background: #f87171;
-}
-
-.status-text {
-  font-size: 0.85rem;
-  font-weight: bold;
-}
-
-.status-allowed .status-text {
-  color: #4ade80;
-}
-
-.status-denied .status-text {
-  color: #f87171;
+  font-weight: 600;
+  color: var(--text-primary);
 }
 
 .animal-details {
-  font-size: 0.8rem;
-  font-weight: bold;
-  margin-top: 0.5rem;
-  padding: 0 0.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--spacing-sm);
+  font-size: 0.9rem;
+  color: var(--text-secondary);
 }
 
-.detail-row {
-  display: flex;
-  justify-content: space-between;
+.animal-details span {
+  font-weight: 500;
+  color: var(--text-primary);
 }
 
-.animal-actions {
-  margin-top: 0.5rem;
+.animal-footer {
   display: flex;
   justify-content: flex-end;
 }
 
 .delete-button {
-  background: #dc2e2e;
+  padding: var(--spacing-sm) var(--spacing-md);
+  background: var(--accent-red);
+  color: white;
   border: none;
-  border-radius: 8px;
-  padding: 0.5rem 1.2rem; /* reduzimos um pouco a altura */
-  color: rgb(252, 252, 252);
-  font-weight: 700;
-  font-size: 1rem;
+  border-radius: var(--radius-small);
+  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 3px 8px rgba(0,0,0,0.3);
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .delete-button:hover {
-  background: #e60000;
-  transform: scale(1.00);
+  background: var(--accent-red-hover);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 15px rgba(231, 76, 60, 0.4);
 }
 
-
-/* Botão histórico */
+/* ================================================== */
+/* BOTÃO DE HISTÓRICO */
+/* ================================================== */
 
 .history-section {
   text-align: center;
-  margin-top: 2rem;
+  margin-top: var(--spacing-xl);
 }
 
 .history-button {
-  padding: 0.6rem 1rem;
-  background: rgba(255,255,255,0.2);
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: bold;
-  cursor: pointer;
-  font-size: 1rem;
+  padding: var(--spacing-md) var(--spacing-xl);
+  background: var(--glass-primary);
+  backdrop-filter: var(--blur-light);
+  -webkit-backdrop-filter: var(--blur-light);
+  border: 1px solid var(--glass-border);
+  border-radius: var(--radius-medium);
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.history-button:hover {
+  background: var(--glass-accent);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px var(--glass-shadow);
+}
+
+/* ================================================== */
+/* RESPONSIVE */
+/* ================================================== */
+
+@media (max-width: 1024px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .animals-list-card {
+    max-height: 450px;
+  }
 }
