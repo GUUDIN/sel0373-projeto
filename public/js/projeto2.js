@@ -238,25 +238,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
 
 const recentes = {
+  mapa: [],
   temperatura: [],
   umidade: [],
-  vento: [],
-  mapa: []
+  vento: []
 };
+
+// Função para limitar a 5
+function adicionarRegistro(tipo, registro) {
+  recentes[tipo].push(registro);
+  if (recentes[tipo].length > 5) {
+    recentes[tipo].shift(); // Remove o mais antigo
+  }
+  renderRecentes(tipo);
+}
+
 
 function renderRecentes(tipo) {
   const container = document.querySelector(`#tab-${tipo} .data-list`);
   if (!container) return;
 
-  container.innerHTML = ''; // Limpa antes de preencher
+  container.innerHTML = ''; // Limpa os registros antigos
 
-  const dados = recentes[tipo].slice(-5).reverse();
+  const dados = [...recentes[tipo]].reverse(); // Mostrar do mais recente ao mais antigo
 
   if (dados.length === 0) {
-    const p = document.createElement('p');
-    p.classList.add('empty-state');
-    p.textContent = `Nenhum dado de ${tipo} disponível`;
-    container.appendChild(p);
+    container.innerHTML = `<p class="empty-state">Nenhum dado de ${tipo} disponível</p>`;
     return;
   }
 
@@ -270,7 +277,9 @@ function renderRecentes(tipo) {
         <div class="data-field"><strong>Long:</strong> <span>${registro.longitude}</span></div>
       `;
     } else {
-      const unidade = tipo === 'umidade' ? '%' : tipo === 'vento' ? ' m/s' : '°C';
+      const unidade = tipo === 'temperatura' ? '°C' :
+                      tipo === 'umidade' ? '%' :
+                      tipo === 'vento' ? ' m/s' : '';
       div.innerHTML = `
         <div class="data-field"><strong>${tipo.charAt(0).toUpperCase() + tipo.slice(1)}:</strong> <span>${registro.valor}${unidade}</span></div>
       `;
@@ -281,23 +290,20 @@ function renderRecentes(tipo) {
 }
 
 
-// Sockets
-socket.on('dados-recentes/temperatura', (registro) => {
-  recentes.temperatura.push(registro);
-  renderRecentes('temperatura');
+
+socket.on('temperatura/echo', ({ temperatura, horario }) => {
+  adicionarRegistro('temperatura', { valor: temperatura, horario });
 });
 
-socket.on('dados-recentes/umidade', (registro) => {
-  recentes.umidade.push(registro);
-  renderRecentes('umidade');
+socket.on('umidade/echo', ({ umidade, horario }) => {
+  adicionarRegistro('umidade', { valor: umidade, horario });
 });
 
-socket.on('dados-recentes/vento', (registro) => {
-  recentes.vento.push(registro);
-  renderRecentes('vento');
+socket.on('sensor-de-vento/echo', ({ velocidade, horario }) => {
+  adicionarRegistro('vento', { valor: velocidade, horario });
 });
 
-socket.on('dados-recentes/mapa', (registro) => {
-  recentes.mapa.push(registro);
-  renderRecentes('mapa');
+socket.on('nova-coordenada', ({ lat, long }) => {
+  adicionarRegistro('mapa', { latitude: lat, longitude: long });
 });
+
