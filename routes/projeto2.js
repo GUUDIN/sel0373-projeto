@@ -66,7 +66,7 @@ module.exports = function(io) {
         registrosmapa.push({latitude: lat, longitude: long});
         const registrostemp = await projeto_2.find({ tipo: 'temperatura' }).sort({ dataRecebida: -1 }).limit(limite));
 
-        //registrosmapa.push(...await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite));
+        registrosmapa.push(...await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite));
         // Faz requisição à API de clima
         const url = `https://api.open-meteo.com/v1/forecast?latitude=${lat}&longitude=${long}&current_weather=true`;
         const { data } = await axios.get(url);
@@ -83,7 +83,7 @@ module.exports = function(io) {
         // Envia dados meteorológicos para o frontend
         //io.emit('dados-clima', clima);
         //console.log("Emitido dados-clima:", clima);
-        let registrosmapa = await projeto_2.find({tipo:'mapa'}).sort({dataRecebida:-1}).limit(limite);
+        //let registrosmapa = await projeto_2.find({tipo:'mapa'}).sort({dataRecebida:-1}).limit(limite);
         
       } catch (e) {
         console.error("Erro ao processar mensagem MQTT:", e.message);
