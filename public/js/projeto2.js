@@ -89,12 +89,10 @@ socket.on('nova-coordenada', ({ lat, long }) => {
 
   historicoMapa.push({ lat, long, horario: new Date().toISOString() });
   if (historicoMapa.length > 50) historicoMapa.shift();
+  historico.push({ lat, long, horario });
+  if (historico.length > 50) historico.shift();
 });
-const clima_echo = [
-    'temperatura/echo',
-    'umidade/echo',
-    'sensor-de-vento/echo'
-  ];
+
 
 // 🌡️ Temperatura recebida
 socket.on('temperatura/echo', ({ temperatura, horario }) => {
@@ -106,6 +104,9 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
   historicoTemp.push({ temperatura, horario });
   //client.publish('temperatura/echo', { temperatura, horario });
   if (historicoTemp.length > 50) historicoTemp.shift();
+
+  historico.push({ temperatura: temperatura, horario });
+  if (historico.length > 50) historico.shift();
   updateChart();
 });
 
@@ -118,6 +119,9 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
   //client.publish('umidade/echo', { umidade, horario });
 
   if (historicoUmidade.length > 50) historicoUmidade.shift();
+
+  historico.push({ umidade: umidade, horario });
+  if (historico.length > 50) historico.shift();
   updateChart();
 });
 
@@ -129,8 +133,10 @@ socket.on('vento/echo', ({ velocidade, horario }) => {
 
   //historico.push({ velocidade, horario });
   //client.publish('vento/echo', { velocidade, horario });
-
+  
   if (historicoVento.length > 50) historicoVento.shift();
+  historico.push({ vento: velocidade, horario });
+  if (historico.length > 50) historico.shift();
   updateChart();
 });
 
@@ -178,40 +184,33 @@ socket.on('mqttToggleResponse', function(data) {
   }
 });
 
+// Chart update function
 function updateChart() {
   const eixoY = document.getElementById('eixoY')?.value || 'temperatura';
   const eixoX = document.getElementById('eixoX')?.value || 'tempo';
 
-  let dados = [];
-
-  // Seleciona o histórico correto com base no eixo Y
-  switch (eixoY) {
+  chart.data.labels = historico.map(d => new Date(d.horario).toLocaleTimeString('pt-BR'));
+  chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
+  chart.data.datasets[0].data = historico.map(d => d[eixoY]);
+  
+  // Update chart colors based on data type
+  switch(eixoY) {
     case 'temperatura':
-      dados = historicoTemp;
       chart.data.datasets[0].borderColor = '#FF6B35';
       chart.data.datasets[0].backgroundColor = 'rgba(255, 107, 53, 0.1)';
       break;
     case 'umidade':
-      dados = historicoUmidade;
       chart.data.datasets[0].borderColor = '#007AFF';
       chart.data.datasets[0].backgroundColor = 'rgba(0, 122, 255, 0.1)';
       break;
     case 'vento':
-      dados = historicoVento;
       chart.data.datasets[0].borderColor = '#34C759';
       chart.data.datasets[0].backgroundColor = 'rgba(52, 199, 89, 0.1)';
       break;
-    default:
-      return; // caso inválido
   }
-
-  chart.data.labels = dados.map(d => new Date(d.horario).toLocaleTimeString('pt-BR'));
-  chart.data.datasets[0].label = eixoY.charAt(0).toUpperCase() + eixoY.slice(1);
-  chart.data.datasets[0].data = dados.map(d => parseFloat(d.valor));
-
+  
   chart.update();
 }
-
 
 // Tab functionality
 document.addEventListener('DOMContentLoaded', function() {
