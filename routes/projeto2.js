@@ -58,8 +58,7 @@ module.exports = function(io) {
             await novoReg.save();
             io.emit('dados-recentes/mapa', novoReg);
             console.log('Novo registro:', novoReg);
-        //registrosmapa.push(mensagem);
-        //console.log(`MQTT: Mapa atualizado - ${latitude}: ${longitude}`);
+
 
         // Emite coordenadas para o frontend
         io.emit('nova-coordenada', { lat: lat, long: long });
@@ -125,11 +124,11 @@ module.exports = function(io) {
             await novoReg.save();
             io.emit('dados-recentes/umidade', novoReg);
             console.log('Novo registro:', novoReg);
-        //registrosumidade.length = 0;
-        registrosumidade.push(...await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite));
 
-        //let registrosumidade = await projeto_2.find({tipo:'umidade'}).sort({dataRecebida:-1}).limit(limite);
-        //client.publish('umidade/echo', umidade);
+        registrosumidade.push(...await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite));
+        await projeto_2.find({ tipo: 'umidade' }).sort({ dataRecebida: -1 }).limit(limite);
+
+
         io.emit('umidade/echo', { umidade: umidade, horario: new Date().toISOString() });
         //console.log(`MQTT: Umidade atualizado - ${umidade}`);
       } catch (e) {
@@ -140,21 +139,21 @@ module.exports = function(io) {
     if (topic === 'sensor-de-vento') {
       try {
         const mensagem = payload.toString();
-        const velocidade = mensagem;
+        const vento = mensagem;
         //registrosvento.push(mensagem);
         const novoReg = new projeto_2({
             tipo: 'vento',
-            valor: parseFloat(velocidade),
+            valor: parseFloat(vento),
             });
             await novoReg.save();
             io.emit('dados-recentes/vento', novoReg);
 
             //registrosvento.length = 0;
-            registrosvento.push(...await projeto_2.find({ tipo: 'velocidade' }).sort({ dataRecebida: -1 }).limit(limite));
+            registrosvento.push(...await projeto_2.find({ tipo: 'vento' }).sort({ dataRecebida: -1 }).limit(limite));
 
             //let registrosvento = await projeto_2.find({tipo:'velocidade'}).sort({dataRecebida:-1}).limit(limite);
             //client.publish('sensor-de-vento/echo', `${velocidade}`);
-            io.emit('vento/echo', { velocidade, horario: new Date().toISOString() });
+            io.emit('vento/echo', { vento, horario: new Date().toISOString() });
 
 
         console.log(`MQTT: Sensor vento atualizado - ${velocidade}`);
