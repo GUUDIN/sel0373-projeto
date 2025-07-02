@@ -298,9 +298,8 @@ document.addEventListener('DOMContentLoaded', function() {
       toggleStatus.textContent = isChecked ? 'Ativado' : 'Desativado';
       toggleStatus.className = isChecked ? 'toggle-status on' : 'toggle-status off';
 
-      socket.emit('mqttToggle', {
+      socket.emit('teste', {
         state: isChecked,
-        timestamp: new Date().toISOString()
       });
 
       console.log(`Toggle MQTT: ${isChecked ? 'liga' : 'desliga'}`);
