@@ -303,7 +303,7 @@ document.addEventListener('DOMContentLoaded', function() {
         timestamp: new Date().toISOString()
       });
 
-      console.log(`Toggle MQTT: ${isChecked ? 'ON' : 'OFF'}`);
+      console.log(`Toggle MQTT: ${isChecked ? 'liga' : 'desliga'}`);
     });
   }
 
