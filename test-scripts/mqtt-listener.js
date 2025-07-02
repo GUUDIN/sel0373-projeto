@@ -5,7 +5,7 @@ const client = mqtt.connect('mqtt://igbt.eesc.usp.br', {
   password: 'mqtt_123_abc'
 });
 const topics = ['mapa', 'temperatura', 'umidade', 'sensor-de-vento'];
-const topics_front = ['mapa/echo', 'temperatura/echo', 'umidade/echo', 'sensor-de-vento/echo'];
+const topics_front = ['mapa/echo', 'temperatura/echo', 'umidade/echo', 'sensor-de-vento/echo', 'teste'];
 
 client.on('connect', () => {
   client.subscribe(topics_front, () => console.log('Escutando tópicos:', topics_front));

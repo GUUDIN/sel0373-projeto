@@ -294,7 +294,7 @@ const toggleStatus = document.getElementById('toggleStatus');
 if (toggleSwitch && toggleStatus) {
   toggleSwitch.addEventListener('change', function () {
     const isChecked = this.checked;
-    const comando = isChecked ? 'ligar' : 'desligar';
+    const comando = isChecked ? 'liga' : 'desliga';
 
     toggleStatus.textContent = isChecked ? 'Ativado' : 'Desativado';
     toggleStatus.className = isChecked ? 'toggle-status on' : 'toggle-status off';
