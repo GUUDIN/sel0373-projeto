@@ -83,7 +83,7 @@ socket.on('nova-coordenada', ({ lat, long }) => {
     .openPopup();
 
   historico.push({ lat, long, horario: new Date().toISOString() });
-  if (historico.length > 30) historico.shift();
+  if (historico.length > 50) historico.shift();
 });
 const clima_echo = [
     'temperatura/echo',
@@ -100,7 +100,7 @@ socket.on('temperatura/echo', ({ temperatura, horario }) => {
 
   historico.push({ temperatura, horario });
   //client.publish('temperatura/echo', { temperatura, horario });
-  if (historico.length > 30) historico.shift();
+  if (historico.length > 50) historico.shift();
   updateChart();
 });
 
@@ -112,7 +112,7 @@ socket.on('umidade/echo', ({ umidade, horario }) => {
   historico.push({ umidade, horario });
   //client.publish('umidade/echo', { umidade, horario });
 
-  if (historico.length > 30) historico.shift();
+  if (historico.length > 50) historico.shift();
   updateChart();
 });
 
@@ -125,7 +125,7 @@ socket.on('vento/echo', ({ velocidade, horario }) => {
   //historico.push({ velocidade, horario });
   //client.publish('vento/echo', { velocidade, horario });
 
-  if (historico.length > 30) historico.shift();
+  if (historico.length > 50) historico.shift();
   updateChart();
 });
 

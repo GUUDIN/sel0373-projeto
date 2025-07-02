@@ -65,7 +65,7 @@ module.exports = function(io) {
         //console.log(`MQTT: Mapa atualizado - ${latitude}: ${longitude}`);
 
         // Emite coordenadas para o frontend
-        io.emit('nova-coordenada', { lat: lat, lon: long });
+        io.emit('nova-coordenada', { lat: lat, long: long });
         registrosmapa.length = 0;
         registrosmapa.push(...await projeto_2.find({ tipo: 'mapa' }).sort({ dataRecebida: -1 }).limit(limite));
         // Faz requisição à API de clima
