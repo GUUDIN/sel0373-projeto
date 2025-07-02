@@ -88,12 +88,16 @@ const clima_echo = [
 
 // 🌡️ Temperatura recebida
 socket.on('temperatura/echo', async({ temperatura, horario }) => {
-  const tempElement = document.getElementById('card-temp').innerText = data.temperatura;
+  document.getElementById("temperatura").innerText = temperatura;
+
+  const tempElement = document.getElementById('card-temp');
   if (tempElement) tempElement.textContent = `${temperatura}°C`;
+
   historico.push({ temperatura, horario });
   if (historico.length > 50) historico.shift();
   updateChart();
 });
+
 
 // 💧 Umidade recebida
 socket.on('umidade/echo', async({ umidade, horario }) => {
