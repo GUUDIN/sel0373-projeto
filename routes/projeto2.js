@@ -115,10 +115,10 @@ module.exports = function(io, connectedUsers){
 socket.on('mqttToggle', (data) => {
     const comando = data.comando || (data.state ? 'liga' : 'desliga');
 
-    //if (client && client.connected) {
+    if (client && client.connected) {
       client.publish('teste', comando);
       console.log(`[${username}] MQTT publicado em 'teste': ${comando}`);
-    //}
+    }
 
     socket.emit('mqttToggleResponse', {
       success: true,
