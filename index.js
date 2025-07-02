@@ -22,6 +22,16 @@ conn();
 
 const http = require("http");
 const server = http.createServer(app);
+
+const sessionOptions = {
+  secret: process.env.SESSION_SECRET,
+  resave: false,
+  saveUninitialized: false,
+  cookie: { maxAge: 1000 * 60 * 60 } 
+};
+
+const sessionMiddleware = session(sessionOptions);
+
 const { Server } = require("socket.io");
 const io = new Server(server); // cria o socket
 
@@ -52,18 +62,7 @@ io.on('connection', (socket) => {
 app.use(bodyParser.urlencoded({ extended: true }));
 
 
-const sessionOptions = {
-  secret: process.env.SESSION_SECRET,
-  resave: false,
-  saveUninitialized: false,
-  cookie: { maxAge: 1000 * 60 * 60 } 
-};
-
-const sessionMiddleware = session(sessionOptions);
-
-// Usa o middleware de sessão no app
 app.use(sessionMiddleware);
-app.use(session(sessionOptions));
 
 // Torna `user` disponível em res.locals para os templates
 app.use((req, res, next) => {
