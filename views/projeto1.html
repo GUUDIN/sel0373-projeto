@@ -1,40 +1,220 @@
-<!DOCTYPE html><html lang="pt-BR"><head><title>Monitoramento de Animais</title><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link rel="stylesheet" href="/css/design-system.css"><link rel="stylesheet" href="/css/projeto1.css"><link rel="stylesheet" href="/css/partials/modals.css"><link rel="stylesheet" href="/css/partials/forms.css"><link rel="stylesheet" href="/css/partials/popovers.css"><link rel="stylesheet" href="/css/partials/buttons.css"><link rel="stylesheet" href="/components/user-settings/settings.css"><link rel="stylesheet" href="/css/index.css"><script src="/components/user-settings/settings.js"></script></head><body><header class="navbar"><a class="logo-text" href="/">Projetos IOT</a><a class="login-button" href="/login">Login</a></header><div class="container"><div class="page-header"><h1 class="page-title">Monitoramento de Animais</h1><p class="page-subtitle">Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID</p></div><div class="main-grid"><div class="card form-card"><h3 class="card-title">Cadastrar Animal</h3><form id="register-form" action="/projeto1/register" method="POST"><div class="form-group"><label for="identifier">Identificador do animal</label><input class="input" id="identifier" type="text" name="identifier" placeholder="Ex: A123" required></div><div class="form-group"><label for="nome">Nome do animal</label><input class="input" id="nome" type="text" name="nome" placeholder="Ex: Rex"></div><div class="form-group"><label for="especie">Espécie</label><input class="input" id="especie" type="text" name="especie" placeholder="Ex: Cachorro"></div><div class="form-group"><label for="idade">Idade</label><input class="input" id="idade" type="number" name="idade" placeholder="Ex: 5"></div><div class="form-group"><label for="allowed">Permitir Acesso?</label><select class="select" id="allowed" name="allowed" required><option value="" disabled selected>Selecione uma opção</option><option value="sim">Sim</option><option value="nao">Não</option></select></div><button class="button" type="submit">Cadastrar</button></form></div><div class="card animals-list-card"><h3 class="card-title">Animais Registrados</h3><div class="empty-state"><p>Nenhum animal registrado ainda.</p></div></div></div><div class="history-section"><a class="history-button" href="/projeto1/history">Ver Histórico Completo</a></div></div><script src="/components/user-settings/settings.js"></script><script src="/socket.io/socket.io.js"></script><script>const socket = io();
-socket.on('pesoAtualizado', function(data) {
-  console.log("Recebido via socket:", data);
-  const pesoSpan = document.getElementById(`peso-${data.identifier}`);
-  const dataSpan = document.getElementById(`data-${data.identifier}`);
-  
-  if (pesoSpan) {
-    pesoSpan.textContent = data.peso;
-  }
-  if (dataSpan) {
-    const dataFormatada = new Date().toLocaleString("pt-BR");
-    dataSpan.textContent = dataFormatada;
-  }
-});
-socket.on('connect', () => console.log('Socket.IO conectado'));
-socket.on('disconnect', () => console.log('Socket.IO desconectado'));
-</script></body></html><script>document.getElementById("register-form").addEventListener("submit", async function(event) {
-  event.preventDefault();
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <title>Monitoramento de Animais</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" href="/css/design-system.css" />
+  <link rel="stylesheet" href="/css/projeto1.css" />
+  <link rel="stylesheet" href="/css/partials/modals.css" />
+  <link rel="stylesheet" href="/css/partials/forms.css" />
+  <link rel="stylesheet" href="/css/partials/popovers.css" />
+  <link rel="stylesheet" href="/css/partials/buttons.css" />
+  <link rel="stylesheet" href="/components/user-settings/settings.css" />
+  <link rel="stylesheet" href="/css/index.css" />
+  <script src="/components/user-settings/settings.js"></script>
+</head>
 
-  const formData = new FormData(this);
-  const data = Object.fromEntries(formData.entries());
+<body>
+  <header class="navbar">
+    <a class="logo-text" href="/">Projetos IOT</a>
+    <a class="login-button" href="/login">Login</a>
+  </header>
 
-  const response = await fetch("/projeto1/register", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify(data)
-  });
+  <div class="container">
+    <div class="page-header">
+      <h1 class="page-title">Monitoramento de Animais</h1>
+      <p class="page-subtitle">Sistema de cadastro e monitoramento para identificação e controle de acesso de animais via RFID</p>
+    </div>
 
-  const result = await response.json();
+    <div class="main-grid">
+      <!-- Formulário -->
+      <div class="card form-card">
+        <h3 class="card-title">Cadastrar Animal</h3>
+        <form id="register-form">
+          <div class="form-group">
+            <label for="identifier">Identificador do animal</label>
+            <input class="input" id="identifier" type="text" name="identifier" placeholder="Ex: A123" required />
+          </div>
+          <div class="form-group">
+            <label for="nome">Nome do animal</label>
+            <input class="input" id="nome" type="text" name="nome" placeholder="Ex: Rex" />
+          </div>
+          <div class="form-group">
+            <label for="especie">Espécie</label>
+            <input class="input" id="especie" type="text" name="especie" placeholder="Ex: Cachorro" />
+          </div>
+          <div class="form-group">
+            <label for="idade">Idade</label>
+            <input class="input" id="idade" type="number" name="idade" placeholder="Ex: 5" />
+          </div>
+          <div class="form-group">
+            <label for="allowed">Permitir Acesso?</label>
+            <select class="select" id="allowed" name="allowed" required>
+              <option value="" disabled selected>Selecione uma opção</option>
+              <option value="sim">Sim</option>
+              <option value="nao">Não</option>
+            </select>
+          </div>
+          <button class="button" type="submit">Cadastrar</button>
+        </form>
+      </div>
 
-  if (response.ok) {
-    alert("✅ " + result.message);
-    // Opcional: limpar o formulário
-    this.reset();
-  } else {
-    alert("❌ Erro: " + (result.error || result.message));
-  }
-});</script>
+      <!-- Lista de Animais Registrados -->
+      <div class="card animals-list-card">
+        <h3 class="card-title">Animais Registrados</h3>
+        <div class="animals-list">
+          <!-- Os registros aparecerão aqui dinamicamente -->
+        </div>
+      </div>
+    </div>
+
+    <div class="history-section">
+      <a class="history-button" href="/projeto1/history">Ver Histórico Completo</a>
+    </div>
+  </div>
+
+  <!-- Scripts -->
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    socket.on('pesoAtualizado', function (data) {
+      const pesoSpan = document.getElementById(`peso-${data.identifier}`);
+      const dataSpan = document.getElementById(`data-${data.identifier}`);
+      const valorPeso = typeof data.peso === 'object' ? data.peso.peso : data.peso;
+      const dataAtualizacao = typeof data.peso === 'object'
+        ? data.peso.dataAtualizacao
+        : new Date().toISOString();
+      if (pesoSpan) pesoSpan.textContent = valorPeso;
+      if (dataSpan) dataSpan.textContent = `Atualizado em: ${new Date(dataAtualizacao).toLocaleString("pt-BR")}`;
+    });
+
+    socket.on('registroAtualizado', function (registro) {
+      const pesoEl = document.getElementById(`peso-${registro.identifier}`);
+      const dataEl = document.getElementById(`data-${registro.identifier}`);
+
+      if (pesoEl) pesoEl.textContent = registro.peso || 'Não recebido';
+      if (dataEl) dataEl.textContent = new Date().toLocaleString("pt-BR");
+
+      const animalItem = pesoEl.closest('.animal-item');
+      const statusDiv = animalItem.querySelector('.animal-status');
+      const statusText = statusDiv.querySelector('.status-text');
+
+      if (registro.allowed === 'sim') {
+        statusDiv.classList.remove('status-denied');
+        statusDiv.classList.add('status-allowed');
+        statusText.textContent = 'Permitido';
+      } else {
+        statusDiv.classList.remove('status-allowed');
+        statusDiv.classList.add('status-denied');
+        statusText.textContent = 'Negado';
+      }
+    });
+
+    socket.on('registroRemovido', function (dado) {
+      const allItems = document.querySelectorAll('.animal-item');
+      allItems.forEach(item => {
+        const id = item.querySelector('.animal-id').textContent;
+        if (id === dado.identifier) {
+          item.remove();
+        }
+      });
+    });
+
+    socket.on('novoRegistro', function (registro) {
+      const animalsList = document.querySelector('.animals-list');
+
+      const animalItem = document.createElement('div');
+      animalItem.className = 'animal-item';
+      animalItem.style.height = '170px';
+      animalItem.style.display = 'flex';
+      animalItem.style.flexDirection = 'column';
+      animalItem.style.justifyContent = 'space-between';
+      animalItem.style.padding = '0.75rem';
+
+      animalItem.innerHTML = `
+        <div class="animal-main">
+          <div class="animal-id">${registro.identifier}</div>
+          <div class="animal-status ${registro.allowed === 'sim' ? 'status-allowed' : 'status-denied'}">
+            <div class="status-indicator"></div>
+            <span class="status-text">${registro.allowed === 'sim' ? 'Permitido' : 'Negado'}</span>
+          </div>
+        </div>
+
+        <div class="animal-details">
+          <div class="detail-row">
+            <span class="detail-label">Peso (kg):</span>
+            <span class="detail-value" id="peso-${registro.identifier}">
+              ${registro.peso || 'Não recebido'}
+            </span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Atualizado em:</span>
+            <span class="detail-value" id="data-${registro.identifier}">
+              ${registro.data ? new Date(registro.data).toLocaleString("pt-BR") : 'Sem registro'}
+            </span>
+          </div>
+
+          <div class="detail-row">
+            <span class="detail-label">Cadastrado por:</span>
+            <span class="detail-value">${registro.registradoPor || ''}</span>
+          </div>
+        </div>
+
+        <div class="animal-actions">
+          <form action="/projeto1/delete/${registro.identifier}" method="POST" style="display: inline;">
+            <button class="glass-button-danger delete-button" type="submit">Excluir</button>
+          </form>
+        </div>
+      `;
+
+      animalsList.prepend(animalItem);
+    });
+
+    // Envio do formulário via AJAX
+    document.addEventListener("DOMContentLoaded", () => {
+      const form = document.getElementById("register-form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = {
+          identifier: formData.get("identifier"),
+          allowed: formData.get("allowed"),
+          nome: formData.get("nome"),
+          especie: formData.get("especie"),
+          idade: formData.get("idade")
+        };
+        try {
+          const res = await fetch("/projeto1/register", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) form.reset();
+          else alert("Erro ao cadastrar");
+        } catch {
+          alert("Erro inesperado");
+        }
+      });
+
+      document.addEventListener('click', async (e) => {
+        if (e.target.closest('.delete-button')) {
+          e.preventDefault();
+          const button = e.target.closest('.delete-button');
+          const identifier = button.closest('.animal-item').querySelector('.animal-id').textContent;
+          if (!confirm(`Deseja excluir ${identifier}?`)) return;
+
+          try {
+            const res = await fetch(`/projeto1/delete/${identifier}`, { method: 'POST' });
+            if (!res.ok) alert('Erro ao excluir');
+          } catch {
+            alert('Erro inesperado');
+          }
+        }
+      });
+    });
+  </script>
+</body>
+</html>
