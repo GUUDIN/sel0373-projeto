@@ -95,14 +95,13 @@ Este projeto é uma plataforma web desenvolvida para a disciplina SEL0373, com o
 
 ---
 
-## Pontos de Destaque para Avaliação
+## Pontos de Destaque do Projeto
 
-- **Código limpo, modular e comentado.**
+- **Código modular e comentado.**
 - **Segurança:** Hash de senha, sessões protegidas.
 - **Responsividade e acessibilidade.**
 - **Comunicação em tempo real (MQTT + Socket.IO).**
 - **Expansível para novos projetos IoT.**
-- **Documentação clara e exemplos de uso.**
 
 ---
 
