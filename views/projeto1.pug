@@ -93,7 +93,11 @@ html(lang="pt-BR")
       include ../components/user-settings/settings.pug
 
     script(src="/components/user-settings/settings.js")
+    script(src="/js/projeto1.js")
     script(src="/socket.io/socket.io.js")
+    
+
+    
     script.
       const socket = io();
       socket.on('pesoAtualizado', function(data) {
