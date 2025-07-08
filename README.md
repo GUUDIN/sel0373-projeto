@@ -108,8 +108,6 @@ Este projeto é uma plataforma web desenvolvida para a disciplina SEL0373, com o
 
 ## Screenshots
 
-> Adicione aqui prints das principais telas para facilitar a avaliação.
-
 ---
 
 ## Observações Finais
