@@ -38,7 +38,7 @@ console.error(`Erro ao se inscrever no tópico ${mqtt_topic}: ${err}`);
   // Middleware para simular usuário se necessário
   router.use((req, res, next) => {
     if (!req.session.user) {
-      req.session.user = { id: 2, username: 'testUser1', project: 1 };
+      req.session.user = { id: 1, username: 'testUser1', project: 1 };
     }
     next();
   });
