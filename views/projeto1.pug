@@ -92,52 +92,10 @@ html(lang="pt-BR")
     if user
       include ../components/user-settings/settings.pug
 
-    script(src="/components/user-settings/settings.js")
-    script(src="/js/projeto1.js")
     script(src="/socket.io/socket.io.js")
+    script(src="/components/user-settings/settings.js")
+    script(src=" /public/js/projeto1.js")
+    
     
 
     
-    script.
-      const socket = io();
-      socket.on('pesoAtualizado', function(data) {
-        console.log("Recebido via socket:", data);
-        const pesoSpan = document.getElementById(`peso-${data.identifier}`);
-        const dataSpan = document.getElementById(`data-${data.identifier}`);
-        
-        if (pesoSpan) {
-          pesoSpan.textContent = data.peso;
-        }
-        if (dataSpan) {
-          const dataFormatada = new Date().toLocaleString("pt-BR");
-          dataSpan.textContent = dataFormatada;
-        }
-      });
-      socket.on('connect', () => console.log('Socket.IO conectado'));
-      socket.on('disconnect', () => console.log('Socket.IO desconectado'));
-
-script.
-  document.getElementById("register-form").addEventListener("submit", async function(event) {
-    event.preventDefault();
-
-    const formData = new FormData(this);
-    const data = Object.fromEntries(formData.entries());
-
-    const response = await fetch("/projeto1/register", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
-      body: JSON.stringify(data)
-    });
-
-    const result = await response.json();
-
-    if (response.ok) {
-      alert("✅ " + result.message);
-      // Opcional: limpar o formulário
-      this.reset();
-    } else {
-      alert("❌ Erro: " + (result.error || result.message));
-    }
-  });
